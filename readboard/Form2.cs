@@ -11,14 +11,19 @@ namespace readboard
         Boolean isMouthDown = false;
         Graphics g;
         Form5 form5;
-        Boolean needFDJ;
+        Boolean needMag;
 
 
-        public Form2(Boolean needFDJ)
+        public Form2(Boolean needMag)
         {
             InitializeComponent();
-            this.needFDJ = needFDJ;
-            if (Program.useFDJ && needFDJ)
+          //  int SH = Screen.PrimaryScreen.Bounds.Height;
+         //   int SW = Screen.PrimaryScreen.Bounds.Width;
+          //  this.Size = new Size(SW+160,SH+160);
+          //  this.Location = new Point(-80, -80);
+         
+            this.needMag = needMag;
+            if (Program.useMag && needMag)
             {
                 form5 = new Form5();
                 form5.StartPosition = FormStartPosition.Manual;
@@ -53,7 +58,7 @@ namespace readboard
 
             //form5.setPic((int)x, (int)y);
             //form5.Show();
-            if (Program.useFDJ&&needFDJ)
+            if (Program.useMag&& needMag)
             {
                 form5.setPic(e.X, e.Y);
             }
@@ -79,7 +84,7 @@ namespace readboard
         {
             x2 = MousePosition.X + 1;
             y2 = MousePosition.Y + 1;
-            if (Program.useFDJ && needFDJ)
+            if (Program.useMag && needMag)
             {
                 form5.Close();
                 form5.Hide();

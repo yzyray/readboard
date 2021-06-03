@@ -19,7 +19,7 @@ namespace readboard
         public static int whitePC = 75;
         public static int blackZB = 33;
         public static int whiteZB = 33;
-        public static Boolean useFDJ = true;
+        public static Boolean useMag = true;
         public static Boolean doubleClick = true;
         public static Boolean showScaleHint = true;
         public static Boolean showInBoard = false;

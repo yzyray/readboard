@@ -41,7 +41,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.chkFDJ = new System.Windows.Forms.CheckBox();
+            this.chkMag = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.chkDoubleCheck = new System.Windows.Forms.CheckBox();
@@ -156,15 +156,15 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // chkFDJ
+            // chkMag
             // 
-            this.chkFDJ.AutoSize = true;
-            this.chkFDJ.Location = new System.Drawing.Point(12, 12);
-            this.chkFDJ.Name = "chkFDJ";
-            this.chkFDJ.Size = new System.Drawing.Size(84, 16);
-            this.chkFDJ.TabIndex = 12;
-            this.chkFDJ.Text = "使用放大镜";
-            this.chkFDJ.UseVisualStyleBackColor = true;
+            this.chkMag.AutoSize = true;
+            this.chkMag.Location = new System.Drawing.Point(12, 12);
+            this.chkMag.Name = "chkMag";
+            this.chkMag.Size = new System.Drawing.Size(84, 16);
+            this.chkMag.TabIndex = 12;
+            this.chkMag.Text = "使用放大镜";
+            this.chkMag.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
@@ -251,10 +251,10 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(235, 55);
+            this.button3.Location = new System.Drawing.Point(235, 53);
             this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(140, 20);
+            this.button3.Size = new System.Drawing.Size(140, 23);
             this.button3.TabIndex = 21;
             this.button3.Text = "如何判断我的缩放类型";
             this.button3.UseVisualStyleBackColor = true;
@@ -284,7 +284,7 @@
             this.Controls.Add(this.chkDoubleCheck);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.chkFDJ);
+            this.Controls.Add(this.chkMag);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label6);
@@ -322,7 +322,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox chkFDJ;
+        private System.Windows.Forms.CheckBox chkMag;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox chkDoubleCheck;

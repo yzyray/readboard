@@ -18,7 +18,7 @@ namespace readboard
 {
     public partial class Form1 : Form
     {
-       // Boolean showDebugImage = false;
+       // Boolean showDebugImage = true;
         TcpClient client;
         NetworkStream io;
         Thread threadReceive;
@@ -193,7 +193,7 @@ namespace readboard
                                 Program.blackZB = Convert.ToInt32(arr[1]);
                                 Program.whitePC = Convert.ToInt32(arr[2]);
                                 Program.whiteZB = Convert.ToInt32(arr[3]);
-                                Program.useFDJ = (Convert.ToInt32(arr[4]) == 1);
+                                Program.useMag = (Convert.ToInt32(arr[4]) == 1);
                                 Program.doubleClick = (Convert.ToInt32(arr[5]) == 1);
                                 Program.showScaleHint = (Convert.ToInt32(arr[6]) == 1);
                                 Program.showInBoard = (Convert.ToInt32(arr[7]) == 1);
@@ -1890,7 +1890,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useFDJ ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", ""));
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", ""));
             wr.Close();
             if (chkShowInBoard.Checked)
             {
@@ -2021,21 +2021,23 @@ namespace readboard
         {
             Mat srcImage = new Mat("screen.bmp", ImreadModes.Color);
             Mat src_gray = new Mat();
-            //Mat copy = new Mat();
-            //Mat copy2 = new Mat();
+            Mat copy = new Mat();
+            Mat copy2 = new Mat();
             //if (showDebugImage)
-            //{ 
-            //    srcImage.CopyTo(copy);                
+            //{
+            //    srcImage.CopyTo(copy);
             //    srcImage.CopyTo(copy2);
             //}
-            Scalar lowerb = new Scalar(0, 0, 0);
-            Scalar upperb = new Scalar(150, 150, 150);
-            Cv2.InRange(srcImage, lowerb, upperb, src_gray);
+            //  Scalar lowerb = new Scalar(0, 0, 0);
+            //  Scalar upperb = new Scalar(150, 150, 150);
+            //  Cv2.InRange(srcImage, lowerb, upperb, src_gray);
+
             Mat contours = new Mat();
-            Cv2.Canny(src_gray, contours, 200, 550);
+            Cv2.Canny(srcImage, contours, 200, 550);
+            int length = Math.Min(srcImage.Width, srcImage.Height);
             // Cv2.ImShow("轮廓", contours);
-            LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, srcImage.Width / (((boardWidth + 1) * 3) / 2), srcImage.Width / (((boardWidth + 1) * 3) / 2), 2);
-            int Src_length = srcImage.Width;
+            LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, (int)(length / (((boardWidth + 1) * 1.5f))),(int)(length / (((boardWidth + 1) * 1.5f))), 1);
+    
 
 
             // return;
@@ -2072,11 +2074,26 @@ namespace readboard
             verticalLines.Sort(delegate (verticalLine a, verticalLine b) {
                 return a.position.CompareTo(b.position);
             });
-            for (int s = 0; s < verticalLines.Count - 1; s++)
+            for (int s = 0; s < verticalLines.Count /2; s++)
             {
                 verticalLine line = verticalLines[s];
                 verticalLine line2 = verticalLines[s + 1];
-                if ((Math.Abs(line.position - line2.position) <= 8 && line.startPoint.Y > line2.startPoint.Y) || Math.Abs(line.position - line2.position) <= 4)
+                if (Math.Abs(line.position - line2.position) <= 4 )
+                {
+                    line2.position = (line.position + line2.position) / 2;
+                    line2.startPoint.X = line2.position;
+                    line2.startPoint.Y = Math.Min(line.startPoint.Y, line2.startPoint.Y);
+                    line2.endPoint.X = line2.position;
+                    line2.endPoint.Y = Math.Max(line.endPoint.Y, line2.endPoint.Y);
+                    line.needDelete = true;
+                }
+            }
+
+            for (int s = verticalLines.Count; s > verticalLines.Count / 2; s--)
+            {
+                verticalLine line = verticalLines[s-1];
+                verticalLine line2 = verticalLines[s - 2];
+                if (Math.Abs(line.position - line2.position) <= 4)
                 {
                     line2.position = (line.position + line2.position) / 2;
                     line2.startPoint.X = line2.position;
@@ -2098,11 +2115,25 @@ namespace readboard
             horizonLines.Sort(delegate (horizonLine a, horizonLine b) {
                 return a.position.CompareTo(b.position);
             });
-            for (int s = 0; s < horizonLines.Count - 1; s++)
+            for (int s = 0; s < horizonLines.Count/2; s++)
             {
                 horizonLine line = horizonLines[s];
                 horizonLine line2 = horizonLines[s + 1];
-                if ((Math.Abs(line.position - line2.position) <= 8 && line.startPoint.X > line2.startPoint.X) || Math.Abs(line.position - line2.position) <= 4)
+                if (Math.Abs(line.position - line2.position) <= 4)
+                {
+                    line2.position = (line.position + line2.position) / 2;
+                    line2.startPoint.Y = line2.position;
+                    line2.startPoint.X = Math.Min(line.startPoint.X, line2.startPoint.X);
+                    line2.endPoint.Y = line2.position;
+                    line2.endPoint.X = Math.Max(line.endPoint.X, line2.endPoint.X);
+                    line.needDelete = true;
+                }
+            }
+            for (int s = horizonLines.Count; s > horizonLines.Count / 2; s--)
+            {
+                horizonLine line = horizonLines[s-1];
+                horizonLine line2 = horizonLines[s -2];
+                if (Math.Abs(line.position - line2.position) <= 4)
                 {
                     line2.position = (line.position + line2.position) / 2;
                     line2.startPoint.Y = line2.position;
@@ -2120,17 +2151,18 @@ namespace readboard
                     s--;
                 }
             }
-        //    if (showDebugImage)
-        //    {        for (int i = 0; i < horizonLines.Count; i++)
-        //        {
-        //            Cv2.Line(copy, horizonLines[i].startPoint, horizonLines[i].endPoint, new Scalar(0, 255, 0), 1);
-        //        }
-        //    for (int i = 0; i < verticalLines.Count; i++)
-        //    {
-        //        Cv2.Line(copy, verticalLines[i].startPoint, verticalLines[i].endPoint, new Scalar(0, 255, 0), 1);
-        //    }
-        //    Cv2.ImShow("line", copy);
-        //}
+            //if (showDebugImage)
+            //{
+            //    for (int i = 0; i < horizonLines.Count; i++)
+            //    {
+            //        Cv2.Line(copy, horizonLines[i].startPoint, horizonLines[i].endPoint, new Scalar(0, 255, 0), 1);
+            //    }
+            //    for (int i = 0; i < verticalLines.Count; i++)
+            //    {
+            //        Cv2.Line(copy, verticalLines[i].startPoint, verticalLines[i].endPoint, new Scalar(0, 255, 0), 1);
+            //    }
+            //    Cv2.ImShow("line", copy);
+            //}
             List<int> verticalGaps = new List<int>();
             for (int s = 0; s < verticalLines.Count - 1; s++)
             {
@@ -2257,10 +2289,56 @@ namespace readboard
                 return res;
             });
 
+         
             int verticalGap = verticalGapCounts[0].gap;
-        //    Console.WriteLine("V gap: " + verticalGap);
-
             int horizonGap = horizonGapCounts[0].gap;
+
+            if (verticalGapCounts.Count >= 3)
+            {
+                if ((Math.Abs(verticalGapCounts[0].gap - verticalGapCounts[1].gap) <= 2) && (Math.Abs(verticalGapCounts[0].gap - verticalGapCounts[2].gap) <= 2))
+                    if (((verticalGapCounts[1].uniqueCounts / (float)verticalGapCounts[0].uniqueCounts) > 0.5) && ((verticalGapCounts[2].uniqueCounts / (float)verticalGapCounts[0].uniqueCounts) > 0.5))
+                    {
+                        int gap0 = verticalGapCounts[0].gap;
+                        int gap1 = verticalGapCounts[1].gap;
+                        int gap2 =verticalGapCounts[2].gap;
+                        if ((gap0 > gap1 && gap1 > gap2) || (gap2 > gap1 && gap1 > gap0))
+                        {
+                            verticalGap = gap1;
+                        }
+                        else if ((gap1 > gap0 && gap0 > gap2) || (gap2 > gap0 && gap0 > gap1))
+                        {
+                            verticalGap = gap0;
+                        }
+                        else
+                        {
+                            verticalGap = gap2;
+                        }
+                    }
+            }
+       
+            if (horizonGapCounts.Count >= 3)
+            {
+                if ((Math.Abs(horizonGapCounts[0].gap - horizonGapCounts[1].gap) <= 2) && (Math.Abs(horizonGapCounts[0].gap - horizonGapCounts[2].gap) <= 2))
+                    if (((horizonGapCounts[1].uniqueCounts / (float)horizonGapCounts[0].uniqueCounts) > 0.5) && ((horizonGapCounts[2].uniqueCounts / (float)horizonGapCounts[0].uniqueCounts) > 0.5))
+                    {
+                        int gap0 = horizonGapCounts[0].gap;
+                        int gap1 = horizonGapCounts[1].gap;
+                        int gap2 = horizonGapCounts[2].gap;
+                        if ((gap0 > gap1 && gap1 > gap2) || (gap2 > gap1 && gap1 > gap0))
+                        {
+                            horizonGap = gap1;
+                        }
+                        else if ((gap1 > gap0 && gap0 > gap2) || (gap2 > gap0 && gap0 > gap1))
+                        {
+                            horizonGap = gap0;
+                        }
+                        else
+                        {
+                            horizonGap = gap2;
+                        }
+                    }
+            }
+            //    Console.WriteLine("V gap: " + verticalGap);
             //      Console.WriteLine("H gap: " + horizonGap);
             for (int n = 0; n < verticalLines.Count; n++)
             {
@@ -2268,9 +2346,9 @@ namespace readboard
                 for (int m = n + 1; m < verticalLines.Count; m++)
                 {
                     verticalLine line2 = verticalLines[m];
-                    if (Math.Abs(line2.position - line1.position - verticalGap) <=1)
-                    {      line1.needSave = true;
-                    line2.needSave = true;
+                    if (Math.Abs(line2.position - line1.position - verticalGap) <= Math.Max(1,verticalGap/8))
+                    {      line1.validate = true;
+                    line2.validate = true;
                 }
                 }
             }
@@ -2281,10 +2359,10 @@ namespace readboard
                 for (int m = n + 1; m < horizonLines.Count; m++)
                 {
                     horizonLine line2 = horizonLines[m];
-                    if (Math.Abs(line2.position - line1.position - horizonGap) <= 1)
+                    if (Math.Abs(line2.position - line1.position - horizonGap) <= Math.Max(1,horizonGap /8))
                     {
-                        line1.needSave = true;
-                        line2.needSave = true;
+                        line1.validate = true;
+                        line2.validate = true;
                     }
                 }
             }
@@ -2327,7 +2405,7 @@ namespace readboard
                 for (int s = 0; s < horizonLines.Count; s++)
                 {
                     horizonLine line = horizonLines[s];
-                    if (!line.needSave)
+                    if (!line.validate)
                         continue;
                     if (line.startPoint.X < v0Min&& line.endPoint.X> v0Min)
                         v0MinCounts++;
@@ -2381,7 +2459,7 @@ namespace readboard
                 for (int s = 0; s < verticalLines.Count; s++)
                 {
                     verticalLine line = verticalLines[s];
-                    if (!line.needSave)
+                    if (!line.validate)
                         continue;
                     if (line.startPoint.Y < h0Min && line.endPoint.Y > h0Min)
                         h0MinCounts++;
@@ -2413,12 +2491,13 @@ namespace readboard
 
             ox1 = ox1+leftPos-vGap;
            oy1 = oy1+topPos-vGap;
-            //if (showDebugImage) { 
+            //if (showDebugImage)
+            //{
             //    Cv2.Line(copy2, new Point(leftPos, topPos), new Point(rightPos, topPos), new Scalar(0, 255, 0), 1);
-            //Cv2.Line(copy2, new Point(leftPos, bottomPos), new Point(rightPos, bottomPos), new Scalar(0, 255, 0), 1);
-            //Cv2.Line(copy2, new Point(leftPos, topPos), new Point(leftPos, bottomPos), new Scalar(0, 255, 0), 1);
-            //Cv2.Line(copy2, new Point(rightPos, topPos), new Point(rightPos, bottomPos), new Scalar(0, 255, 0), 1);
-            //Cv2.ImShow("1路线", copy2);
+            //    Cv2.Line(copy2, new Point(leftPos, bottomPos), new Point(rightPos, bottomPos), new Scalar(0, 255, 0), 1);
+            //    Cv2.Line(copy2, new Point(leftPos, topPos), new Point(leftPos, bottomPos), new Scalar(0, 255, 0), 1);
+            //    Cv2.Line(copy2, new Point(rightPos, topPos), new Point(rightPos, bottomPos), new Scalar(0, 255, 0), 1);
+            //    Cv2.ImShow("1路线", copy2);
             //}
             //for (int s = 0; s < verticalLines.Count; s++)
             //{
@@ -2459,7 +2538,7 @@ class verticalLine
     public Point endPoint;
     public int position;
     public Boolean needDelete = false;
-    public Boolean needSave = false;
+    public Boolean validate = false;
 }
 
 class horizonLine
@@ -2468,6 +2547,6 @@ class horizonLine
     public Point endPoint;
     public int position;
     public Boolean needDelete = false;
-    public Boolean needSave = false;
+    public Boolean validate = false;
 }
 

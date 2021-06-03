@@ -21,7 +21,7 @@ namespace readboard
             this.txtBzb.Text = Program.blackZB.ToString();
             this.txtWpc.Text = Program.whitePC.ToString();
             this.txtWzb.Text = Program.whiteZB.ToString();
-            this.chkFDJ.Checked = Program.useFDJ;
+            this.chkMag.Checked = Program.useMag;
             this.chkDoubleCheck.Checked = Program.doubleClick;
             this.chkAutoMin.Checked = Program.autoMin;
             if (!Program.isScaled)
@@ -49,7 +49,7 @@ namespace readboard
                 rdoNormalScale.Checked = true;
             if (!Program.isChn) {
                 this.Text = "Settings";
-                this.chkFDJ.Text = "UseMagnifier";
+                this.chkMag.Text = "UseMagnifier";
                 this.chkDoubleCheck.Text = "DoubleClickOnForeground(uncheck if sabaki/gogui)";
                 this.chkAutoMin.Text = "Auto Minimize After Sync";
                 this.rdoNormalScale.Text = "NormalScale";
@@ -76,7 +76,7 @@ namespace readboard
             int Bzb = Program.blackZB;
             int Wpc = Program.whitePC;
             int Wzb = Program.whiteZB;
-            Boolean useFDJ = chkFDJ.Checked;
+            Boolean useMag = chkMag.Checked;
             Boolean doubleClick = chkDoubleCheck.Checked;
             Boolean chkAuto = chkAutoMin.Checked;
             try
@@ -100,7 +100,7 @@ namespace readboard
             Program.whitePC = Wpc;
             Program.blackZB = Bzb;
             Program.whiteZB = Wzb;
-            Program.useFDJ = useFDJ;
+            Program.useMag = useMag;
             Program.doubleClick = doubleClick;
             Program.autoMin = chkAuto;
             Program.isAdvScale = rdoAdvanceScale.Checked;
@@ -108,7 +108,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useFDJ?"1":"0")+"_"+ (doubleClick ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", ""));
+            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (doubleClick ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", ""));
             wr.Close();
             this.Close();
         }
@@ -141,7 +141,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useFDJ ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" +"yyyyyyssssk$#");
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" +"yyyyyyssssk$#");
             wr.Close();
             MessageBox.Show(Program.isChn ? "已恢复默认设置,请重新打开": "Reset successfully,please restart.");
             Application.Exit();
