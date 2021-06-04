@@ -108,7 +108,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (doubleClick ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", ""));
+            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (doubleClick ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + Form1.type);
             wr.Close();
             this.Close();
         }
@@ -141,7 +141,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" +"yyyyyyssssk$#");
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" +"yyyyyyssssk$#" + "_" + Form1.type);
             wr.Close();
             MessageBox.Show(Program.isChn ? "已恢复默认设置,请重新打开": "Reset successfully,please restart.");
             Application.Exit();

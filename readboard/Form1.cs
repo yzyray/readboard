@@ -53,7 +53,7 @@ namespace readboard
         int sy1ty5=0;
         int all;
           //  System.Timers.Timer t;
-        int type;
+       public static int type=5;
        // Boolean isQTYC = false;
         int boardWidth=19;
        static int widthMagrin=0;
@@ -162,7 +162,7 @@ namespace readboard
             }
         }
 
-        public Form1(String i, String time, String last, String both, String aitime, String playouts, String firstpo, String nolw, String usetcp)
+        public Form1(String time, String last, String both, String aitime, String playouts, String firstpo, String nolw, String usetcp)
         {
             InitializeComponent();
             GlobalHooker hooker = new GlobalHooker();//全局钩子
@@ -183,7 +183,7 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 12)
+                    if (arr.Length == 13)
                     {
                         try
                         {
@@ -200,7 +200,7 @@ namespace readboard
                                 Program.showInBoardHint = (Convert.ToInt32(arr[8]) == 1);
                                 Program.autoMin = (Convert.ToInt32(arr[9]) == 1);
                                 Program.isAdvScale = (Convert.ToInt32(arr[10]) == 1);
-
+                                type = Convert.ToInt32(arr[12]);
                                 Program.hasConfigFile = true;
                             }
                         }
@@ -211,19 +211,27 @@ namespace readboard
                 }
                 sr.Close();
             }
-         //   Boolean hint = Program.showInBoardHint;
-           // Program.showInBoardHint = false;
+            switch (type) {
+                case 0:
+                    rdoFox.Checked = true;
+                    break;
+                case 1:
+                    rdoTygem.Checked = true;
+                    break;
+                case 2:
+                    rdoSina.Checked = true;
+                    break;
+                case 5:
+                    rdoFore.Checked = true;
+                    break;
+                case 3:
+                    rdoBack.Checked = true;
+                    break;
+
+
+            }
             this.chkShowInBoard.Checked = Program.showInBoard;
-            //Program.showInBoardHint = hint;
-
             Program.showInBoard = chkShowInBoard.Checked;
-            //string result1 = "config_readboard.txt";
-            //FileStream fs = new FileStream(result1, FileMode.Create);
-            //StreamWriter wr = null;
-            //wr = new StreamWriter(fs);
-            //wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useFDJ ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0")+"_"+ Environment.GetEnvironmentVariable("computername").Replace("_",""));
-            //wr.Close();
-
             if (Program.showScaleHint && factor > 1)
             {
 
@@ -231,37 +239,10 @@ namespace readboard
                 form6.ShowDialog();
 
             }
-            //if (this.factor> 1)
-            //{
-            //    this.radioButton1.Enabled = false;
-            //    this.radioButton4.Enabled = false;
-            //}
-
             dm = new CDmSoft();
             dm2 = new CDmSoft();
             this.MaximizeBox = false;
-            pcurrentWin = this;
-            int leix = int.Parse(i);
-            if (leix == 0)
-            { this.radioButton1.Checked = true;
-                type = 0;
-            }
-            if (leix == 1)
-            { this.radioButton2.Checked = true;
-                type = 1;
-            }
-            if (leix == 2)
-            { this.radioButton4.Checked = true;
-                type = 2;
-            }
-            if (leix == 3)
-            {   this.rdoqiantai.Checked = true;
-                type = 5;
-            }
-            if (leix == 4)
-            {    this.radioButton3.Checked = true;
-                type = 3;
-            }
+            pcurrentWin = this;           
             this.radioButton5.Checked = true;
 
             if (type == 0 || type == 1 || type == 2)
@@ -363,11 +344,11 @@ namespace readboard
                 }
             }
             if (!Program.isChn) {
-                this.radioButton1.Text = "FoxWQ";
-                this.radioButton2.Text = "Tygem";
-                this.radioButton3.Text = "Background";
-                this.radioButton4.Text = "Sina";
-                this.rdoqiantai.Text = "Foreground";
+                this.rdoFox.Text = "FoxWQ";
+                this.rdoTygem.Text = "Tygem";
+                this.rdoBack.Text = "Background";
+                this.rdoSina.Text = "Sina";
+                this.rdoFore.Text = "Foreground";
                 this.btnSettings.Text = "Settings";
                 this.button1.Text = "Help";
                 this.button10.Text = "FastSync";
@@ -702,17 +683,17 @@ namespace readboard
             this.button5.Text = Program.isChn ? "停止同步" : "StopSync";
             this.button10.Text = Program.isChn ? "停止同步" : "StopSync";
             button5click = true;
-            this.radioButton1.Enabled = false;
-            this.radioButton2.Enabled = false;
+            this.rdoFox.Enabled = false;
+            this.rdoTygem.Enabled = false;
             //checkBox1.Enabled = false;
            // chkAutoPlay.Enabled = checkBox1.Checked;
-            this.radioButton3.Enabled = false;
-            this.radioButton4.Enabled = false;
+            this.rdoBack.Enabled = false;
+            this.rdoSina.Enabled = false;
             this.radioButton5.Enabled = false;
             this.radioButton6.Enabled = false;
             this.radioButton7.Enabled = false;
             this.radioButton8.Enabled = false;
-            this.rdoqiantai.Enabled = false;
+            this.rdoFore.Enabled = false;
             this.button11.Enabled = false;
             this.button3.Enabled = false;
             this.button4.Enabled = false;
@@ -723,17 +704,17 @@ namespace readboard
             //this.button5.Text = "停止同步";
             this.button10.Text = Program.isChn ? "停止同步" : "StopSync";
             //  button5click = true;
-            this.radioButton1.Enabled = false;
-            this.radioButton2.Enabled = false;
+            this.rdoFox.Enabled = false;
+            this.rdoTygem.Enabled = false;
             //checkBox1.Enabled = false;
             // chkAutoPlay.Enabled = checkBox1.Checked;
-            this.radioButton3.Enabled = false;
-            this.radioButton4.Enabled = false;
+            this.rdoBack.Enabled = false;
+            this.rdoSina.Enabled = false;
             this.radioButton5.Enabled = false;
             this.radioButton6.Enabled = false;
             this.radioButton7.Enabled = false;
             this.radioButton8.Enabled = false;
-            this.rdoqiantai.Enabled = false;
+            this.rdoFore.Enabled = false;
           //  this.button2.Enabled = false;
         //    this.button3.Enabled = false;
         //    this.button4.Enabled = false;
@@ -745,20 +726,20 @@ namespace readboard
            // this.button10.Text = "一键同步";
             //if (this.factor <= 1)
             //{ 
-            this.radioButton1.Enabled = true;
-            this.radioButton4.Enabled = true;
+            this.rdoFox.Enabled = true;
+            this.rdoSina.Enabled = true;
             //} 
             
-            this.radioButton2.Enabled = true;
+            this.rdoTygem.Enabled = true;
            
-            this.radioButton3.Enabled = true;           
+            this.rdoBack.Enabled = true;           
             this.radioButton5.Enabled = true;
            // checkBox1.Enabled = true;
           //  chkAutoPlay.Enabled = true;
             this.radioButton6.Enabled = true;
             this.radioButton7.Enabled = true;
             this.radioButton8.Enabled = true;
-            this.rdoqiantai.Enabled = true;
+            this.rdoFore.Enabled = true;
             //
             if (type == 3 || type == 5)
             {
@@ -1503,7 +1484,7 @@ namespace readboard
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton1.Checked)
+            if (this.rdoFox.Checked)
             {
                 type = 0;             
                 this.button2.Enabled = false;
@@ -1515,7 +1496,7 @@ namespace readboard
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton2.Checked)
+            if (this.rdoTygem.Checked)
             {
                 type = 1;
                 this.button2.Enabled = false;
@@ -1527,7 +1508,7 @@ namespace readboard
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton3.Checked)
+            if (this.rdoBack.Checked)
             {
                 type = 3;
                 this.button3.Enabled = false;
@@ -1540,7 +1521,7 @@ namespace readboard
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
 
-            if (this.radioButton4.Checked)
+            if (this.rdoSina.Checked)
             {
                 type = 2;
                 this.button2.Enabled = false;
@@ -1553,8 +1534,13 @@ namespace readboard
 
         private void form_closing(object sender, FormClosingEventArgs e)
         {
-           
-                mh.Enabled = false;
+              string result1 = "config_readboard.txt";
+            FileStream fs = new FileStream(result1, FileMode.Create);
+            StreamWriter wr = null;
+            wr = new StreamWriter(fs);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
+            wr.Close();
+            mh.Enabled = false;
             if (dm.IsBind(hwnd)>0)
             {
                 dm.UnBindWindow();
@@ -1805,7 +1791,7 @@ namespace readboard
 
         private void rdoqiantai_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.rdoqiantai.Checked)
+            if (this.rdoFore.Checked)
             {
                 type = 5;
                 this.button3.Enabled = false;
@@ -1890,7 +1876,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", ""));
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "")+"_"+type);
             wr.Close();
             if (chkShowInBoard.Checked)
             {

@@ -35,11 +35,11 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rdoqiantai = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.rdoFore = new System.Windows.Forms.RadioButton();
+            this.rdoSina = new System.Windows.Forms.RadioButton();
+            this.rdoBack = new System.Windows.Forms.RadioButton();
+            this.rdoTygem = new System.Windows.Forms.RadioButton();
+            this.rdoFox = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioButton8 = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
@@ -124,76 +124,76 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.rdoqiantai);
-            this.groupBox1.Controls.Add(this.radioButton4);
-            this.groupBox1.Controls.Add(this.radioButton3);
-            this.groupBox1.Controls.Add(this.radioButton2);
-            this.groupBox1.Controls.Add(this.radioButton1);
+            this.groupBox1.Controls.Add(this.rdoFore);
+            this.groupBox1.Controls.Add(this.rdoSina);
+            this.groupBox1.Controls.Add(this.rdoBack);
+            this.groupBox1.Controls.Add(this.rdoTygem);
+            this.groupBox1.Controls.Add(this.rdoFox);
             this.groupBox1.Location = new System.Drawing.Point(7, -2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(326, 32);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             // 
-            // rdoqiantai
+            // rdoFore
             // 
-            this.rdoqiantai.AutoSize = true;
-            this.rdoqiantai.Location = new System.Drawing.Point(154, 11);
-            this.rdoqiantai.Name = "rdoqiantai";
-            this.rdoqiantai.Size = new System.Drawing.Size(83, 16);
-            this.rdoqiantai.TabIndex = 14;
-            this.rdoqiantai.TabStop = true;
-            this.rdoqiantai.Text = "其他(前台)";
-            this.rdoqiantai.UseVisualStyleBackColor = true;
-            this.rdoqiantai.CheckedChanged += new System.EventHandler(this.rdoqiantai_CheckedChanged);
+            this.rdoFore.AutoSize = true;
+            this.rdoFore.Location = new System.Drawing.Point(154, 11);
+            this.rdoFore.Name = "rdoFore";
+            this.rdoFore.Size = new System.Drawing.Size(83, 16);
+            this.rdoFore.TabIndex = 14;
+            this.rdoFore.TabStop = true;
+            this.rdoFore.Text = "其他(前台)";
+            this.rdoFore.UseVisualStyleBackColor = true;
+            this.rdoFore.CheckedChanged += new System.EventHandler(this.rdoqiantai_CheckedChanged);
             // 
-            // radioButton4
+            // rdoSina
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(104, 11);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(47, 16);
-            this.radioButton4.TabIndex = 13;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "新浪";
-            this.radioButton4.UseVisualStyleBackColor = true;
-            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
+            this.rdoSina.AutoSize = true;
+            this.rdoSina.Location = new System.Drawing.Point(104, 11);
+            this.rdoSina.Name = "rdoSina";
+            this.rdoSina.Size = new System.Drawing.Size(47, 16);
+            this.rdoSina.TabIndex = 13;
+            this.rdoSina.TabStop = true;
+            this.rdoSina.Text = "新浪";
+            this.rdoSina.UseVisualStyleBackColor = true;
+            this.rdoSina.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
             // 
-            // radioButton3
+            // rdoBack
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(239, 11);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(83, 16);
-            this.radioButton3.TabIndex = 12;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "其他(后台)";
-            this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
+            this.rdoBack.AutoSize = true;
+            this.rdoBack.Location = new System.Drawing.Point(239, 11);
+            this.rdoBack.Name = "rdoBack";
+            this.rdoBack.Size = new System.Drawing.Size(83, 16);
+            this.rdoBack.TabIndex = 12;
+            this.rdoBack.TabStop = true;
+            this.rdoBack.Text = "其他(后台)";
+            this.rdoBack.UseVisualStyleBackColor = true;
+            this.rdoBack.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
             // 
-            // radioButton2
+            // rdoTygem
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(54, 11);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(47, 16);
-            this.radioButton2.TabIndex = 11;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "弈城";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            this.rdoTygem.AutoSize = true;
+            this.rdoTygem.Location = new System.Drawing.Point(54, 11);
+            this.rdoTygem.Name = "rdoTygem";
+            this.rdoTygem.Size = new System.Drawing.Size(47, 16);
+            this.rdoTygem.TabIndex = 11;
+            this.rdoTygem.TabStop = true;
+            this.rdoTygem.Text = "弈城";
+            this.rdoTygem.UseVisualStyleBackColor = true;
+            this.rdoTygem.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
             // 
-            // radioButton1
+            // rdoFox
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(5, 11);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(47, 16);
-            this.radioButton1.TabIndex = 10;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "野狐";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.rdoFox.AutoSize = true;
+            this.rdoFox.Location = new System.Drawing.Point(5, 11);
+            this.rdoFox.Name = "rdoFox";
+            this.rdoFox.Size = new System.Drawing.Size(47, 16);
+            this.rdoFox.TabIndex = 10;
+            this.rdoFox.TabStop = true;
+            this.rdoFox.Text = "野狐";
+            this.rdoFox.UseVisualStyleBackColor = true;
+            this.rdoFox.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -517,10 +517,10 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton rdoSina;
+        private System.Windows.Forms.RadioButton rdoBack;
+        private System.Windows.Forms.RadioButton rdoTygem;
+        private System.Windows.Forms.RadioButton rdoFox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton radioButton7;
@@ -539,7 +539,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.RadioButton rdoqiantai;
+        private System.Windows.Forms.RadioButton rdoFore;
         private System.Windows.Forms.CheckBox chkAutoPlay;
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.RadioButton radioButton8;
