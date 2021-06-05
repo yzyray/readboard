@@ -85,9 +85,9 @@ namespace readboard
             x2 = MousePosition.X + 1;
             y2 = MousePosition.Y + 1;
             if (Program.useMag && needMag)
-            {
-                form5.Close();
+            {                
                 form5.Hide();
+                form5.Close();
             }
             this.Hide();
             this.Close();

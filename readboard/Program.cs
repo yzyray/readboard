@@ -78,7 +78,12 @@ namespace readboard
                     {
                         Form1.pcurrentWin.sendVersion();
                     }
-                }
+                    if (a.Equals("quit"))
+                    {
+                        Control.CheckForIllegalCrossThreadCalls = false;
+                        Form1.pcurrentWin.shutdown();
+                    }
+                    }
             }
         }
         /// 启动控制台

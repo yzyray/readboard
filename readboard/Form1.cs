@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
+using System.Threading.Tasks;
 
 namespace readboard
 {
@@ -67,7 +68,6 @@ namespace readboard
         int savedX;
         int savedY;
         Thread thread;
-        Boolean isKuangxuan = false;
         Boolean isMannulCircle = false;
         float factor = 1.0f;
         private KeyboardHookListener hookListener;
@@ -423,10 +423,10 @@ namespace readboard
             mh.MouseClick += mh_MouseMoveEvent2;
             mh.Enabled = false;
             this.button5.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + timename + "ms)";
-
-
         }
 
+        [DllImport("user32.dll")]
+        static extern void BlockInput(bool Block);
         public void Snap( int sx1, int sy1, int sx2, int sy2)
         {            
             pressed = true;
@@ -442,9 +442,14 @@ namespace readboard
                 {
                     object curX, curY;
                     dm2.GetCursorPos(out curX, out curY);
-                    dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
-                    hwnd = dm.GetMousePointWindow();
-                    dm2.MoveTo((int)curX, (int)curY);
+                    BlockInput(true);
+                    dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);                
+                    hwnd = dm2.GetMousePointWindow();
+                    var t = Task.Run(() => {
+                        Thread.Sleep(50);
+                        dm2.MoveTo((int)curX, (int)curY);
+                    });
+                    BlockInput(false);                   
                 }
             }
             else { 
@@ -494,7 +499,6 @@ namespace readboard
 
         private void button3_Click(object sender, EventArgs e)
         {
-            isKuangxuan = false;
             mh.Enabled = true;
             clicked = true;
         }
@@ -695,6 +699,7 @@ namespace readboard
             this.radioButton8.Enabled = false;
             this.rdoFore.Enabled = false;
             this.button11.Enabled = false;
+            this.button2.Enabled = false;
             this.button3.Enabled = false;
             this.button4.Enabled = false;
         }
@@ -723,13 +728,13 @@ namespace readboard
         public void Action2Test(String t)
         {
             this.button5.Text = t;
-           // this.button10.Text = "一键同步";
+            if(!isContinuousSyncing)
+            this.button10.Text = "一键同步";
             //if (this.factor <= 1)
             //{ 
             this.rdoFox.Enabled = true;
             this.rdoSina.Enabled = true;
             //} 
-            
             this.rdoTygem.Enabled = true;
            
             this.rdoBack.Enabled = true;           
@@ -1225,10 +1230,10 @@ namespace readboard
                     }
                     if (type == 3)
                     {
-                        sx1 = (int)(ox1  - (int)x1);
-                        sy1 = (int)(oy1 - (int)y1);
-                        width = (int)((ox2 - ox1) );
-                        height = (int)((oy2 - oy1) );
+                        //sx1 = (int)(ox1  - (int)x1);
+                        //sy1 = (int)(oy1 - (int)y1);
+                      //  width = (int)((ox2 - ox1) );
+                        //height = (int)((oy2 - oy1) );
                         if (!Program.isAdvScale)
                         {
                             sx1 = (int)(sx1 / factor);
@@ -1455,11 +1460,19 @@ namespace readboard
                         }
                         else
                         {
-                            if (numw > all * 0.8)
-                                result = result + "0,";
+                            if (j == 0 || j == boardWidth - 1 || i == 0 || i == boardWidth - 1) {
+                                if (numw > all * 0.85)
+                                    result = result + "0,";
+                                else
+                                    result = result + "2,";
+                            }
                             else
-                                result = result + "2,";
-
+                            {
+                                if (numw > all * 0.8)
+                                    result = result + "0,";
+                                else
+                                    result = result + "2,";
+                            }
                         }
                     }
                     else
@@ -1532,38 +1545,37 @@ namespace readboard
            
         }
 
-        private void form_closing(object sender, FormClosingEventArgs e)
-        {
-              string result1 = "config_readboard.txt";
+        public void shutdown() {
+            string result1 = "config_readboard.txt";
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
             wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             mh.Enabled = false;
-            if (dm.IsBind(hwnd)>0)
+            if (dm.IsBind(hwnd) > 0)
             {
                 dm.UnBindWindow();
                 dm.Dispose();
             }
-                
-                if (canUseLW)
-                {
-                    lw.lwsoft lw = new lw.lwsoft();
+            dm2.Dispose();
+            if (canUseLW)
+            {
+                lw.lwsoft lw = new lw.lwsoft();
                 if (lw.IsBind(hwnd) > 0)
-                 lw.UnBindWindow();
-                }           
+                    lw.UnBindWindow();
+            }
             Send("stopsync");
-                Send("nobothSync");
+            Send("nobothSync");
             Send("endsync");
             keepSync = false;
-            //if (thread != null)
-            //    thread.Suspend();               
-            //Program.run = false;
             Application.Exit();
-            this.Hide();
-            Thread.Sleep(1000);
             System.Environment.Exit(0);
+        }
+
+        private void form_closing(object sender, FormClosingEventArgs e)
+        {
+            shutdown();
         }
 
         private void radioButton5_CheckedChanged(object sender, EventArgs e)
@@ -1996,7 +2008,6 @@ namespace readboard
         }
 
         private void selectBoard() {
-            isKuangxuan = true;
             mh.Enabled = true;
             this.WindowState = FormWindowState.Minimized;
             form2 = new Form2(isMannulCircle);
