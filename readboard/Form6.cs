@@ -24,7 +24,7 @@ namespace readboard
             }
             if (!Program.isChn) {
                 this.Text = "Information";
-                this.label1.Text = "Windows scale is not 100%,DoubleSync may not place stone right.";
+                this.label1.Text = "Windows scale is not 100%,confirm scale type.";
                 this.label2.Text = "Select your scale type";
                 this.button3.Text = "How To Know My Type";
                 this.rdoNormalScale.Text = "NormalScale";

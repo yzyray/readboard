@@ -43,10 +43,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(144, 167);
+            this.button1.Location = new System.Drawing.Point(128, 139);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(84, 34);
+            this.button1.Size = new System.Drawing.Size(75, 28);
             this.button1.TabIndex = 0;
             this.button1.Text = "确定";
             this.button1.UseVisualStyleBackColor = true;
@@ -54,10 +54,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(250, 167);
+            this.button2.Location = new System.Drawing.Point(222, 139);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(105, 34);
+            this.button2.Size = new System.Drawing.Size(93, 28);
             this.button2.TabIndex = 1;
             this.button2.Text = "不再提示";
             this.button2.UseVisualStyleBackColor = true;
@@ -66,19 +66,18 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 11);
+            this.label1.Location = new System.Drawing.Point(19, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(440, 18);
+            this.label1.Size = new System.Drawing.Size(298, 15);
             this.label1.TabIndex = 2;
-            this.label1.Text = "windows显示缩放不为100%,双向同步可能无法准确落子";
+            this.label1.Text = "windows显示缩放不为100%,请确认缩放类型";
             // 
             // rdoNormalScale
             // 
             this.rdoNormalScale.AutoSize = true;
-            this.rdoNormalScale.Location = new System.Drawing.Point(7, 20);
-            this.rdoNormalScale.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.rdoNormalScale.Location = new System.Drawing.Point(6, 17);
             this.rdoNormalScale.Name = "rdoNormalScale";
-            this.rdoNormalScale.Size = new System.Drawing.Size(105, 22);
+            this.rdoNormalScale.Size = new System.Drawing.Size(88, 19);
             this.rdoNormalScale.TabIndex = 3;
             this.rdoNormalScale.TabStop = true;
             this.rdoNormalScale.Text = "普通缩放";
@@ -88,10 +87,9 @@
             // rdoAdvanceScale
             // 
             this.rdoAdvanceScale.AutoSize = true;
-            this.rdoAdvanceScale.Location = new System.Drawing.Point(232, 20);
-            this.rdoAdvanceScale.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.rdoAdvanceScale.Location = new System.Drawing.Point(206, 17);
             this.rdoAdvanceScale.Name = "rdoAdvanceScale";
-            this.rdoAdvanceScale.Size = new System.Drawing.Size(105, 22);
+            this.rdoAdvanceScale.Size = new System.Drawing.Size(88, 19);
             this.rdoAdvanceScale.TabIndex = 4;
             this.rdoAdvanceScale.TabStop = true;
             this.rdoAdvanceScale.Text = "高级缩放";
@@ -102,29 +100,26 @@
             // 
             this.groupBox1.Controls.Add(this.rdoNormalScale);
             this.groupBox1.Controls.Add(this.rdoAdvanceScale);
-            this.groupBox1.Location = new System.Drawing.Point(18, 67);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox1.Location = new System.Drawing.Point(16, 56);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.groupBox1.Size = new System.Drawing.Size(471, 58);
+            this.groupBox1.Size = new System.Drawing.Size(419, 48);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(21, 46);
+            this.label2.Location = new System.Drawing.Point(19, 38);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(188, 18);
+            this.label2.Size = new System.Drawing.Size(157, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "请设置正确的缩放类型";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(248, 36);
-            this.button3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button3.Location = new System.Drawing.Point(220, 30);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(242, 36);
+            this.button3.Size = new System.Drawing.Size(215, 30);
             this.button3.TabIndex = 7;
             this.button3.Text = "如何判断我的缩放类型";
             this.button3.UseVisualStyleBackColor = true;
@@ -133,17 +128,17 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 136);
+            this.label3.Location = new System.Drawing.Point(19, 113);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(404, 18);
+            this.label3.Size = new System.Drawing.Size(338, 15);
             this.label3.TabIndex = 8;
             this.label3.Text = "注:选择不再提示后,可在参数设置中修改缩放类型";
             // 
             // Form6
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(510, 218);
+            this.ClientSize = new System.Drawing.Size(453, 182);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label2);

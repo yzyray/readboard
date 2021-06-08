@@ -57,8 +57,8 @@ namespace readboard
        public static int type=5;
        // Boolean isQTYC = false;
         int boardWidth=19;
-       static int widthMagrin=0;
-        static int heightMagrin =0;
+       static double widthMagrin=0;
+        static double heightMagrin =0;
         Boolean noticeLast = true;
         Boolean syncBoth = false;
         Boolean canUseLW = false;
@@ -80,10 +80,10 @@ namespace readboard
 
         public struct RECT
         {
-            public int Left;                             //最左坐标
-            public int Top;                             //最上坐标
-            public int Right;                           //最右坐标
-            public int Bottom;                        //最下坐标
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
         }
 
         private void Send(String strMsg)
@@ -106,7 +106,6 @@ namespace readboard
             }
         }
 
-
         private Boolean isAltDown = false;
 
         private void HookListener_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -116,7 +115,6 @@ namespace readboard
                 isAltDown = true;
             if (isAltDown && e.KeyValue == 65)
                 chkShowInBoard.Checked = !chkShowInBoard.Checked;
-
         }
 
         private void HookListener_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -165,7 +163,7 @@ namespace readboard
         public Form1(String time, String last, String both, String aitime, String playouts, String firstpo, String nolw, String usetcp)
         {
             InitializeComponent();
-            GlobalHooker hooker = new GlobalHooker();//全局钩子
+            GlobalHooker hooker = new GlobalHooker();
             hookListener = new KeyboardHookListener(hooker);
             hookListener.KeyDown += HookListener_KeyDown;
             hookListener.KeyUp += HookListener_KeyUp;
@@ -330,9 +328,7 @@ namespace readboard
             {
                 try
                 {
-                    //连接服务端
                     client = new TcpClient("127.0.0.1", 24781);
-                    //开启线程不停的接收服务端发送的数据
                     threadReceive = new Thread(new ThreadStart(Receive));
                     threadReceive.IsBackground = true;
                     threadReceive.Start();
@@ -410,9 +406,7 @@ namespace readboard
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //1.将Form属性ShowInTaskbar改为false，这样程序将不会在任务栏中显示。
-            //2.将Form属性WindowState选择为 Minimized，以便起来自动最小化隐藏。
-            string startup = Application.ExecutablePath;       //取得程序路径   
+            string startup = Application.ExecutablePath;
             int pp = startup.LastIndexOf("\\");
             startup = startup.Substring(0, pp);
           
@@ -425,8 +419,8 @@ namespace readboard
             this.button5.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + timename + "ms)";
         }
 
-        [DllImport("user32.dll")]
-        static extern void BlockInput(bool Block);
+        //[DllImport("user32.dll")]
+        //static extern void BlockInput(bool Block);
         public void Snap( int sx1, int sy1, int sx2, int sy2)
         {            
             pressed = true;
@@ -442,14 +436,16 @@ namespace readboard
                 {
                     object curX, curY;
                     dm2.GetCursorPos(out curX, out curY);
-                    BlockInput(true);
+                   // BlockInput(true);
                     dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);                
                     hwnd = dm2.GetMousePointWindow();
                     var t = Task.Run(() => {
                         Thread.Sleep(50);
+                        dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        Thread.Sleep(50);
                         dm2.MoveTo((int)curX, (int)curY);
                     });
-                    BlockInput(false);                   
+                  //  BlockInput(false);                   
                 }
             }
             else { 
@@ -471,8 +467,7 @@ namespace readboard
             if (pressed)
             {
                 pressed = false;
-                hwnd = dm.GetMousePointWindow();               
-                
+                hwnd = dm.GetMousePointWindow();
             }
         }
 
@@ -486,7 +481,6 @@ namespace readboard
                //     mh.Enabled = false;
                 clicked = false;
                 hwnd = dm.GetMousePointWindow();
-                
             }
          
 
@@ -535,8 +529,6 @@ namespace readboard
                 IntPtr hwnds;
                 if (form3 != null)
                 {
-                    //form3.Close();
-                    // form3.Dispose();
                     hwnds = form3.setPic();
                 }
                 else
@@ -785,8 +777,8 @@ namespace readboard
                     {
                         if (oneHwnd.Length == 0)
                             continue;
-                      //  if (dm.GetWindowTitle(int.Parse(oneHwnd)).Equals("CChessboardPanel"))
-                      //  {
+                        if (dm.GetWindowTitle(int.Parse(oneHwnd)).Equals("CChessboardPanel"))
+                        {
                             int hwndTemp = int.Parse(oneHwnd);
                             p = new IntPtr(hwndTemp);
                             GetWindowRect(p, ref rect);
@@ -799,7 +791,7 @@ namespace readboard
                                 hwnd = hwndTemp;
                                 finalWidth = x2 - x1;
                             }
-                        //}
+                        }
                     }
                 }
                 else if (type == 1)
@@ -856,12 +848,6 @@ namespace readboard
 
                     }
                 }
-                //p = new IntPtr(hwnd);
-                //GetWindowRect(p, ref rect);
-                //x2 = rect.Right;
-                //y2 = rect.Bottom;
-                //x1 = rect.Left;
-                //y1 = rect.Top;
                 if (hwnd > 0) {
                     startContinuousSync(true);
                 }
@@ -896,10 +882,7 @@ namespace readboard
                     dm.MoveWindow(form3.getHwnd(), 9999, 9999);
                 }
                 Send("sync");
-
-                // MessageBox.Show(hwnds.ToString());
                 dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
-                //dm.Capture(0, 0, 50, 50, "screen2.bmp");
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a,"");
               //  startKeepingSync();
@@ -1018,20 +1001,11 @@ namespace readboard
                 }
                 else
                     OutPut(true, null);
-                // if (t != null)
-                //  {
-                //       t.Enabled = false;
-                //   }
             }
 
-
-            //  t = new System.Timers.Timer(timeinterval);   //实例化Timer类，设置间隔时间为1000毫秒；   
-            //t.Elapsed += new System.Timers.ElapsedEventHandler(OutPutTime); //到达时间的时候执行事件；   
-            //t.AutoReset = false;   //设置是执行一次（false）还是一直执行(true)；   
-            //t.Enabled = true;     //是否执行System.Timers.Timer.Elapsed事件；   
             keepSync = true;
-            widthMagrin = width / boardWidth;
-            heightMagrin = height / boardWidth;
+            widthMagrin = width / (float)boardWidth;
+            heightMagrin = height / (float)boardWidth;
             if (syncBoth)
             {
                 if (radioBlack.Checked)
@@ -1050,7 +1024,7 @@ namespace readboard
             ThreadStart threadStart = new ThreadStart(OutPutTime);
             thread = new Thread(OutPutTime);
             thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();//启动界面
+            thread.Start();
             if (Program.showInBoard && type != 5)
             {
                 object startX, startY;
@@ -1079,8 +1053,7 @@ namespace readboard
                 Send("stopsync");
                 stopKeepingSync();
                 keepSync = false;
-            }           
-
+            }
         }
 
         public delegate void Action2<in T>(T t);
@@ -1138,12 +1111,8 @@ namespace readboard
                         form3.Show();
                         dm.MoveWindow(form3.getHwnd(), 9999, 9999);
                     }
-
-
-                    // MessageBox.Show(hwnds.ToString());
+                    
                     dm.BindWindow((int)hwnds, "dx2", "windows", "normal", 0);
-                    //dm.Capture(0, 0, 50, 50, "screen2.bmp");
-
                     sx1 = 0;
                     sy1 = 0;
                     width = ox2 - ox1;
@@ -1228,22 +1197,22 @@ namespace readboard
                         width = height;
                         all = width / boardWidth * height / boardWidth;
                     }
-                    if (type == 3)
-                    {
-                        //sx1 = (int)(ox1  - (int)x1);
-                        //sy1 = (int)(oy1 - (int)y1);
-                      //  width = (int)((ox2 - ox1) );
-                        //height = (int)((oy2 - oy1) );
-                        if (!Program.isAdvScale)
-                        {
-                            sx1 = (int)(sx1 / factor);
-                            sy1 = (int)(sy1 / factor);
-                            width = (int)(width / factor);
-                            height = (int)(height / factor);
-                        }
-                        all = width / boardWidth * height / boardWidth;
-                        all = width / boardWidth * height / boardWidth;
-                    }
+                    //if (type == 3)
+                    //{
+                    //    //sx1 = (int)(ox1  - (int)x1);
+                    //    //sy1 = (int)(oy1 - (int)y1);
+                    //  //  width = (int)((ox2 - ox1) );
+                    //    //height = (int)((oy2 - oy1) );
+                    //    if (!Program.isAdvScale)
+                    //    {
+                    //        sx1 = (int)(sx1 / factor);
+                    //        sy1 = (int)(sy1 / factor);
+                    //        width = (int)(width / factor);
+                    //        height = (int)(height / factor);
+                    //    }
+                    //    all = width / boardWidth * height / boardWidth;
+                    //    all = width / boardWidth * height / boardWidth;
+                    //}
                     if (oldall != all)
                     {
                         Send("clear");
@@ -1291,7 +1260,7 @@ namespace readboard
             if (lwh!=null&&savedPlace)
             {
                 savedPlace = false;
-                lwh.MoveTo(sx1 + widthMagrin * (savedX + 1), sy1 + heightMagrin * (savedY + 1));
+                lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
                 lwh.LeftClick();
             }
             if (!(width <= boardWidth || height <= boardWidth))
@@ -1435,7 +1404,7 @@ namespace readboard
             if (lwh != null && savedPlace)
             {
                 savedPlace = false;
-                lwh.MoveTo(sx1 + widthMagrin * (savedX + 1), sy1 + heightMagrin * (savedY + 1));
+                lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
                 lwh.LeftClick();
             }
             if (width <= boardWidth || height <= boardWidth)
@@ -1664,24 +1633,20 @@ namespace readboard
                         object xo, yo;
                         dm2.GetCursorPos(out xo, out yo);
 
-                        dm.MoveTo(sx1 + widthMagrin * (x + 1), sy1 + heightMagrin * (y + 1));
+                        dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
                         //Thread.Sleep(20);
                         dm.LeftClick();
-                        dm.MoveTo(sx1 + widthMagrin * (x + 1), sy1 + heightMagrin * (y + 1));
+                        dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
                         dm.LeftClick();
                         //Thread.Sleep(20);
                         dm2.MoveTo((int)xo, (int)yo);
                     }
                     else
-                    {
-                        if (type == 3)
-                        {
-                            dm.MoveTo(sx1 + widthMagrin * x , sy1 + heightMagrin *y );
-                        }
+                    {         
+                        if(Program.isAdvScale)
+                            dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
                         else
-                        {
-                            dm.MoveTo((int)((sx1 + widthMagrin * (x + 1))*factor), (int)((sy1 + heightMagrin * (y + 1))*factor));
-                        }                          
+                            dm.MoveTo((int)Math.Round((sx1 + widthMagrin * (x + 0.5))*factor), (int)Math.Round((sy1 + heightMagrin * (y + 0.5))*factor));
                         dm.LeftClick();
                     }
                 }
@@ -1704,7 +1669,6 @@ namespace readboard
                     }
                 }
                 textBox1.Text = sb.ToString();
-                //定义输入焦点在最后一个字符
                 textBox1.SelectionStart = textBox1.Text.Length;
             }
             Send("timechanged "+ (textBox1.Text.Equals("") ? "0" : textBox1.Text));
@@ -1730,7 +1694,6 @@ namespace readboard
                     }
                 }
                 textBox2.Text = sb.ToString();
-                //定义输入焦点在最后一个字符
                 textBox2.SelectionStart = textBox2.Text.Length;
             }
             Send("playoutschanged " + (textBox2.Text.Equals("") ? "0" : textBox2.Text));
@@ -1751,7 +1714,6 @@ namespace readboard
                     }
                 }
                 textBox3.Text = sb.ToString();
-                //定义输入焦点在最后一个字符
                 textBox3.SelectionStart = textBox3.Text.Length;
             }
             Send("firstchanged " + (textBox3.Text.Equals("") ? "0" : textBox3.Text));
@@ -1781,7 +1743,7 @@ namespace readboard
                 ThreadStart threadStart = new ThreadStart(OutPutTime);
                 thread = new Thread(OutPutTime);
                 thread.SetApartmentState(ApartmentState.STA);
-                thread.Start();//启动界面
+                thread.Start();
 
             }
         }
@@ -1968,8 +1930,6 @@ namespace readboard
             //form5.setPic((int)x, (int)y);
             //form5.Show();
             selectBoard();
-
-
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -1990,8 +1950,8 @@ namespace readboard
                     graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size((int)(width * factor), (int)(height * factor)));
                     bitmap.Save("screen.bmp");
                 }
-                try { 
-                lineDetectTest(boardWidth);
+                try {
+                    boardLineAjust(boardWidth);
                 }
                 catch
                 {
@@ -2014,7 +1974,7 @@ namespace readboard
             form2.ShowDialog();
         }
 
-        private void lineDetectTest(int boardWidth)
+        private void boardLineAjust(int boardWidth)
         {
             Mat srcImage = new Mat("screen.bmp", ImreadModes.Color);
             Mat src_gray = new Mat();
@@ -2028,15 +1988,12 @@ namespace readboard
             //  Scalar lowerb = new Scalar(0, 0, 0);
             //  Scalar upperb = new Scalar(150, 150, 150);
             //  Cv2.InRange(srcImage, lowerb, upperb, src_gray);
-
             Mat contours = new Mat();
             Cv2.Canny(srcImage, contours, 200, 550);
             int length = Math.Min(srcImage.Width, srcImage.Height);
             // Cv2.ImShow("轮廓", contours);
             LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, (int)(length / (((boardWidth + 1) * 1.5f))),(int)(length / (((boardWidth + 1) * 1.5f))), 1);
     
-
-
             // return;
             List<verticalLine> verticalLines = new List<verticalLine>();
             List<horizonLine> horizonLines = new List<horizonLine>();
@@ -2487,7 +2444,7 @@ namespace readboard
             oy2 = oy1 + bottomPos+ hGap;
 
             ox1 = ox1+leftPos-vGap;
-           oy1 = oy1+topPos-vGap;
+            oy1 = oy1+topPos-vGap;
             //if (showDebugImage)
             //{
             //    Cv2.Line(copy2, new Point(leftPos, topPos), new Point(rightPos, topPos), new Scalar(0, 255, 0), 1);
@@ -2508,11 +2465,8 @@ namespace readboard
             //    horizonLine line = horizonLines[s];
             //    Cv2.Line(copy, line.startPoint, line.endPoint, new Scalar(0, 255, 0), 1);
             //}
-
         }
     }
-
-   
 }
 
 class wholeOffset

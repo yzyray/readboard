@@ -1,4 +1,4 @@
-锘縰sing System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace readboard
     static class Program
     {
         /// <summary>
-        /// 搴旂敤绋嬪簭鐨勪富鍏ュ彛鐐广��
+        /// 应用程序的主入口点。
         /// </summary>
         static string[] arg;
         public static int blackPC = 96;
@@ -27,7 +27,7 @@ namespace readboard
         public static Boolean autoMin = true;
         public static Boolean isAdvScale = false;
         public static Boolean isScaled = false;
-        public static String version = "0602";
+        public static String version = "608";
         public static Boolean isChn = false;
 
         public static double factor = 1.0;
@@ -44,7 +44,7 @@ namespace readboard
             ThreadStart threadStart = new ThreadStart(Start);
             Thread thread = new Thread(Start);
             thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();//鍚姩鐣岄潰
+            thread.Start();//启动界面
             if (arg.Length < 10)
                 System.Environment.Exit(0);
             if (arg[9].Equals("0"))
@@ -86,7 +86,7 @@ namespace readboard
                     }
             }
         }
-        /// 鍚姩鎺у埗鍙�
+        /// 启动控制台
         /// </summary>
         /// <returns></returns>
         [DllImport("kernel32.dll")]
