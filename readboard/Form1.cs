@@ -2440,11 +2440,27 @@ namespace readboard
 
             int vGap = (int)Math.Ceiling(verticalGap / 2f);
             int hGap = (int)Math.Ceiling(horizonGap / 2f);
-            ox2 = ox1 + rightPos+ vGap;
-            oy2 = oy1 + bottomPos+ hGap;
+            ox2 = ox1 + rightPos+ hGap;
+            oy2 = oy1 + bottomPos+ vGap;
 
-            ox1 = ox1+leftPos-vGap;
+            ox1 = ox1+leftPos- hGap;
             oy1 = oy1+topPos-vGap;
+
+
+          //  Cv2.Canny(srcImage, contours, 100, 250);
+            //Rect roi = new Rect(leftPos - vGap, topPos - vGap, rightPos-leftPos + hGap*2, bottomPos- topPos + vGap * 2);//首先要用个rect确定我们的兴趣区域在哪
+            //Mat ImageROI = new Mat(contours, roi);
+            //Mat ImageShow = new Mat(srcImage, roi);
+            //CircleSegment[] circles = Cv2.HoughCircles(ImageROI, HoughMethods.Gradient,1,550);
+            //foreach (CircleSegment circle in circles)
+            //{
+            //    // Point2f center = circle.Center;//圆心
+            //    int radius = (int)circle.Radius;//半径
+
+            //    ImageShow.Circle((int)circle.Center.X, (int)circle.Center.Y, radius, new Scalar(0, 255, 0), 1);
+            //}
+            //Cv2.ImShow("兴趣区域", ImageShow);
+
             //if (showDebugImage)
             //{
             //    Cv2.Line(copy2, new Point(leftPos, topPos), new Point(rightPos, topPos), new Scalar(0, 255, 0), 1);
