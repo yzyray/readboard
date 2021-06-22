@@ -1515,6 +1515,8 @@ namespace readboard
         }
 
         public void shutdown() {
+            isContinuousSyncing = false;
+            keepSync = false;
             string result1 = "config_readboard.txt";
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
@@ -1536,8 +1538,7 @@ namespace readboard
             }
             Send("stopsync");
             Send("nobothSync");
-            Send("endsync");
-            keepSync = false;
+            Send("endsync");            
             Application.Exit();
             System.Environment.Exit(0);
         }
