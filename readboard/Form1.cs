@@ -1650,6 +1650,8 @@ namespace readboard
             {
                 boardW = 19;
                 boardH = 19;
+                this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
+                this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
             }
             saveBoardSize();
         }
@@ -1660,6 +1662,8 @@ namespace readboard
             {
                 boardW = 13;
                 boardH = 13;
+                this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
+                this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
             }
             saveBoardSize();
         }
@@ -1670,6 +1674,8 @@ namespace readboard
             {
                 boardW = 9;
                 boardH = 9;
+                this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
+                this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
             }
             saveBoardSize();
         }
