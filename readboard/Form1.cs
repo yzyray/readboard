@@ -56,7 +56,9 @@ namespace readboard
           //  System.Timers.Timer t;
        public static int type=5;
        // Boolean isQTYC = false;
-        int boardWidth=19;
+       // int boardWidth=19;
+        int boardH = 19;
+        int boardW = 19;
        static double widthMagrin=0;
         static double heightMagrin =0;
         Boolean noticeLast = true;
@@ -209,6 +211,73 @@ namespace readboard
                 }
                 sr.Close();
             }
+
+            if (File.Exists("config_readboard_boardsize.txt"))
+            {
+                int customW = -1;
+                int customH = -1;
+                StreamReader sr = new StreamReader("config_readboard_boardsize.txt", Encoding.UTF8);
+                String line;
+                if ((line = sr.ReadLine()) != null)
+                {
+                    string[] arr = line.Split('_');
+                    if (arr.Length == 4)
+                    {
+                        try
+                        {
+                            this.boardW = Convert.ToInt32(arr[0]);
+                            this.boardH = Convert.ToInt32(arr[1]);
+                            customW = Convert.ToInt32(arr[2]);
+                            customH = Convert.ToInt32(arr[3]);
+                        }
+                        catch (Exception)
+                        {
+                        }                      
+                    }
+                }
+                sr.Close();
+                if (boardW == boardH)
+                {
+                    if (boardW == 19)
+                    {
+                        this.rdo19x19.Checked = true;
+                        if(customW>0)
+                            this.txtBoardWidth.Text = customW + "";
+                        if (customH > 0)
+                            this.txtBoardHeight.Text = customH + "";
+                    }
+                    else if (boardW == 13)
+                    {
+                        this.rdo13x13.Checked = true;
+                        if (customW > 0)
+                            this.txtBoardWidth.Text = customW + "";
+                        if (customH > 0)
+                            this.txtBoardHeight.Text = customH + "";
+                    }
+                    else if (boardW == 9)
+                    {
+                        this.rdo9x9.Checked = true;
+                        if (customW > 0)
+                            this.txtBoardWidth.Text = customW + "";
+                        if (customH > 0)
+                            this.txtBoardHeight.Text = customH + "";
+                    }
+                    else
+                    {
+                        this.txtBoardWidth.Text = this.boardW + "";
+                        this.txtBoardHeight.Text = this.boardH + "";
+                        this.rdoOtherBoard.Checked = true;
+                    }
+                }
+                else
+                {
+                    this.txtBoardWidth.Text = this.boardW + "";
+                    this.txtBoardHeight.Text = this.boardH + "";
+                    this.rdoOtherBoard.Checked = true;                
+                }
+            }
+            else
+                this.rdo19x19.Checked = true;
             switch (type) {
                 case 0:
                     rdoFox.Checked = true;
@@ -240,8 +309,7 @@ namespace readboard
             dm = new CDmSoft();
             dm2 = new CDmSoft();
             this.MaximizeBox = false;
-            pcurrentWin = this;           
-            this.radioButton5.Checked = true;
+            pcurrentWin = this;  
 
             if (type == 0 || type == 1 || type == 2)
                 this.button10.Enabled = true;
@@ -449,8 +517,8 @@ namespace readboard
                 }
             }
             else { 
-            int gapX= (int)Math.Round((ox2 - ox1) / ((boardWidth-1)*2f));
-            int gapY= (int)Math.Round((oy2 - oy1) / ((boardWidth - 1)*2f));
+            int gapX= (int)Math.Round((ox2 - ox1) / ((boardW- 1)*2f));
+            int gapY= (int)Math.Round((oy2 - oy1) / ((boardH - 1)*2f));
             ox1 = ox1 - gapX;
             oy1 = oy1 - gapY;
             ox2 = ox2 + gapX;
@@ -547,7 +615,7 @@ namespace readboard
                 sy1 = 0;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
-                all = width / boardWidth * height / boardWidth;
+                all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 OutPut3(true, null);
             }
             else
@@ -604,7 +672,7 @@ namespace readboard
                     sy1 = (int)qy1;
                     width = (int)qx1 - (int)qx4;
                     height = width;
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 1)
                 {
@@ -621,7 +689,7 @@ namespace readboard
                         width =(int)(width / factor);
                         height = (int)(height / factor);
                             }
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 2)
                 {
@@ -637,7 +705,7 @@ namespace readboard
                     sy1 = (int)qy1 - 1;
                     height = (int)qy4 - (int)qy1 + 4;
                     width = height;
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 3)
                 {
@@ -658,7 +726,7 @@ namespace readboard
                     //   // width = (int)(width / factor);
                     //  //  height = (int)(height / factor);
                     //}
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     //dm.Capture(sx1, sy1, sx1+width, sy1+ height, "backboard.bmp");
                     OutPut3(true, null);
                 }
@@ -685,10 +753,10 @@ namespace readboard
            // chkAutoPlay.Enabled = checkBox1.Checked;
             this.rdoBack.Enabled = false;
             this.rdoSina.Enabled = false;
-            this.radioButton5.Enabled = false;
-            this.radioButton6.Enabled = false;
-            this.radioButton7.Enabled = false;
-            this.radioButton8.Enabled = false;
+            this.rdo19x19.Enabled = false;
+            this.rdo13x13.Enabled = false;
+            this.rdo9x9.Enabled = false;
+            this.rdoOtherBoard.Enabled = false;
             this.rdoFore.Enabled = false;
             this.button11.Enabled = false;
             this.button2.Enabled = false;
@@ -707,10 +775,10 @@ namespace readboard
             // chkAutoPlay.Enabled = checkBox1.Checked;
             this.rdoBack.Enabled = false;
             this.rdoSina.Enabled = false;
-            this.radioButton5.Enabled = false;
-            this.radioButton6.Enabled = false;
-            this.radioButton7.Enabled = false;
-            this.radioButton8.Enabled = false;
+            this.rdo19x19.Enabled = false;
+            this.rdo13x13.Enabled = false;
+            this.rdo9x9.Enabled = false;
+            this.rdoOtherBoard.Enabled = false;
             this.rdoFore.Enabled = false;
           //  this.button2.Enabled = false;
         //    this.button3.Enabled = false;
@@ -730,12 +798,12 @@ namespace readboard
             this.rdoTygem.Enabled = true;
            
             this.rdoBack.Enabled = true;           
-            this.radioButton5.Enabled = true;
+            this.rdo19x19.Enabled = true;
            // checkBox1.Enabled = true;
           //  chkAutoPlay.Enabled = true;
-            this.radioButton6.Enabled = true;
-            this.radioButton7.Enabled = true;
-            this.radioButton8.Enabled = true;
+            this.rdo13x13.Enabled = true;
+            this.rdo9x9.Enabled = true;
+            this.rdoOtherBoard.Enabled = true;
             this.rdoFore.Enabled = true;
             //
             if (type == 3 || type == 5)
@@ -892,7 +960,7 @@ namespace readboard
                 sy1 = 0;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
-                all = width / boardWidth * height / boardWidth;
+                all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 OutPut3(true, null);
             }
             else
@@ -943,7 +1011,7 @@ namespace readboard
                     sy1 = (int)qy1;
                     width = (int)qx1 - (int)qx4;
                     height = width;
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
 
                 if (type == 1)
@@ -963,7 +1031,7 @@ namespace readboard
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 2)
                 {
@@ -981,7 +1049,7 @@ namespace readboard
                     sy1 = (int)qy1 - 1;
                     height = (int)qy4 - (int)qy1 + 4;
                     width = height;
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 3)
                 {
@@ -996,7 +1064,7 @@ namespace readboard
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     OutPut3(true, null);
                 }
                 else
@@ -1004,8 +1072,8 @@ namespace readboard
             }
 
             keepSync = true;
-            widthMagrin = width / (float)boardWidth;
-            heightMagrin = height / (float)boardWidth;
+            widthMagrin = width / (float)boardW;
+            heightMagrin = height / (float)boardH;
             if (syncBoth)
             {
                 if (radioBlack.Checked)
@@ -1117,7 +1185,7 @@ namespace readboard
                     sy1 = 0;
                     width = ox2 - ox1;
                     height = oy2 - oy1;
-                    all = width / boardWidth * height / boardWidth;
+                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     OutPut3(false, null);
                 }
                 else
@@ -1170,7 +1238,7 @@ namespace readboard
                         sy1 = (int)qy1;
                         width = (int)qx1 - (int)qx4;
                         height = width;
-                        all = width / boardWidth * height / boardWidth;
+                        all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     }
                     if (type == 1)
                     {
@@ -1183,7 +1251,7 @@ namespace readboard
                             width = (int)(width / factor);
                             height = (int)(height / factor);
                         }
-                        all = width / boardWidth * height / boardWidth;
+                        all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     }
                     if (type == 2)
                     {
@@ -1195,7 +1263,7 @@ namespace readboard
                         sy1 = (int)qy1 - 1;
                         height = (int)qy4 - (int)qy1 + 4;
                         width = height;
-                        all = width / boardWidth * height / boardWidth;
+                        all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     }
                     //if (type == 3)
                     //{
@@ -1263,25 +1331,25 @@ namespace readboard
                 lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
                 lwh.LeftClick();
             }
-            if (!(width <= boardWidth || height <= boardWidth))
+            if (!(width <= boardW || height <= boardH))
             {
                 String result = "";
                 if(first)
-                Send("start "+ boardWidth+" " + hwnd);
-                for (int i = 0; i < boardWidth; i++)
+                Send("start "+ boardW+" "+boardH+" " + hwnd);
+                for (int i = 0; i < boardH; i++)
                 {
-                    for (int j = 0; j < boardWidth; j++)
+                    for (int j = 0; j < boardW; j++)
                     {
                         int numw = 0;
                         if (type == 1)
                         {
-                            numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth) , sy1 + (int)Math.Round((height * i )/ (float)boardWidth) , sx1 + (int)Math.Round((width* (j + 1)) / (float)boardWidth) , sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth) , "FFFFFF-505050", 1.0);
+                            numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW) , sy1 + (int)Math.Round((height * i )/ (float)boardH) , sx1 + (int)Math.Round((width* (j + 1)) / (float)boardW) , sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH) , "FFFFFF-505050", 1.0);
                         }
                         else
-                            numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "FFFFFF-707070", 1.0);
+                            numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FFFFFF-707070", 1.0);
                      if ((type!=1&&numw < all * 0.32)||(type == 1&& numw < all * 0.30))
                         {
-                            int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "000000-606060", 1.0);
+                            int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000000-606060", 1.0);
                             if (numb < all * 0.37)
                             {
                                 result = result + "0,";
@@ -1296,7 +1364,7 @@ namespace readboard
                                             result = result + "3,";
                                         else
                                         {
-                                            int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "FF0000-202020", 1.0);
+                                            int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FF0000-202020", 1.0);
                                             if (numblue > all * 0.02)
                                                 result = result + "3,";
                                             else
@@ -1309,7 +1377,7 @@ namespace readboard
                                             result = result + "3,";
                                         else
                                         {
-                                            int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "FF0000-202020", 1.0);
+                                            int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FF0000-202020", 1.0);
                                             //  dm.GetColorNum(sx1 + (width / boardWidth) * j, sy1 + (height / boardWidth) * i, sx1 + (width / boardWidth) * (j + 1), sy1 + (height / boardWidth) * (i + 1), "FF0000-202020", 1.0);
                                             if (numred > all * 0.005)
                                                 result = result + "3,";
@@ -1318,7 +1386,7 @@ namespace readboard
                                         }
                                     }
                                     else if (type == 2) {
-                                        int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "FFFF00-202020", 1.0);
+                                        int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FFFF00-202020", 1.0);
 
                                         //dm.GetColorNum(sx1 + (width / boardWidth) * j, sy1 + (height / boardWidth) * i, sx1 + (width / boardWidth) * (j + 1), sy1 + (height / boardWidth) * (i + 1), "FFFF00-202020", 1.0);
                                         if (numred > all * 0.02)
@@ -1338,12 +1406,12 @@ namespace readboard
                             {
                                 if (type == 0)
                                 {
-                                    int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "000000-202020", 1.0);
+                                    int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000000-202020", 1.0);
                                      if (all * 0.1 < numb && numb < all * 0.2)
                                         result = result + "4,";
                                     else
                                     {
-                                        int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "0000FF-202020", 1.0);
+                                        int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "0000FF-202020", 1.0);
 
                                         if (numblue > all * 0.02)
                                             result = result + "4,";
@@ -1353,13 +1421,13 @@ namespace readboard
                                 }
                                 else if (type == 1)
                                 {
-                                    int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "0000FF-202020", 1.0);
+                                    int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "0000FF-202020", 1.0);
 
                                     if (numblue > all * 0.005)
                                         result = result + "4,";
                                     else
                                     {
-                                        int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "FF0000-202020", 1.0);
+                                        int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FF0000-202020", 1.0);
                                                                                 
                                         if (numred > all * 0.005)
                                             result = result + "4,";
@@ -1370,7 +1438,7 @@ namespace readboard
 
                                 else if (type == 2)
                                 {
-                                    int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "000080-202020", 1.0);
+                                    int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000080-202020", 1.0);
 
                                     if (numred > all * 0.02)
                                         result = result + "4,";
@@ -1382,7 +1450,7 @@ namespace readboard
                                 result = result + "2,";
                             }
                         }
-                        if (j == (boardWidth-1))
+                        if (j == (boardW-1))
                         {
                             if(result.Length>1)
                             result = result.Substring(0, result.Length - 1);
@@ -1407,20 +1475,20 @@ namespace readboard
                 lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
                 lwh.LeftClick();
             }
-            if (width <= boardWidth || height <= boardWidth)
+            if (width <= boardW || height <= boardH)
                 return;
             String result = "";
             if (first)
-                Send("start " + boardWidth + " " + hwnd);
-            for (int i = 0; i < boardWidth; i++)
+                Send("start " + boardW + " " + boardH +" "+ hwnd);
+            for (int i = 0; i < boardH; i++)
             {
-                for (int j = 0; j < boardWidth; j++)
+                for (int j = 0; j < boardW; j++)
                 {
-                    int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "000000-" + pianyiB + pianyiB + pianyiB, 1.0);
+                    int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000000-" + pianyiB + pianyiB + pianyiB, 1.0);
 
                     if (numb < all * zhanbiB)
                     {
-                        int numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardWidth), sy1 + (int)Math.Round((height * i) / (float)boardWidth), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardWidth), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardWidth), "FFFFFF-" + pianyiW + pianyiW + pianyiW, 1.0); 
+                        int numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FFFFFF-" + pianyiW + pianyiW + pianyiW, 1.0); 
                         
                         if (numw < all * zhanbiW)
                         {
@@ -1429,7 +1497,7 @@ namespace readboard
                         }
                         else
                         {
-                            if (j == 0 || j == boardWidth - 1 || i == 0 || i == boardWidth - 1) {
+                            if (j == 0 || j == boardW - 1 || i == 0 || i == boardH - 1) {
                                 if (numw > all * 0.85)
                                     result = result + "0,";
                                 else
@@ -1448,7 +1516,7 @@ namespace readboard
                     {                       
                             result = result + "1,";                      
                     }
-                    if (j == (boardWidth - 1))
+                    if (j == (boardW - 1))
                     {
                         result = result.Substring(0, result.Length - 1);
                         Send("re=" + result);
@@ -1473,6 +1541,9 @@ namespace readboard
                 this.button11.Enabled = false;
                 this.button3.Enabled = true;
                 this.button10.Enabled = true;
+                if (this.rdoOtherBoard.Checked)
+                    this.rdo19x19.Checked = true;
+                this.rdoOtherBoard.Enabled = false;
             }
         }
 
@@ -1485,6 +1556,9 @@ namespace readboard
                 this.button11.Enabled = false;
                 this.button3.Enabled = true;
                 this.button10.Enabled = true;
+                if (this.rdoOtherBoard.Checked)
+                    this.rdo19x19.Checked = true;
+                this.rdoOtherBoard.Enabled = false;
             }
         }
 
@@ -1497,6 +1571,7 @@ namespace readboard
                 this.button11.Enabled = true;
                 this.button2.Enabled = true;
                 this.button10.Enabled = false;
+                this.rdoOtherBoard.Enabled = true;
             }
         }
 
@@ -1510,8 +1585,29 @@ namespace readboard
                 this.button11.Enabled =false;
                 this.button3.Enabled = true;
                 this.button10.Enabled = true;
+                if (this.rdoOtherBoard.Checked)
+                    this.rdo19x19.Checked = true;
+                this.rdoOtherBoard.Enabled = false;
             }
            
+        }
+
+        public void saveBoardSize() {
+            string result1 = "config_readboard_boardsize.txt";
+            FileStream fs = new FileStream(result1, FileMode.Create);
+            StreamWriter wr = null;
+            wr = new StreamWriter(fs);
+            int customW = -1;
+            int customH = -1;
+            try {
+                customW = int.Parse(txtBoardWidth.Text);
+                customH = int.Parse(txtBoardHeight.Text);
+            }
+            catch (Exception )
+            {
+            }
+            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH);
+            wr.Close();
         }
 
         public void shutdown() {
@@ -1550,26 +1646,32 @@ namespace readboard
 
         private void radioButton5_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton5.Checked)
+            if (this.rdo19x19.Checked)
             {
-                boardWidth = 19;
+                boardW = 19;
+                boardH = 19;
             }
+            saveBoardSize();
         }
 
         private void radioButton6_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton6.Checked)
+            if (this.rdo13x13.Checked)
             {
-                boardWidth = 13;
+                boardW = 13;
+                boardH = 13;
             }
+            saveBoardSize();
         }
 
         private void radioButton7_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton7.Checked)
+            if (this.rdo9x9.Checked)
             {
-                boardWidth = 9;
+                boardW = 9;
+                boardH = 9;
             }
+            saveBoardSize();
         }
 
         public void sendVersion() {
@@ -1772,7 +1874,8 @@ namespace readboard
                 this.button3.Enabled = false;
                 this.button11.Enabled = true;
                 this.button2.Enabled = true;
-                this.button10.Enabled = false;              
+                this.button10.Enabled = false;
+                this.rdoOtherBoard.Enabled = true;
             }
         }
 
@@ -1806,10 +1909,79 @@ namespace readboard
 
         private void radioButton8_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.radioButton8.Checked)
+            if (this.rdoOtherBoard.Checked)
             {
-                boardWidth = 15;
+                try
+                {
+                    this.boardW = int.Parse(txtBoardWidth.Text);
+                    this.boardH = int.Parse(txtBoardHeight.Text);
+                }
+                catch (Exception)
+                {
+                  // MessageBox.Show(Program.isChn?"错误的棋盘大小":"Wrong goban size!");
+                }
             }
+            saveBoardSize();
+        }
+
+
+
+        private void parseWidth(object sender, EventArgs e)        
+        {
+            try
+            {
+                if (this.rdoOtherBoard.Checked)
+                {
+                    this.boardW = int.Parse(txtBoardWidth.Text);
+                    saveBoardSize();
+                }
+                else
+                {
+                    int w = int.Parse(txtBoardWidth.Text);
+                }
+            }
+            catch (Exception)
+            {
+                txtBoardWidth.BackColor = Color.Red;
+            }            
+        }
+
+        private void parseHeight(object sender, EventArgs e)
+        {
+            try
+            {
+                if (this.rdoOtherBoard.Checked)
+                {
+                    this.boardH = int.Parse(txtBoardHeight.Text);
+                    saveBoardSize();
+                }
+                else
+                {
+                    int h = int.Parse(txtBoardHeight.Text);
+                }
+            }
+            catch (Exception)
+            {
+                txtBoardHeight.BackColor = Color.Red;
+            }
+        }
+
+        private void tb_KeyPressWidth(object sender, KeyPressEventArgs e)
+        {
+            if (!(e.KeyChar == '\b' || (e.KeyChar >= '0' && e.KeyChar <= '9')))
+            {
+                e.Handled = true;
+            }
+            txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
+        }
+
+        private void tb_KeyPressHeight(object sender, KeyPressEventArgs e)
+        {
+            if (!(e.KeyChar == '\b' || (e.KeyChar >= '0' && e.KeyChar <= '9')))
+            {
+                e.Handled = true;
+            }
+            txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
         }
 
         private void radioBlack_CheckedChanged(object sender, EventArgs e)
@@ -1952,7 +2124,7 @@ namespace readboard
                     bitmap.Save("screen.bmp");
                 }
                 try {
-                    boardLineAjust(boardWidth);
+                    boardLineAjust(boardW, boardH);
                 }
                 catch
                 {
@@ -1975,7 +2147,7 @@ namespace readboard
             form2.ShowDialog();
         }
 
-        private void boardLineAjust(int boardWidth)
+        private void boardLineAjust(int boardWidth1,int boardHeight1)
         {
             Mat srcImage = new Mat("screen.bmp", ImreadModes.Color);
             Mat src_gray = new Mat();
@@ -1993,7 +2165,8 @@ namespace readboard
             Cv2.Canny(srcImage, contours, 200, 550);
             int length = Math.Min(srcImage.Width, srcImage.Height);
             // Cv2.ImShow("轮廓", contours);
-            LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, (int)(length / (((boardWidth + 1) * 1.5f))),(int)(length / (((boardWidth + 1) * 1.5f))), 1);
+            int size = Math.Min(boardWidth1, boardHeight1);
+            LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, (int)(length / (((size + 1) * 1.5f))),(int)(length / (((size + 1) * 1.5f))), 1);
     
             // return;
             List<verticalLine> verticalLines = new List<verticalLine>();
@@ -2323,8 +2496,8 @@ namespace readboard
             }
 
 
-            int boardW = verticalGap * (boardWidth - 1);
-            int boardH = horizonGap * (boardWidth - 1);
+            int boardW = verticalGap * (boardWidth1 - 1);
+            int boardH = horizonGap * (boardHeight1 - 1);
 
             List<wholeOffset> verticalOffsets = new List<wholeOffset>();
             for (int s = 0; s < verticalLines.Count; s++)

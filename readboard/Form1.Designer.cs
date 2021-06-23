@@ -41,11 +41,14 @@
             this.rdoTygem = new System.Windows.Forms.RadioButton();
             this.rdoFox = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.radioButton8 = new System.Windows.Forms.RadioButton();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtBoardHeight = new System.Windows.Forms.TextBox();
+            this.txtBoardWidth = new System.Windows.Forms.TextBox();
+            this.rdoOtherBoard = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
-            this.radioButton7 = new System.Windows.Forms.RadioButton();
-            this.radioButton6 = new System.Windows.Forms.RadioButton();
-            this.radioButton5 = new System.Windows.Forms.RadioButton();
+            this.rdo9x9 = new System.Windows.Forms.RadioButton();
+            this.rdo13x13 = new System.Windows.Forms.RadioButton();
+            this.rdo19x19 = new System.Windows.Forms.RadioButton();
             this.radioWhite = new System.Windows.Forms.RadioButton();
             this.radioBlack = new System.Windows.Forms.RadioButton();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -197,28 +200,59 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.radioButton8);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.txtBoardHeight);
+            this.groupBox2.Controls.Add(this.txtBoardWidth);
+            this.groupBox2.Controls.Add(this.rdoOtherBoard);
             this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.radioButton7);
-            this.groupBox2.Controls.Add(this.radioButton6);
-            this.groupBox2.Controls.Add(this.radioButton5);
+            this.groupBox2.Controls.Add(this.rdo9x9);
+            this.groupBox2.Controls.Add(this.rdo13x13);
+            this.groupBox2.Controls.Add(this.rdo19x19);
             this.groupBox2.Location = new System.Drawing.Point(87, 29);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(246, 31);
             this.groupBox2.TabIndex = 15;
             this.groupBox2.TabStop = false;
             // 
-            // radioButton8
+            // label6
             // 
-            this.radioButton8.AutoSize = true;
-            this.radioButton8.Location = new System.Drawing.Point(183, 11);
-            this.radioButton8.Name = "radioButton8";
-            this.radioButton8.Size = new System.Drawing.Size(53, 16);
-            this.radioButton8.TabIndex = 33;
-            this.radioButton8.TabStop = true;
-            this.radioButton8.Text = "15*15";
-            this.radioButton8.UseVisualStyleBackColor = true;
-            this.radioButton8.CheckedChanged += new System.EventHandler(this.radioButton8_CheckedChanged);
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(213, 12);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(11, 12);
+            this.label6.TabIndex = 36;
+            this.label6.Text = "*";
+            // 
+            // txtBoardHeight
+            // 
+            this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
+            this.txtBoardHeight.Location = new System.Drawing.Point(224, 8);
+            this.txtBoardHeight.Name = "txtBoardHeight";
+            this.txtBoardHeight.Size = new System.Drawing.Size(21, 21);
+            this.txtBoardHeight.TabIndex = 35;
+            this.txtBoardHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tb_KeyPressHeight);
+            this.txtBoardHeight.Leave += new System.EventHandler(this.parseHeight);
+            // 
+            // txtBoardWidth
+            // 
+            this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
+            this.txtBoardWidth.Location = new System.Drawing.Point(191, 8);
+            this.txtBoardWidth.Name = "txtBoardWidth";
+            this.txtBoardWidth.Size = new System.Drawing.Size(21, 21);
+            this.txtBoardWidth.TabIndex = 34;
+            this.txtBoardWidth.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tb_KeyPressWidth);
+            this.txtBoardWidth.Leave += new System.EventHandler(this.parseWidth);
+            // 
+            // rdoOtherBoard
+            // 
+            this.rdoOtherBoard.AutoSize = true;
+            this.rdoOtherBoard.Location = new System.Drawing.Point(176, 12);
+            this.rdoOtherBoard.Name = "rdoOtherBoard";
+            this.rdoOtherBoard.Size = new System.Drawing.Size(14, 13);
+            this.rdoOtherBoard.TabIndex = 33;
+            this.rdoOtherBoard.TabStop = true;
+            this.rdoOtherBoard.UseVisualStyleBackColor = true;
+            this.rdoOtherBoard.CheckedChanged += new System.EventHandler(this.radioButton8_CheckedChanged);
             // 
             // label1
             // 
@@ -229,41 +263,41 @@
             this.label1.TabIndex = 17;
             this.label1.Text = "棋盘:";
             // 
-            // radioButton7
+            // rdo9x9
             // 
-            this.radioButton7.AutoSize = true;
-            this.radioButton7.Location = new System.Drawing.Point(144, 11);
-            this.radioButton7.Name = "radioButton7";
-            this.radioButton7.Size = new System.Drawing.Size(41, 16);
-            this.radioButton7.TabIndex = 16;
-            this.radioButton7.TabStop = true;
-            this.radioButton7.Text = "9*9";
-            this.radioButton7.UseVisualStyleBackColor = true;
-            this.radioButton7.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
+            this.rdo9x9.AutoSize = true;
+            this.rdo9x9.Location = new System.Drawing.Point(138, 11);
+            this.rdo9x9.Name = "rdo9x9";
+            this.rdo9x9.Size = new System.Drawing.Size(41, 16);
+            this.rdo9x9.TabIndex = 16;
+            this.rdo9x9.TabStop = true;
+            this.rdo9x9.Text = "9*9";
+            this.rdo9x9.UseVisualStyleBackColor = true;
+            this.rdo9x9.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
             // 
-            // radioButton6
+            // rdo13x13
             // 
-            this.radioButton6.AutoSize = true;
-            this.radioButton6.Location = new System.Drawing.Point(91, 11);
-            this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(53, 16);
-            this.radioButton6.TabIndex = 15;
-            this.radioButton6.TabStop = true;
-            this.radioButton6.Text = "13*13";
-            this.radioButton6.UseVisualStyleBackColor = true;
-            this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
+            this.rdo13x13.AutoSize = true;
+            this.rdo13x13.Location = new System.Drawing.Point(88, 11);
+            this.rdo13x13.Name = "rdo13x13";
+            this.rdo13x13.Size = new System.Drawing.Size(53, 16);
+            this.rdo13x13.TabIndex = 15;
+            this.rdo13x13.TabStop = true;
+            this.rdo13x13.Text = "13*13";
+            this.rdo13x13.UseVisualStyleBackColor = true;
+            this.rdo13x13.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
             // 
-            // radioButton5
+            // rdo19x19
             // 
-            this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(38, 11);
-            this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(53, 16);
-            this.radioButton5.TabIndex = 14;
-            this.radioButton5.TabStop = true;
-            this.radioButton5.Text = "19*19";
-            this.radioButton5.UseVisualStyleBackColor = true;
-            this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
+            this.rdo19x19.AutoSize = true;
+            this.rdo19x19.Location = new System.Drawing.Point(38, 11);
+            this.rdo19x19.Name = "rdo19x19";
+            this.rdo19x19.Size = new System.Drawing.Size(53, 16);
+            this.rdo19x19.TabIndex = 14;
+            this.rdo19x19.TabStop = true;
+            this.rdo19x19.Text = "19*19";
+            this.rdo19x19.UseVisualStyleBackColor = true;
+            this.rdo19x19.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
             // 
             // radioWhite
             // 
@@ -523,9 +557,9 @@
         private System.Windows.Forms.RadioButton rdoFox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.RadioButton radioButton7;
-        private System.Windows.Forms.RadioButton radioButton6;
-        private System.Windows.Forms.RadioButton radioButton5;
+        private System.Windows.Forms.RadioButton rdo9x9;
+        private System.Windows.Forms.RadioButton rdo13x13;
+        private System.Windows.Forms.RadioButton rdo19x19;
         private System.Windows.Forms.RadioButton radioWhite;
         private System.Windows.Forms.RadioButton radioBlack;
         private System.Windows.Forms.Button button7;
@@ -542,12 +576,15 @@
         private System.Windows.Forms.RadioButton rdoFore;
         private System.Windows.Forms.CheckBox chkAutoPlay;
         private System.Windows.Forms.Button btnSettings;
-        private System.Windows.Forms.RadioButton radioButton8;
+        private System.Windows.Forms.RadioButton rdoOtherBoard;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.CheckBox chkShowInBoard;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtBoardHeight;
+        private System.Windows.Forms.TextBox txtBoardWidth;
     }
 }
 
