@@ -916,7 +916,7 @@ namespace readboard
 
                     }
                 }
-                if (hwnd > 0) {
+                if (hwnd > 0&& isContinuousSyncing) {
                     startContinuousSync(true);
                 }
                 }
@@ -2072,6 +2072,7 @@ namespace readboard
         {
             if (!isContinuousSyncing)
             {
+                isContinuousSyncing = true;
                 ThreadStart threadStart = new ThreadStart(startContinuous);
             thread = new Thread(startContinuous);
                 thread.SetApartmentState(ApartmentState.STA);
@@ -2079,11 +2080,11 @@ namespace readboard
                 if (Program.autoMin  && this.WindowState != FormWindowState.Minimized)
                 {
                     minWindow("");
-                }
-                isContinuousSyncing = true;
+                }              
             }
             else
             {
+                isContinuousSyncing = false;
                 dm.UnBindWindow();
                 if (canUseLW)
                 {
@@ -2091,8 +2092,7 @@ namespace readboard
                     lw.UnBindWindow();
                 }
                 Send("stopsync");
-                stopKeepingSync();
-                isContinuousSyncing = false;
+                stopKeepingSync();               
                 this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
                 keepSync = false;
             }
