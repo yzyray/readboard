@@ -19,10 +19,10 @@ namespace readboard
             CheckForIllegalCrossThreadCalls = false;
         }
         public IntPtr setPic() {
-            System.IO.FileStream pFileStream = new System.IO.FileStream("screen.bmp", System.IO.FileMode.Open);
-            pictureBox1.Image = Image.FromStream(pFileStream);
-            pFileStream.Close();
-            pFileStream.Dispose();
+          //  System.IO.FileStream pFileStream = new System.IO.FileStream("screen.bmp", System.IO.FileMode.Open);
+            pictureBox1.Image = Program.bitmap;
+           // pFileStream.Close();
+           // pFileStream.Dispose();
 
             Size newSize = new Size(pictureBox1.Size.Width+20, pictureBox1.Size.Height+50);
             this.Size = newSize;

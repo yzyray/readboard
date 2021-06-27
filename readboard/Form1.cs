@@ -571,11 +571,11 @@ namespace readboard
             {
                 int width = x2 - x;
                 int height = y2 - y;
-                System.Drawing.Bitmap bitmap = new Bitmap(width, height);
-                using (System.Drawing.Graphics graphics = Graphics.FromImage(bitmap))
+               Program.bitmap = new Bitmap(width, height);
+                using (System.Drawing.Graphics graphics = Graphics.FromImage(Program.bitmap))
                 {                    
                     graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size((int)(width * factor), (int)(height * factor)));
-                    bitmap.Save("screen.bmp");
+                    //bitmap.Save("screen.bmp");
                 }
               //  dm2.Capture(x, y, x2, y2, "screen.bmp");
                 return true;
@@ -2123,11 +2123,11 @@ namespace readboard
             {
                 int width = x2 - x;
                 int height = y2 - y;
-                System.Drawing.Bitmap bitmap = new Bitmap(width, height);
-                using (System.Drawing.Graphics graphics = Graphics.FromImage(bitmap))
+                Program.bitmap = new Bitmap(width, height);
+                using (System.Drawing.Graphics graphics = Graphics.FromImage(Program.bitmap))
                 {
                     graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size((int)(width * factor), (int)(height * factor)));
-                    bitmap.Save("screen.bmp");
+                  //  bitmap.Save("screen.bmp");
                 }
                 try {
                     boardLineAjust(boardW, boardH);
@@ -2155,7 +2155,7 @@ namespace readboard
 
         private void boardLineAjust(int boardWidth1,int boardHeight1)
         {
-            Mat srcImage = new Mat("screen.bmp", ImreadModes.Color);
+            Mat srcImage = OpenCvSharp.Extensions.BitmapConverter.ToMat(Program.bitmap);
             Mat src_gray = new Mat();
             Mat copy = new Mat();
             Mat copy2 = new Mat();

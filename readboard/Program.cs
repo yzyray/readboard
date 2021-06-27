@@ -33,10 +33,11 @@ namespace readboard
         public static double factor = 1.0;
 
         public static Boolean hasConfigFile = false;
-        //public static Thread th;
-        //public  static Boolean run =true;
-        // static Form Form1;
-        [STAThread]
+        public static System.Drawing.Bitmap bitmap;
+       //public static Thread th;
+       //public  static Boolean run =true;
+       // static Form Form1;
+       [STAThread]
         static void Main(string[] args)
         {
             arg = args;
