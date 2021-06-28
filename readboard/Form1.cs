@@ -505,10 +505,17 @@ namespace readboard
                     object curX, curY;
                     dm2.GetCursorPos(out curX, out curY);
                    // BlockInput(true);
-                    dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);                
-                    hwnd = dm2.GetMousePointWindow();
-                    var t = Task.Run(() => {
-                        Thread.Sleep(50);
+                    dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                    Task.Factory.StartNew(() =>
+                    {
+                        Thread.Sleep(35);
+                        hwnd = dm2.GetMousePointWindow();
+                    });
+                    Task.Factory.StartNew(() =>
+                    {
+                        Thread.Sleep(30);
+                        dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        Thread.Sleep(20);
                         dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                         Thread.Sleep(50);
                         dm2.MoveTo((int)curX, (int)curY);
@@ -792,6 +799,9 @@ namespace readboard
             this.button10.Text = "一键同步";
             //if (this.factor <= 1)
             //{ 
+            this.button3.Enabled = true;
+            this.button4.Enabled = true;
+            this.button5.Enabled = true;
             this.rdoFox.Enabled = true;
             this.rdoSina.Enabled = true;
             //} 
@@ -819,6 +829,8 @@ namespace readboard
         private void stopKeepingSync()
         {
             button5click = false;
+            if (thread.IsAlive)
+                thread.Abort();
             Action2<String> a = new Action2<String>(Action2Test);
             Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + timename + "ms)");      
         }
@@ -2074,6 +2086,9 @@ namespace readboard
             {
                 isContinuousSyncing = true;
                 ThreadStart threadStart = new ThreadStart(startContinuous);
+                this.button3.Enabled = false;
+                this.button4.Enabled = false;
+                this.button5.Enabled = false;
             thread = new Thread(startContinuous);
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
