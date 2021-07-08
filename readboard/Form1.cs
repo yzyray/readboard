@@ -38,7 +38,7 @@ namespace readboard
         Form3 form3;
         Form8 form8;
 
-        Boolean button5click = false;
+        Boolean startedSync = false;
         Boolean isContinuousSyncing = false;
         object qx1;
         object qy1;
@@ -753,7 +753,7 @@ namespace readboard
         {
             this.button5.Text = Program.isChn ? "停止同步" : "StopSync";
             this.button10.Text = Program.isChn ? "停止同步" : "StopSync";
-            button5click = true;
+            startedSync = true;
             this.rdoFox.Enabled = false;
             this.rdoTygem.Enabled = false;
             //checkBox1.Enabled = false;
@@ -828,8 +828,8 @@ namespace readboard
 
         private void stopKeepingSync()
         {
-            button5click = false;
-            if (thread.IsAlive)
+            startedSync = false;
+            if (thread!=null&&thread.IsAlive)
                 thread.Abort();
             Action2<String> a = new Action2<String>(Action2Test);
             Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + timename + "ms)");      
@@ -841,7 +841,7 @@ namespace readboard
             RECT rect = new RECT();
             IntPtr p = new IntPtr(hwnd);
             while (isContinuousSyncing) {
-                if (!button5click) {
+                if (!startedSync) {
                     hwnd = -1;
                     int finalWidth = 0;
                     int x1;
@@ -992,7 +992,7 @@ namespace readboard
 
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                 {
-                    if(!isSimpleSync)
+                    if(!isSimpleSync&&startedSync)
                     MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     stopKeepingSync();
                     return;
@@ -1010,7 +1010,7 @@ namespace readboard
                 {
                     if (!dm.GetWindowClass(hwnd).ToLower().Equals("#32770"))
                     {
-                        if (!isSimpleSync)
+                        if (!isSimpleSync && startedSync)
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
@@ -1030,7 +1030,7 @@ namespace readboard
                 {
                     if (!dm.GetWindowClass(hwnd).ToLower().Equals("afxwnd140u"))
                     {
-                        if (!isSimpleSync)
+                        if (!isSimpleSync && startedSync)
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
@@ -1098,9 +1098,14 @@ namespace readboard
                 }
             }
             if (Program.autoMin && isRightGoban && this.WindowState != FormWindowState.Minimized)
-            {     Action2<String> a = new Action2<String>(minWindow);
-            Invoke(a, "");
-            }          
+            {
+                Action2<String> a = new Action2<String>(minWindow);
+                Invoke(a, "");
+            }
+            if (!isRightGoban && !isContinuousSyncing)
+            {
+                stopSync();
+            }
             ThreadStart threadStart = new ThreadStart(OutPutTime);
             thread = new Thread(OutPutTime);
             thread.SetApartmentState(ApartmentState.STA);
@@ -1119,21 +1124,27 @@ namespace readboard
                 isContinuousSyncing = false;
                 this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
             }
-            if (!button5click)
+            if (!startedSync)
             {
                 startContinuousSync(false);
             }
-            else {              
-                dm.UnBindWindow();
-                if (canUseLW)
-                {
-                    lw.lwsoft lw = new lw.lwsoft();
-                    lw.UnBindWindow();
-                }
-                Send("stopsync");
-                stopKeepingSync();
-                keepSync = false;
+            else
+            {
+                stopSync();
             }
+        }
+
+        private void stopSync()
+        {
+            dm.UnBindWindow();
+            if (canUseLW)
+            {
+                lw.lwsoft lw = new lw.lwsoft();
+                lw.UnBindWindow();
+            }
+            Send("stopsync");
+            stopKeepingSync();
+            keepSync = false;
         }
 
         public delegate void Action2<in T>(T t);
@@ -1646,8 +1657,7 @@ namespace readboard
             }
             Send("stopsync");
             Send("nobothSync");
-            Send("endsync");            
-            Application.Exit();
+            Send("endsync");     
             System.Environment.Exit(0);
         }
 
@@ -2167,6 +2177,7 @@ namespace readboard
             form2 = new Form2(isMannulCircle);
             form2.ShowDialog();
         }
+
 
         private void boardLineAjust(int boardWidth1,int boardHeight1)
         {

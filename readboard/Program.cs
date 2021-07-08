@@ -27,7 +27,7 @@ namespace readboard
         public static Boolean autoMin = true;
         public static Boolean isAdvScale = false;
         public static Boolean isScaled = false;
-        public static String version = "623";
+        public static String version = "708";
         public static Boolean isChn = false;
 
         public static double factor = 1.0;
