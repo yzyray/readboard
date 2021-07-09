@@ -2178,139 +2178,40 @@ namespace readboard
             form2.ShowDialog();
         }
 
+        private List<verticalLine> verticalLines = new List<verticalLine>();
+        private List<horizonLine> horizonLines = new List<horizonLine>();
 
         private void boardLineAjust(int boardWidth1,int boardHeight1)
         {
             Mat srcImage = OpenCvSharp.Extensions.BitmapConverter.ToMat(Program.bitmap);
-            Mat src_gray = new Mat();
-            Mat copy = new Mat();
-            Mat copy2 = new Mat();
+            //Mat src_gray = new Mat();
+            //   Mat copy = new Mat();
+            //  Mat copy2 = new Mat();
             //if (showDebugImage)
             //{
             //    srcImage.CopyTo(copy);
             //    srcImage.CopyTo(copy2);
-            //}
-            //  Scalar lowerb = new Scalar(0, 0, 0);
-            //  Scalar upperb = new Scalar(150, 150, 150);
-            //  Cv2.InRange(srcImage, lowerb, upperb, src_gray);
-            Mat contours = new Mat();
-            Cv2.Canny(srcImage, contours, 200, 550);
-            int length = Math.Min(srcImage.Width, srcImage.Height);
-            // Cv2.ImShow("轮廓", contours);
-            int size = Math.Min(boardWidth1, boardHeight1);
-            LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, (int)(length / (((size + 1) * 1.5f))),(int)(length / (((size + 1) * 1.5f))), 1);
-    
-            // return;
-            List<verticalLine> verticalLines = new List<verticalLine>();
-            List<horizonLine> horizonLines = new List<horizonLine>();
-            for (int i = 0; i < linesPoint.Length; i++)
+            //Cv2.CvtColor(srcImage, srcImage, ColorConversionCodes.BGR2HSV);  // 色彩空间转换为hsv，便于分离
+            //Scalar lowerb = new Scalar(0, 0,0);
+            //Scalar upperb = new Scalar(50, 50, 50);
+            //Cv2.InRange(srcImage, lowerb, upperb, src_gray);
+            //Cv2.ImShow("黑色", src_gray);
+            double lowCanny = 200; double upCanny = 550;
+          
+            LineSegmentPoint[] linesPoint = FindLines(srcImage, boardWidth1, boardHeight1, (int)lowCanny, (int)upCanny);
+            CalculateLines(linesPoint);
+            int lines = verticalLines.Count+ horizonLines.Count;
+            int maxTimes = 10;
+            while (lines < 10&& maxTimes>0)
             {
-                int x1 = linesPoint[i].P1.X;
-                int x2 = linesPoint[i].P2.X;
-
-                int y1 = linesPoint[i].P1.Y;
-                int y2 = linesPoint[i].P2.Y;
-                if (Math.Abs(x1 - x2) >= 2 && Math.Abs(y1 - y2) >= 2)
-                    continue;
-
-                if (Math.Abs(y1 - y2) >= 2)
-                {
-                    verticalLine newLine = new verticalLine();
-                    newLine.position = (x1 + x2) / 2;
-                    newLine.startPoint = new Point(newLine.position, Math.Min(y1, y2));
-                    newLine.endPoint = new Point(newLine.position, Math.Max(y1, y2));
-                    verticalLines.Add(newLine);
-                }
-                else
-                {
-                    horizonLine newLine = new horizonLine();
-                    newLine.position = (y1 + y2) / 2;
-                    newLine.startPoint = new Point(Math.Min(x1, x2), newLine.position);
-                    newLine.endPoint = new Point(Math.Max(x1, x2), newLine.position);
-                    horizonLines.Add(newLine);
-                }
-                // Cv2.Line(copy, linesPoint[i].P1, linesPoint[i].P2, new Scalar(0, 255, 0), 1);
+                lowCanny = lowCanny * 0.9;
+                upCanny = upCanny * 0.9;
+                linesPoint = FindLines(srcImage, boardWidth1, boardHeight1, (int)lowCanny, (int)upCanny);
+                CalculateLines(linesPoint);
+                lines = verticalLines.Count + horizonLines.Count;
+                maxTimes--;
             }
-            verticalLines.Sort(delegate (verticalLine a, verticalLine b) {
-                return a.position.CompareTo(b.position);
-            });
-            for (int s = 0; s < verticalLines.Count /2; s++)
-            {
-                verticalLine line = verticalLines[s];
-                verticalLine line2 = verticalLines[s + 1];
-                if (Math.Abs(line.position - line2.position) <= 4 )
-                {
-                    line2.position = (line.position + line2.position) / 2;
-                    line2.startPoint.X = line2.position;
-                    line2.startPoint.Y = Math.Min(line.startPoint.Y, line2.startPoint.Y);
-                    line2.endPoint.X = line2.position;
-                    line2.endPoint.Y = Math.Max(line.endPoint.Y, line2.endPoint.Y);
-                    line.needDelete = true;
-                }
-            }
-
-            for (int s = verticalLines.Count; s > verticalLines.Count / 2; s--)
-            {
-                verticalLine line = verticalLines[s-1];
-                verticalLine line2 = verticalLines[s - 2];
-                if (Math.Abs(line.position - line2.position) <= 4)
-                {
-                    line2.position = (line.position + line2.position) / 2;
-                    line2.startPoint.X = line2.position;
-                    line2.startPoint.Y = Math.Min(line.startPoint.Y, line2.startPoint.Y);
-                    line2.endPoint.X = line2.position;
-                    line2.endPoint.Y = Math.Max(line.endPoint.Y, line2.endPoint.Y);
-                    line.needDelete = true;
-                }
-            }
-            for (int s = 0; s < verticalLines.Count; s++)
-            {
-                if (verticalLines[s].needDelete)
-                {
-                    verticalLines.RemoveAt(s);
-                    s--;
-                }
-            }
-
-            horizonLines.Sort(delegate (horizonLine a, horizonLine b) {
-                return a.position.CompareTo(b.position);
-            });
-            for (int s = 0; s < horizonLines.Count/2; s++)
-            {
-                horizonLine line = horizonLines[s];
-                horizonLine line2 = horizonLines[s + 1];
-                if (Math.Abs(line.position - line2.position) <= 4)
-                {
-                    line2.position = (line.position + line2.position) / 2;
-                    line2.startPoint.Y = line2.position;
-                    line2.startPoint.X = Math.Min(line.startPoint.X, line2.startPoint.X);
-                    line2.endPoint.Y = line2.position;
-                    line2.endPoint.X = Math.Max(line.endPoint.X, line2.endPoint.X);
-                    line.needDelete = true;
-                }
-            }
-            for (int s = horizonLines.Count; s > horizonLines.Count / 2; s--)
-            {
-                horizonLine line = horizonLines[s-1];
-                horizonLine line2 = horizonLines[s -2];
-                if (Math.Abs(line.position - line2.position) <= 4)
-                {
-                    line2.position = (line.position + line2.position) / 2;
-                    line2.startPoint.Y = line2.position;
-                    line2.startPoint.X = Math.Min(line.startPoint.X, line2.startPoint.X);
-                    line2.endPoint.Y = line2.position;
-                    line2.endPoint.X = Math.Max(line.endPoint.X, line2.endPoint.X);
-                    line.needDelete = true;
-                }
-            }
-            for (int s = 0; s < horizonLines.Count; s++)
-            {
-                if (horizonLines[s].needDelete)
-                {
-                    horizonLines.RemoveAt(s);
-                    s--;
-                }
-            }
+          
             //if (showDebugImage)
             //{
             //    for (int i = 0; i < horizonLines.Count; i++)
@@ -2687,6 +2588,129 @@ namespace readboard
             //    horizonLine line = horizonLines[s];
             //    Cv2.Line(copy, line.startPoint, line.endPoint, new Scalar(0, 255, 0), 1);
             //}
+        }
+
+        private void CalculateLines(LineSegmentPoint[] linesPoint)
+        {
+            for (int i = 0; i < linesPoint.Length; i++)
+            {
+                int x1 = linesPoint[i].P1.X;
+                int x2 = linesPoint[i].P2.X;
+
+                int y1 = linesPoint[i].P1.Y;
+                int y2 = linesPoint[i].P2.Y;
+                if (Math.Abs(x1 - x2) >= 2 && Math.Abs(y1 - y2) >= 2)
+                    continue;
+
+                if (Math.Abs(y1 - y2) >= 2)
+                {
+                    verticalLine newLine = new verticalLine();
+                    newLine.position = (x1 + x2) / 2;
+                    newLine.startPoint = new Point(newLine.position, Math.Min(y1, y2));
+                    newLine.endPoint = new Point(newLine.position, Math.Max(y1, y2));
+                    verticalLines.Add(newLine);
+                }
+                else
+                {
+                    horizonLine newLine = new horizonLine();
+                    newLine.position = (y1 + y2) / 2;
+                    newLine.startPoint = new Point(Math.Min(x1, x2), newLine.position);
+                    newLine.endPoint = new Point(Math.Max(x1, x2), newLine.position);
+                    horizonLines.Add(newLine);
+                }
+                // Cv2.Line(copy, linesPoint[i].P1, linesPoint[i].P2, new Scalar(0, 255, 0), 1);
+            }
+            verticalLines.Sort(delegate (verticalLine a, verticalLine b) {
+                return a.position.CompareTo(b.position);
+            });
+            for (int s = 0; s < verticalLines.Count / 2; s++)
+            {
+                verticalLine line = verticalLines[s];
+                verticalLine line2 = verticalLines[s + 1];
+                if (Math.Abs(line.position - line2.position) <= 4)
+                {
+                    line2.position = (line.position + line2.position) / 2;
+                    line2.startPoint.X = line2.position;
+                    line2.startPoint.Y = Math.Min(line.startPoint.Y, line2.startPoint.Y);
+                    line2.endPoint.X = line2.position;
+                    line2.endPoint.Y = Math.Max(line.endPoint.Y, line2.endPoint.Y);
+                    line.needDelete = true;
+                }
+            }
+
+            for (int s = verticalLines.Count; s > verticalLines.Count / 2; s--)
+            {
+                verticalLine line = verticalLines[s - 1];
+                verticalLine line2 = verticalLines[s - 2];
+                if (Math.Abs(line.position - line2.position) <= 4)
+                {
+                    line2.position = (line.position + line2.position) / 2;
+                    line2.startPoint.X = line2.position;
+                    line2.startPoint.Y = Math.Min(line.startPoint.Y, line2.startPoint.Y);
+                    line2.endPoint.X = line2.position;
+                    line2.endPoint.Y = Math.Max(line.endPoint.Y, line2.endPoint.Y);
+                    line.needDelete = true;
+                }
+            }
+            for (int s = 0; s < verticalLines.Count; s++)
+            {
+                if (verticalLines[s].needDelete)
+                {
+                    verticalLines.RemoveAt(s);
+                    s--;
+                }
+            }
+
+            horizonLines.Sort(delegate (horizonLine a, horizonLine b) {
+                return a.position.CompareTo(b.position);
+            });
+            for (int s = 0; s < horizonLines.Count / 2; s++)
+            {
+                horizonLine line = horizonLines[s];
+                horizonLine line2 = horizonLines[s + 1];
+                if (Math.Abs(line.position - line2.position) <= 4)
+                {
+                    line2.position = (line.position + line2.position) / 2;
+                    line2.startPoint.Y = line2.position;
+                    line2.startPoint.X = Math.Min(line.startPoint.X, line2.startPoint.X);
+                    line2.endPoint.Y = line2.position;
+                    line2.endPoint.X = Math.Max(line.endPoint.X, line2.endPoint.X);
+                    line.needDelete = true;
+                }
+            }
+            for (int s = horizonLines.Count; s > horizonLines.Count / 2; s--)
+            {
+                horizonLine line = horizonLines[s - 1];
+                horizonLine line2 = horizonLines[s - 2];
+                if (Math.Abs(line.position - line2.position) <= 4)
+                {
+                    line2.position = (line.position + line2.position) / 2;
+                    line2.startPoint.Y = line2.position;
+                    line2.startPoint.X = Math.Min(line.startPoint.X, line2.startPoint.X);
+                    line2.endPoint.Y = line2.position;
+                    line2.endPoint.X = Math.Max(line.endPoint.X, line2.endPoint.X);
+                    line.needDelete = true;
+                }
+            }
+            for (int s = 0; s < horizonLines.Count; s++)
+            {
+                if (horizonLines[s].needDelete)
+                {
+                    horizonLines.RemoveAt(s);
+                    s--;
+                }
+            }
+        }
+
+        private LineSegmentPoint[] FindLines(Mat srcImage, int boardWidth1, int boardHeight1, int lowCanny,int upCanny)
+        {    Mat contours = new Mat();
+            Cv2.Canny(srcImage, contours, lowCanny, upCanny);
+            int length = Math.Min(srcImage.Width, srcImage.Height);
+            //  Cv2.ImShow("轮廓", contours);         
+            int size = Math.Min(boardWidth1, boardHeight1);
+            LineSegmentPoint[] linesPoint = Cv2.HoughLinesP(contours, 1, Cv2.PI / 180, (int)(length / (((size + 1) * 1.5f))), (int)(length / (((size + 1) * 1.5f))), 1);
+            //  Console.WriteLine(linesPoint.Length);
+            return linesPoint;
         }
     }
 }
