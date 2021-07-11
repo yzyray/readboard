@@ -1660,7 +1660,6 @@ namespace readboard
             Send("stopsync");
             Send("nobothSync");
             Send("endsync");
-            Application.Exit();
             System.Environment.Exit(0);
         }
 
@@ -2289,26 +2288,7 @@ namespace readboard
                 }
                 else res = 1;
                 return res;
-            });
-
-            int verticalGap = verticalGapCounts[0].gap;
-            List<int> needAvgVGap = new List<int>();
-            for (int vs = 1; vs < 5&&vs< verticalGapCounts.Count; vs++)
-            {
-                if (Math.Abs(verticalGapCounts[vs].gap - verticalGap) < 3 && verticalGapCounts[vs].uniqueCounts > verticalGapCounts[0].uniqueCounts / 2)
-                {
-                    needAvgVGap.Add(verticalGapCounts[vs].gap);
-                }
-            }
-            if (needAvgVGap.Count > 0)
-            {
-                int all = 0;
-                for (int s = 0; s < needAvgVGap.Count; s++)
-                {
-                    all = all+ needAvgVGap[s];
-                }
-                    verticalGap = (int)Math.Round((verticalGap+all) / (float)(needAvgVGap.Count+1));
-            }
+            });   
 
             List<int> horizonGaps = new List<int>();
             for (int s = 0; s < horizonLines.Count - 1; s++)
@@ -2373,24 +2353,8 @@ namespace readboard
                 return res;
             });
 
+            int verticalGap = verticalGapCounts[0].gap;
             int horizonGap = horizonGapCounts[0].gap;
-            List<int> needAvgHGap = new List<int>();
-            for (int hs = 1; hs < 5 && hs < horizonGapCounts.Count; hs++)
-            {
-                if (Math.Abs(horizonGapCounts[hs].gap - horizonGap) < 3 && horizonGapCounts[hs].uniqueCounts > horizonGapCounts[0].uniqueCounts / 2)
-                {
-                    needAvgHGap.Add(horizonGapCounts[hs].gap);
-                }
-            }
-            if (needAvgHGap.Count > 0)
-            {
-                int all = 0;
-                for (int s = 0; s < needAvgHGap.Count; s++)
-                {
-                    all = all + needAvgHGap[s];
-                }
-                horizonGap = (int)Math.Round((horizonGap + all) / (float)(needAvgHGap.Count + 1));
-            }
 
             if (verticalGapCounts.Count >= 3)
             {
