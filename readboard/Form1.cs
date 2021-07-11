@@ -73,6 +73,7 @@ namespace readboard
         Boolean isMannulCircle = false;
         float factor = 1.0f;
         private KeyboardHookListener hookListener;
+        private int port = 24781;
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -162,7 +163,7 @@ namespace readboard
             }
         }
 
-        public Form1(String time, String last, String both, String aitime, String playouts, String firstpo, String nolw, String usetcp)
+        public Form1(String time, String last, String both, String aitime, String playouts, String firstpo, String nolw, String usetcp,String serverPort)
         {
             InitializeComponent();
             GlobalHooker hooker = new GlobalHooker();
@@ -396,7 +397,8 @@ namespace readboard
             {
                 try
                 {
-                    client = new TcpClient("127.0.0.1", 24781);
+                    port= Convert.ToInt32(serverPort); 
+                    client = new TcpClient("127.0.0.1", port);
                     threadReceive = new Thread(new ThreadStart(Receive));
                     threadReceive.IsBackground = true;
                     threadReceive.Start();
@@ -1657,7 +1659,8 @@ namespace readboard
             }
             Send("stopsync");
             Send("nobothSync");
-            Send("endsync");     
+            Send("endsync");
+            Application.Exit();
             System.Environment.Exit(0);
         }
 
@@ -2642,6 +2645,8 @@ namespace readboard
             {
                 verticalLine line = verticalLines[s - 1];
                 verticalLine line2 = verticalLines[s - 2];
+                if (line2.needDelete)
+                    continue;
                 if (Math.Abs(line.position - line2.position) <= 4)
                 {
                     line2.position = (line.position + line2.position) / 2;
@@ -2682,6 +2687,8 @@ namespace readboard
             {
                 horizonLine line = horizonLines[s - 1];
                 horizonLine line2 = horizonLines[s - 2];
+                if (line2.needDelete)
+                    continue;
                 if (Math.Abs(line.position - line2.position) <= 4)
                 {
                     line2.position = (line.position + line2.position) / 2;

@@ -46,7 +46,7 @@ namespace readboard
             Thread thread = new Thread(Start);
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();//启动界面
-            if (arg.Length < 10)
+            if (arg.Length < 11)
                 System.Environment.Exit(0);
             if (arg[9].Equals("0"))
             {
@@ -118,7 +118,7 @@ namespace readboard
             {
                 if (arg[0].Equals("yzy"))
                 {
-                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8]));
+                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8],arg[10]));
                 
                 }
 
