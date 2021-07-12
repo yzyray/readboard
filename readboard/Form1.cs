@@ -1660,7 +1660,8 @@ namespace readboard
             Send("stopsync");
             Send("nobothSync");
             Send("endsync");
-            System.Environment.Exit(0);
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+            Application.Exit();
         }
 
         private void form_closing(object sender, FormClosingEventArgs e)

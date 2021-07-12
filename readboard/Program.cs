@@ -118,10 +118,8 @@ namespace readboard
             {
                 if (arg[0].Equals("yzy"))
                 {
-                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8],arg[10]));
-                
+                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8],arg[10]));                
                 }
-
             }
             catch (Exception ex)
             {
