@@ -52,6 +52,8 @@
             this.scaleGroup = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.lblSyncInterval = new System.Windows.Forms.Label();
+            this.txtSyncInterval = new System.Windows.Forms.TextBox();
             this.scaleGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,6 +99,7 @@
             this.txtBpc.Name = "txtBpc";
             this.txtBpc.Size = new System.Drawing.Size(79, 21);
             this.txtBpc.TabIndex = 4;
+            this.txtBpc.TextChanged += new System.EventHandler(this.txtBpc_TextChanged);
             // 
             // txtWpc
             // 
@@ -197,7 +200,7 @@
             // chkAutoMin
             // 
             this.chkAutoMin.AutoSize = true;
-            this.chkAutoMin.Location = new System.Drawing.Point(12, 33);
+            this.chkAutoMin.Location = new System.Drawing.Point(184, 33);
             this.chkAutoMin.Name = "chkAutoMin";
             this.chkAutoMin.Size = new System.Drawing.Size(198, 16);
             this.chkAutoMin.TabIndex = 16;
@@ -271,11 +274,29 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // lblSyncInterval
+            // 
+            this.lblSyncInterval.AutoSize = true;
+            this.lblSyncInterval.Location = new System.Drawing.Point(10, 34);
+            this.lblSyncInterval.Name = "lblSyncInterval";
+            this.lblSyncInterval.Size = new System.Drawing.Size(101, 12);
+            this.lblSyncInterval.TabIndex = 23;
+            this.lblSyncInterval.Text = "同步时间间隔(ms)";
+            // 
+            // txtSyncInterval
+            // 
+            this.txtSyncInterval.Location = new System.Drawing.Point(116, 29);
+            this.txtSyncInterval.Name = "txtSyncInterval";
+            this.txtSyncInterval.Size = new System.Drawing.Size(56, 21);
+            this.txtSyncInterval.TabIndex = 24;
+            // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(395, 253);
+            this.Controls.Add(this.txtSyncInterval);
+            this.Controls.Add(this.lblSyncInterval);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.scaleGroup);
@@ -333,5 +354,7 @@
         private System.Windows.Forms.GroupBox scaleGroup;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label lblSyncInterval;
+        private System.Windows.Forms.TextBox txtSyncInterval;
     }
 }

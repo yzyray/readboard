@@ -18,6 +18,7 @@ namespace readboard
             this.chkMag.Checked = Program.useMag;
             this.chkDoubleCheck.Checked = Program.doubleClick;
             this.chkAutoMin.Checked = Program.autoMin;
+            this.txtSyncInterval.Text = Program.timeinterval + "";
             if (!Program.isScaled)
             {
                 rdoAdvanceScale.Visible = false;
@@ -57,6 +58,7 @@ namespace readboard
                 this.label8.Text = "Notice: all parameter must be integer.";
                 this.label7.Text = "If got some unnecessary stones,try to decrease offset or increase ratio.";//如某种颜色棋子识别过多,可尝试降低偏差或增大占比
                 this.label6.Text = "If lost some stones,try to increase offset or decrease ratio";//如某种颜色棋子识别丢失,可尝试增大偏差或降低占比
+                this.lblSyncInterval.Text = "SyncInterval(ms)";
                 this.button4.Text = "ResetAll";
                 this.button1.Text = "Confirm";
                 this.button2.Text = "Cancel";
@@ -73,12 +75,14 @@ namespace readboard
             Boolean useMag = chkMag.Checked;
             Boolean doubleClick = chkDoubleCheck.Checked;
             Boolean chkAuto = chkAutoMin.Checked;
+            int syncInterval=Program.timeinterval;
             try
             {
                 Bpc=Convert.ToInt32(this.txtBpc.Text);
                 Bzb = Convert.ToInt32(this.txtBzb.Text);
                 Wpc = Convert.ToInt32(this.txtWpc.Text);
                 Wzb = Convert.ToInt32(this.txtWzb.Text);
+                syncInterval = Convert.ToInt32(this.txtSyncInterval.Text);
             }
             catch (Exception)
             {
@@ -105,6 +109,10 @@ namespace readboard
             wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (doubleClick ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + Form1.type);
             wr.Close();
             this.Close();
+            Program.timeinterval = syncInterval;
+            Program.timename = syncInterval + "";
+            Form1.pcurrentWin.resetBtnKeepSyncName();
+            Form1.pcurrentWin.saveOtherConfig();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -140,6 +148,11 @@ namespace readboard
             MessageBox.Show(Program.isChn ? "已恢复默认设置,请重新打开": "Reset successfully,please restart.");
             Application.Exit();
             System.Environment.Exit(0);
+        }
+
+        private void txtBpc_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

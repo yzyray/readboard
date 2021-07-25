@@ -42,9 +42,7 @@ namespace readboard
         Boolean isContinuousSyncing = false;
         object qx1;
         object qy1;
-
-        String timename;
-        int timeinterval;
+        
         Boolean keepSync = false;
         int sx1;
         int sy1;
@@ -88,6 +86,87 @@ namespace readboard
             public int Right;
             public int Bottom;
         }
+
+        public  Bitmap GetWindowBmp(IntPtr hWnd,int x,int y,int width,int height)
+        {
+            if (x < 0 || y < 0 || width <= 0 || height <= 0)
+                return null;
+            IntPtr hscrdc = GetWindowDC(hWnd);
+            RECT rect = new RECT();
+            GetWindowRect(hWnd, ref rect);
+            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
+            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
+            SelectObject(hmemdc, hbitmap);
+            PrintWindow(hWnd, hmemdc, 0);
+            Bitmap bmp = Bitmap.FromHbitmap(hbitmap);
+            DeleteDC(hscrdc);
+            DeleteDC(hmemdc);
+            Bitmap mybit = new Bitmap(width, height);
+            Graphics g = Graphics.FromImage(mybit);
+            g.DrawImage(bmp /* 原图 */,
+                     new Rectangle(new System.Drawing.Point(0, 0), new System.Drawing.Size(width, height)), // 目标位置 
+                     new Rectangle(new System.Drawing.Point(x, y), new System.Drawing.Size(width, height)), // 原图位置 
+                    GraphicsUnit.Pixel);
+            return mybit;
+        }
+
+        //API声明
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateDC(
+                    string lpszDriver,        // driver name驱动名
+                    string lpszDevice,        // device name设备名
+                    string lpszOutput,        // not used; should be NULL
+                    IntPtr lpInitData  // optional printer data
+         );
+
+        [DllImport("gdi32.dll")]
+        public static extern int BitBlt(
+         IntPtr hdcDest, // handle to destination DC目标设备的句柄
+         int nXDest,  // x-coord of destination upper-left corner目标对象的左上角的X坐标
+         int nYDest,  // y-coord of destination upper-left corner目标对象的左上角的Y坐标
+         int nWidth,  // width of destination rectangle目标对象的矩形宽度
+         int nHeight, // height of destination rectangle目标对象的矩形长度
+         IntPtr hdcSrc,  // handle to source DC源设备的句柄
+         int nXSrc,   // x-coordinate of source upper-left corner源对象的左上角的X坐标
+         int nYSrc,   // y-coordinate of source upper-left corner源对象的左上角的Y坐标
+         UInt32 dwRop  // raster operation code光栅的操作值
+         );
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleDC(
+         IntPtr hdc // handle to DC
+         );
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleBitmap(
+         IntPtr hdc,        // handle to DC
+         int nWidth,     // width of bitmap, in pixels
+         int nHeight     // height of bitmap, in pixels
+         );
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr SelectObject(
+         IntPtr hdc,          // handle to DC
+         IntPtr hgdiobj   // handle to object
+         );
+
+        [DllImport("gdi32.dll")]
+        public static extern int DeleteDC(
+         IntPtr hdc          // handle to DC
+         );
+
+        [DllImport("user32.dll")]
+        public static extern bool PrintWindow(
+         IntPtr hwnd,               // Window to copy,Handle to the window that will be copied.
+         IntPtr hdcBlt,             // HDC to print into,Handle to the device context.
+         UInt32 nFlags              // Optional flags,Specifies the drawing options. It can be one of the following values.
+         );
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowDC(
+         IntPtr hwnd
+         );
 
         private void Send(String strMsg)
         {
@@ -163,7 +242,7 @@ namespace readboard
             }
         }
 
-        public Form1(String time, String last, String both, String aitime, String playouts, String firstpo, String nolw, String usetcp,String serverPort)
+        public Form1(String last,  String aitime, String playouts, String firstpo, String nolw, String usetcp,String serverPort)
         {
             InitializeComponent();
             GlobalHooker hooker = new GlobalHooker();
@@ -222,7 +301,7 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 4)
+                    if (arr.Length == 6)
                     {
                         try
                         {
@@ -230,6 +309,9 @@ namespace readboard
                             this.boardH = Convert.ToInt32(arr[1]);
                             customW = Convert.ToInt32(arr[2]);
                             customH = Convert.ToInt32(arr[3]);
+                            Program.timeinterval= Convert.ToInt32(arr[4]);
+                            Program.timename = Program.timeinterval + "";
+                            this.syncBoth= (Convert.ToInt32(arr[5]) == 1);
                         }
                         catch (Exception)
                         {
@@ -317,8 +399,6 @@ namespace readboard
             else
                 this.button10.Enabled = false;
 
-            timeinterval =  int.Parse(time);
-            timename = time;
             if (last.Equals("0"))
                 {
                 noticeLast = true;
@@ -327,20 +407,16 @@ namespace readboard
             {
                 noticeLast = false;
             }
-            if (both.Equals("0"))
-            {
-                syncBoth = true;
-                checkBox1.Checked = true;
-            }
-            if (both.Equals("1"))
-            {
-                syncBoth = false;
-                checkBox1.Checked = false;
-            }
             if (syncBoth)
-            { Send("bothSync"); }
+            {
+                chkBothSync.Checked = true;
+                chkAutoPlay.Enabled = true;
+                Send("bothSync");
+            }
             else
             {
+                chkBothSync.Checked = false;
+                chkAutoPlay.Enabled = false;
                 Send("nobothSync");
             }
             if (nolw.Equals("1"))
@@ -420,7 +496,7 @@ namespace readboard
                 this.button10.Text = "FastSync";
                 this.label1.Text = "Size:";
                 this.button9.Text = "HowToSetKomi6.5";
-                this.checkBox1.Text = "BothSync";
+                this.chkBothSync.Text = "BothSync";
                 this.chkAutoPlay.Text = "AutoPlay";
                 this.radioBlack.Text = "PlayB";
                 this.radioWhite.Text = "PlayW";
@@ -432,7 +508,7 @@ namespace readboard
                 this.button2.Text = "SelectBoard";
                 this.button7.Text = "Ponder/off";
                 this.chkShowInBoard.Text = "DisplayOnOriginal";
-                this.button5.Text = "KeepSync(200ms)";
+                this.btnKeepSync.Text = "KeepSync(200ms)";
                 this.button4.Text = "OneTimeSync";
                 this.button8.Text = "Exchange";
                 this.button6.Text = "ClearBoard";
@@ -486,7 +562,7 @@ namespace readboard
             mh.MouseMove += mh_MouseMoveEvent;
             mh.MouseClick += mh_MouseMoveEvent2;
             mh.Enabled = false;
-            this.button5.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + timename + "ms)";
+            this.btnKeepSync.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)";
         }
 
         //[DllImport("user32.dll")]
@@ -583,7 +659,8 @@ namespace readboard
                Program.bitmap = new Bitmap(width, height);
                 using (System.Drawing.Graphics graphics = Graphics.FromImage(Program.bitmap))
                 {                    
-                    graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size((int)(width * factor), (int)(height * factor)));
+                  //  graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size((int)(width * factor), (int)(height * factor)));
+                    graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width,height));   
                     //bitmap.Save("screen.bmp");
                 }
               //  dm2.Capture(x, y, x2, y2, "screen.bmp");
@@ -600,28 +677,28 @@ namespace readboard
            
             if (type == 5)
             {
-                if (!CaptureScreen(ox1, oy1, ox2, oy2))
-                    return;
-                //m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
-                IntPtr hwnds;
-                if (form3 != null)
-                {
-                    hwnds = form3.setPic();
-                }
-                else
-                {
-                    form3 = new Form3();
-                    hwnds = form3.setPic();
-                    form3.Show();
-                    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
-                }
+                //if (!CaptureScreen(ox1, oy1, ox2, oy2))
+                //    return;
+                ////m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
+                //IntPtr hwnds;
+                //if (form3 != null)
+                //{
+                //    hwnds = form3.setPic();
+                //}
+                //else
+                //{
+                //    form3 = new Form3();
+                //    hwnds = form3.setPic();
+                //    form3.Show();
+                //    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
+                //}
                 Send("sync");
                 // MessageBox.Show(hwnds.ToString());
-                dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
-                sx1ty5 = ox1;
-                sy1ty5 = oy1;
-                sx1 = 0;
-                sy1 = 0;
+                //dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
+                //sx1ty5 = ox1;
+                //sy1ty5 = oy1;
+                sx1 = ox1;
+                sy1 = oy1;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
                 all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
@@ -753,7 +830,7 @@ namespace readboard
         }
         private void startKeepingSync(String a)
         {
-            this.button5.Text = Program.isChn ? "停止同步" : "StopSync";
+            this.btnKeepSync.Text = Program.isChn ? "停止同步" : "StopSync";
             this.button10.Text = Program.isChn ? "停止同步" : "StopSync";
             startedSync = true;
             this.rdoFox.Enabled = false;
@@ -796,14 +873,14 @@ namespace readboard
 
         public void Action2Test(String t)
         {
-            this.button5.Text = t;
+            this.btnKeepSync.Text = t;
             if(!isContinuousSyncing)
             this.button10.Text = "一键同步";
             //if (this.factor <= 1)
             //{ 
             this.button3.Enabled = true;
             this.button4.Enabled = true;
-            this.button5.Enabled = true;
+            this.btnKeepSync.Enabled = true;
             this.rdoFox.Enabled = true;
             this.rdoSina.Enabled = true;
             //} 
@@ -834,7 +911,12 @@ namespace readboard
             if (thread!=null&&thread.IsAlive)
                 thread.Abort();
             Action2<String> a = new Action2<String>(Action2Test);
-            Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + timename + "ms)");      
+            Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");      
+        }
+
+        public void resetBtnKeepSyncName() {
+            if(!isContinuousSyncing)
+                this.btnKeepSync.Text= (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)";
         }
 
         private void startContinuous() {
@@ -946,32 +1028,32 @@ namespace readboard
             Boolean isRightGoban = true;
             if (type == 5)
             {
-                if (!CaptureScreen(ox1, oy1, ox2, oy2))
-                    return;
-                //m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
-                IntPtr hwnds;
-                if (form3 != null)
-                {
-                    //form3.Close();
-                    // form3.Dispose();
-                    hwnds = form3.setPic();
-                }
-                else
-                {
-                    form3 = new Form3();
-                    hwnds = form3.setPic();
-                    form3.Show();
-                    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
-                }
+                //if (!CaptureScreen(ox1, oy1, ox2, oy2))
+                //    return;
+                ////m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
+                //IntPtr hwnds;
+                //if (form3 != null)
+                //{
+                //    //form3.Close();
+                //    // form3.Dispose();
+                //    hwnds = form3.setPic();
+                //}
+                //else
+                //{
+                //    form3 = new Form3();
+                //    hwnds = form3.setPic();
+                //    form3.Show();
+                //    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
+                //}
                 Send("sync");
-                dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
+              //  dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a,"");
               //  startKeepingSync();
-                sx1ty5 = ox1;
-                sy1ty5 = oy1;
-                sx1 = 0;
-                sy1 = 0;
+              //  sx1ty5 = ox1;
+              //  sy1ty5 = oy1;
+                sx1 = ox1;
+                sy1 = oy1;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
                 all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
@@ -1000,7 +1082,7 @@ namespace readboard
                     return;
                 }
                 if (type == 0)
-                    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0);
+                    dm.BindWindow(hwnd, "dx2", "normal", "normal", 0);
                 else
                 {
                     dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
@@ -1185,32 +1267,32 @@ namespace readboard
                 }
                 if (type == 5)
                 {
-                    if (!CaptureScreen(ox1, oy1, ox2, oy2))
-                    {
-                        return;
-                    }
+                    //if (!CaptureScreen(ox1, oy1, ox2, oy2))
+                    //{
+                    //    return;
+                    //}
                     //m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
-                    IntPtr hwnds;
-                    if (form3 != null)
-                    {
-                        //form3.Close();
-                        // form3.Dispose();
-                        hwnds = form3.setPic();
-                    }
-                    else
-                    {
-                        form3 = new Form3();
-                        hwnds = form3.setPic();
-                        form3.Show();
-                        dm.MoveWindow(form3.getHwnd(), 9999, 9999);
-                    }
-                    
-                    dm.BindWindow((int)hwnds, "dx2", "windows", "normal", 0);
-                    sx1 = 0;
-                    sy1 = 0;
-                    width = ox2 - ox1;
-                    height = oy2 - oy1;
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                    //IntPtr hwnds;
+                    //if (form3 != null)
+                    //{
+                    //    form3.Close();
+                    //    form3.Dispose();
+                    //    hwnds = form3.setPic();
+                    //}
+                    //else
+                    //{
+                    //    form3 = new Form3();
+                    //    hwnds = form3.setPic();
+                    //    form3.Show();
+                    //    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
+                    //}
+
+                    //dm.BindWindow((int)hwnds, "dx2", "windows", "normal", 0);
+                   // sx1 = ox1;
+                   // sy1 = ox2;
+                   // width = ox2 - ox1;
+                   // height = oy2 - oy1;
+                   // all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     OutPut3(false, null);
                 }
                 else
@@ -1341,13 +1423,21 @@ namespace readboard
                 }
                 try
                 {
-                    Thread.Sleep(timeinterval);
+                    Thread.Sleep(Program.timeinterval);
                 }
                 catch (Exception) { }
             }
             Send("stopsync");
         }
-    
+
+        private void recognizeStons(Bitmap input) {
+            if (input == null || input.Width <= boardW || input.Height <= boardH)
+                return;
+            int red=input.GetPixel(10, 10).R;
+            int green = input.GetPixel(10, 10).G;
+            int blue = input.GetPixel(10, 10).B;
+            //蓝色/红色判断最后一手
+        }
 
     private void OutPut(Boolean first,lw.lwsoft lwh) {           
             if (lwh!=null&&savedPlace)
@@ -1356,6 +1446,8 @@ namespace readboard
                 lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
                 lwh.LeftClick();
             }
+            Bitmap bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
+            recognizeStons(bmp);
             if (!(width <= boardW || height <= boardH))
             {
                 String result = "";
@@ -1500,6 +1592,19 @@ namespace readboard
                 lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
                 lwh.LeftClick();
             }
+            Bitmap bmp=null;
+                if(type==3)
+               bmp= GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
+            if (type == 5)
+            {
+                bmp = new Bitmap(width, height);
+                using (System.Drawing.Graphics graphics = Graphics.FromImage(Program.bitmap))
+                {
+                    graphics.CopyFromScreen(ox1, oy1, 0, 0, new System.Drawing.Size(width,height));
+                    //bitmap.Save("screen.bmp");
+                }
+            }
+            recognizeStons(bmp);
             if (width <= boardW || height <= boardH)
                 return;
             String result = "";
@@ -1617,7 +1722,7 @@ namespace readboard
            
         }
 
-        public void saveBoardSize() {
+        public void saveOtherConfig() {
             string result1 = "config_readboard_boardsize.txt";
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
@@ -1631,7 +1736,7 @@ namespace readboard
             catch (Exception )
             {
             }
-            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH);
+            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH+"_"+Program.timeinterval+"_"+ (syncBoth?"1":"0"));
             wr.Close();
         }
 
@@ -1678,7 +1783,7 @@ namespace readboard
                 this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
                 this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
             }
-            saveBoardSize();
+            saveOtherConfig();
         }
 
         private void radioButton6_CheckedChanged(object sender, EventArgs e)
@@ -1690,7 +1795,7 @@ namespace readboard
                 this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
                 this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
             }
-            saveBoardSize();
+            saveOtherConfig();
         }
 
         private void radioButton7_CheckedChanged(object sender, EventArgs e)
@@ -1702,7 +1807,7 @@ namespace readboard
                 this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
                 this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
             }
-            saveBoardSize();
+            saveOtherConfig();
         }
 
         public void sendVersion() {
@@ -1855,16 +1960,22 @@ namespace readboard
 
         private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
         {
-            syncBoth = checkBox1.Checked;
+            syncBoth = chkBothSync.Checked;
             if (syncBoth)
-            { Send("bothSync"); }
+            {
+                Send("bothSync");
+                chkAutoPlay.Enabled = true;
+            }
             else
-            { Send("nobothSync"); }
+            {
+                Send("nobothSync");
+                chkAutoPlay.Enabled = false;
+            }
             if (keepSync)
             {
-                keepSync = false;
-                Thread.Sleep(timeinterval*3/2 + 50);               
-                keepSync = true;
+               // keepSync = false;
+               // Thread.Sleep(timeinterval*3/2 + 50);               
+               // keepSync = true;
                 Send("sync");
                 if (radioBlack.Checked)
                     {
@@ -1874,12 +1985,12 @@ namespace readboard
                     {
                         Send("play>white>" + (textBox1.Text.Equals("") ? "0" : textBox1.Text) + " " + (textBox2.Text.Equals("") ? "0" : textBox2.Text) + " " + (textBox3.Text.Equals("") ? "0" : textBox3.Text));
                     }             
-                ThreadStart threadStart = new ThreadStart(OutPutTime);
-                thread = new Thread(OutPutTime);
-                thread.SetApartmentState(ApartmentState.STA);
-                thread.Start();
-
+               // ThreadStart threadStart = new ThreadStart(OutPutTime);
+               // thread = new Thread(OutPutTime);
+               // thread.SetApartmentState(ApartmentState.STA);
+               // thread.Start();
             }
+            this.saveOtherConfig();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -1952,7 +2063,7 @@ namespace readboard
                   // MessageBox.Show(Program.isChn?"错误的棋盘大小":"Wrong goban size!");
                 }
             }
-            saveBoardSize();
+            saveOtherConfig();
         }
 
 
@@ -1964,7 +2075,7 @@ namespace readboard
                 if (this.rdoOtherBoard.Checked)
                 {
                     this.boardW = int.Parse(txtBoardWidth.Text);
-                    saveBoardSize();
+                    saveOtherConfig();
                 }
                 else
                 {
@@ -1984,7 +2095,7 @@ namespace readboard
                 if (this.rdoOtherBoard.Checked)
                 {
                     this.boardH = int.Parse(txtBoardHeight.Text);
-                    saveBoardSize();
+                    saveOtherConfig();
                 }
                 else
                 {
@@ -2101,7 +2212,7 @@ namespace readboard
                 ThreadStart threadStart = new ThreadStart(startContinuous);
                 this.button3.Enabled = false;
                 this.button4.Enabled = false;
-                this.button5.Enabled = false;
+                this.btnKeepSync.Enabled = false;
             thread = new Thread(startContinuous);
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
@@ -2154,7 +2265,7 @@ namespace readboard
                 Program.bitmap = new Bitmap(width, height);
                 using (System.Drawing.Graphics graphics = Graphics.FromImage(Program.bitmap))
                 {
-                    graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size((int)(width * factor), (int)(height * factor)));
+                    graphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width,  height));
                   //  bitmap.Save("screen.bmp");
                 }
                 try {

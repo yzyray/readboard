@@ -29,6 +29,8 @@ namespace readboard
         public static Boolean isScaled = false;
         public static String version = "708";
         public static Boolean isChn = false;
+        public static String timename="200";
+        public static int timeinterval=200;
 
         public static double factor = 1.0;
 
@@ -46,16 +48,16 @@ namespace readboard
             Thread thread = new Thread(Start);
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();//启动界面
-            if (arg.Length < 11)
+            if (arg.Length < 9)
                 System.Environment.Exit(0);
-            if (arg[9].Equals("0"))
+            if (arg[7].Equals("0"))
             {
                 isChn = true;
             }
             else {
                 isChn = false;
             }
-                if (arg[8].Equals("0"))
+                if (arg[6].Equals("0"))
             {
                 AllocConsole();
                 hideConsole();
@@ -118,7 +120,7 @@ namespace readboard
             {
                 if (arg[0].Equals("yzy"))
                 {
-                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8],arg[10]));                
+                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[8]));                
                 }
             }
             catch (Exception ex)

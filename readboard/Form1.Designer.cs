@@ -32,7 +32,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.btnKeepSync = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rdoFore = new System.Windows.Forms.RadioButton();
@@ -51,7 +51,7 @@
             this.rdo19x19 = new System.Windows.Forms.RadioButton();
             this.radioWhite = new System.Windows.Forms.RadioButton();
             this.radioBlack = new System.Windows.Forms.RadioButton();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.chkBothSync = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
@@ -105,15 +105,15 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button5
+            // btnKeepSync
             // 
-            this.button5.Location = new System.Drawing.Point(7, 152);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(107, 23);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "持续同步(200ms)";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btnKeepSync.Location = new System.Drawing.Point(7, 152);
+            this.btnKeepSync.Name = "btnKeepSync";
+            this.btnKeepSync.Size = new System.Drawing.Size(107, 23);
+            this.btnKeepSync.TabIndex = 4;
+            this.btnKeepSync.Text = "持续同步(200ms)";
+            this.btnKeepSync.UseVisualStyleBackColor = true;
+            this.btnKeepSync.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
@@ -323,16 +323,16 @@
             this.radioBlack.UseVisualStyleBackColor = true;
             this.radioBlack.CheckedChanged += new System.EventHandler(this.radioBlack_CheckedChanged);
             // 
-            // checkBox1
+            // chkBothSync
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(6, 12);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 16);
-            this.checkBox1.TabIndex = 20;
-            this.checkBox1.Text = "双向同步";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
+            this.chkBothSync.AutoSize = true;
+            this.chkBothSync.Location = new System.Drawing.Point(6, 12);
+            this.chkBothSync.Name = "chkBothSync";
+            this.chkBothSync.Size = new System.Drawing.Size(72, 16);
+            this.chkBothSync.TabIndex = 20;
+            this.chkBothSync.Text = "双向同步";
+            this.chkBothSync.UseVisualStyleBackColor = true;
+            this.chkBothSync.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
             // 
             // textBox1
             // 
@@ -421,7 +421,7 @@
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.radioBlack);
             this.groupBox4.Controls.Add(this.label5);
-            this.groupBox4.Controls.Add(this.checkBox1);
+            this.groupBox4.Controls.Add(this.chkBothSync);
             this.groupBox4.Controls.Add(this.textBox3);
             this.groupBox4.Controls.Add(this.label2);
             this.groupBox4.Controls.Add(this.label4);
@@ -522,7 +522,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button7);
-            this.Controls.Add(this.button5);
+            this.Controls.Add(this.btnKeepSync);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -548,7 +548,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button btnKeepSync;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rdoSina;
@@ -563,7 +563,7 @@
         private System.Windows.Forms.RadioButton radioWhite;
         private System.Windows.Forms.RadioButton radioBlack;
         private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkBothSync;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
