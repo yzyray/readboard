@@ -72,6 +72,9 @@ namespace readboard
 
         lw.lwsoft lwh;
 
+        int posX = -1;
+        int posY = -1;
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
@@ -291,16 +294,16 @@ namespace readboard
                 sr.Close();
             }
 
-            if (File.Exists("config_readboard_boardsize.txt"))
+            if (File.Exists("config_readboard_others.txt"))
             {
                 int customW = -1;
                 int customH = -1;
-                StreamReader sr = new StreamReader("config_readboard_boardsize.txt", Encoding.UTF8);
+                StreamReader sr = new StreamReader("config_readboard_others.txt", Encoding.UTF8);
                 String line;
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 7)
+                    if (arr.Length == 9)
                     {
                         try
                         {
@@ -312,6 +315,10 @@ namespace readboard
                             Program.timename = Program.timeinterval + "";
                             this.syncBoth= (Convert.ToInt32(arr[5]) == 1);
                             Program.grayOffset = Convert.ToInt32(arr[6]);
+                            posX = Convert.ToInt32(arr[7]);
+                            posY = Convert.ToInt32(arr[8]);
+                            if(posX!=-1&&posY!=-1)
+                                this.Location= new System.Drawing.Point(posX, posY);
                         }
                         catch (Exception)
                         {
@@ -1751,12 +1758,14 @@ namespace readboard
         }
 
         public void saveOtherConfig() {
-            string result1 = "config_readboard_boardsize.txt";
+            string result1 = "config_readboard_others.txt";
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
             int customW = -1;
             int customH = -1;
+            posX = this.Location.X;
+            posY = this.Location.Y;
             try {
                 customW = int.Parse(txtBoardWidth.Text);
                 customH = int.Parse(txtBoardHeight.Text);
@@ -1764,7 +1773,7 @@ namespace readboard
             catch (Exception )
             {
             }
-            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH+"_"+Program.timeinterval+"_"+ (syncBoth?"1":"0")+ "_"+Program.grayOffset);
+            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH+"_"+Program.timeinterval+"_"+ (syncBoth?"1":"0")+ "_"+Program.grayOffset+"_"+ posX+"_"+ posY);
             wr.Close();
         }
 
@@ -1777,6 +1786,7 @@ namespace readboard
             wr = new StreamWriter(fs);
             wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
+            saveOtherConfig();
             mh.Enabled = false;
             if (dm.IsBind(hwnd) > 0)
             {
@@ -2151,7 +2161,6 @@ namespace readboard
             }
             catch (Exception)
             {
-                txtBoardWidth.BackColor = Color.Red;
             }            
         }
 
@@ -2171,7 +2180,6 @@ namespace readboard
             }
             catch (Exception)
             {
-                txtBoardHeight.BackColor = Color.Red;
             }
         }
 
