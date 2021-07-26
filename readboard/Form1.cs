@@ -285,6 +285,10 @@ namespace readboard
                                 type = Convert.ToInt32(arr[12]);
                                 Program.hasConfigFile = true;
                             }
+                            else {
+                                if (File.Exists("config_readboard_others.txt"))
+                                    File.Delete("config_readboard_others.txt");
+                            }
                         }
                         catch (Exception)
                         {
@@ -316,9 +320,13 @@ namespace readboard
                             this.syncBoth= (Convert.ToInt32(arr[5]) == 1);
                             Program.grayOffset = Convert.ToInt32(arr[6]);
                             posX = Convert.ToInt32(arr[7]);
-                            posY = Convert.ToInt32(arr[8]);
-                            if(posX!=-1&&posY!=-1)
-                                this.Location= new System.Drawing.Point(posX, posY);
+                            posY = Convert.ToInt32(arr[8]);                           
+                            if (posX != -1 && posY != -1)
+                            {
+                                var h = Screen.PrimaryScreen.Bounds.Height;
+                                var w = Screen.PrimaryScreen.Bounds.Width;
+                                this.Location = new System.Drawing.Point(Math.Min(Math.Max(0,posX),w-476), Math.Min(Math.Max(0,posY),h-217));
+                            }
                         }
                         catch (Exception)
                         {
