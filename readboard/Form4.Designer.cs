@@ -44,7 +44,7 @@
             this.chkMag = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.chkDoubleCheck = new System.Windows.Forms.CheckBox();
+            this.chkVerifyMove = new System.Windows.Forms.CheckBox();
             this.chkAutoMin = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.rdoNormalScale = new System.Windows.Forms.RadioButton();
@@ -54,6 +54,8 @@
             this.button4 = new System.Windows.Forms.Button();
             this.lblSyncInterval = new System.Windows.Forms.Label();
             this.txtSyncInterval = new System.Windows.Forms.TextBox();
+            this.lblGrayOffset = new System.Windows.Forms.Label();
+            this.txtGrayOffset = new System.Windows.Forms.TextBox();
             this.scaleGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,7 +71,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 139);
+            this.label2.Location = new System.Drawing.Point(10, 137);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(95, 12);
             this.label2.TabIndex = 1;
@@ -87,7 +89,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(196, 139);
+            this.label4.Location = new System.Drawing.Point(196, 138);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(95, 12);
             this.label4.TabIndex = 3;
@@ -99,18 +101,17 @@
             this.txtBpc.Name = "txtBpc";
             this.txtBpc.Size = new System.Drawing.Size(79, 21);
             this.txtBpc.TabIndex = 4;
-            this.txtBpc.TextChanged += new System.EventHandler(this.txtBpc_TextChanged);
             // 
             // txtWpc
             // 
-            this.txtWpc.Location = new System.Drawing.Point(109, 133);
+            this.txtWpc.Location = new System.Drawing.Point(109, 132);
             this.txtWpc.Name = "txtWpc";
             this.txtWpc.Size = new System.Drawing.Size(79, 21);
             this.txtWpc.TabIndex = 5;
             // 
             // txtWzb
             // 
-            this.txtWzb.Location = new System.Drawing.Point(297, 133);
+            this.txtWzb.Location = new System.Drawing.Point(297, 132);
             this.txtWzb.Name = "txtWzb";
             this.txtWzb.Size = new System.Drawing.Size(79, 21);
             this.txtWzb.TabIndex = 6;
@@ -133,7 +134,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 197);
+            this.label6.Location = new System.Drawing.Point(10, 202);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(287, 12);
             this.label6.TabIndex = 9;
@@ -172,7 +173,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 179);
+            this.label7.Location = new System.Drawing.Point(10, 184);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(287, 12);
             this.label7.TabIndex = 13;
@@ -181,21 +182,21 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 159);
+            this.label8.Location = new System.Drawing.Point(10, 164);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(143, 12);
             this.label8.TabIndex = 14;
             this.label8.Text = "注:所有参数都必须为整数";
             // 
-            // chkDoubleCheck
+            // chkVerifyMove
             // 
-            this.chkDoubleCheck.AutoSize = true;
-            this.chkDoubleCheck.Location = new System.Drawing.Point(218, 12);
-            this.chkDoubleCheck.Name = "chkDoubleCheck";
-            this.chkDoubleCheck.Size = new System.Drawing.Size(108, 16);
-            this.chkDoubleCheck.TabIndex = 15;
-            this.chkDoubleCheck.Text = "落子后进行验证";
-            this.chkDoubleCheck.UseVisualStyleBackColor = true;
+            this.chkVerifyMove.AutoSize = true;
+            this.chkVerifyMove.Location = new System.Drawing.Point(218, 12);
+            this.chkVerifyMove.Name = "chkVerifyMove";
+            this.chkVerifyMove.Size = new System.Drawing.Size(108, 16);
+            this.chkVerifyMove.TabIndex = 15;
+            this.chkVerifyMove.Text = "落子后进行验证";
+            this.chkVerifyMove.UseVisualStyleBackColor = true;
             // 
             // chkAutoMin
             // 
@@ -277,7 +278,7 @@
             // lblSyncInterval
             // 
             this.lblSyncInterval.AutoSize = true;
-            this.lblSyncInterval.Location = new System.Drawing.Point(107, 34);
+            this.lblSyncInterval.Location = new System.Drawing.Point(216, 34);
             this.lblSyncInterval.Name = "lblSyncInterval";
             this.lblSyncInterval.Size = new System.Drawing.Size(107, 12);
             this.lblSyncInterval.TabIndex = 23;
@@ -285,16 +286,34 @@
             // 
             // txtSyncInterval
             // 
-            this.txtSyncInterval.Location = new System.Drawing.Point(219, 29);
+            this.txtSyncInterval.Location = new System.Drawing.Point(327, 29);
             this.txtSyncInterval.Name = "txtSyncInterval";
             this.txtSyncInterval.Size = new System.Drawing.Size(56, 21);
             this.txtSyncInterval.TabIndex = 24;
+            // 
+            // lblGrayOffset
+            // 
+            this.lblGrayOffset.AutoSize = true;
+            this.lblGrayOffset.Location = new System.Drawing.Point(196, 164);
+            this.lblGrayOffset.Name = "lblGrayOffset";
+            this.lblGrayOffset.Size = new System.Drawing.Size(95, 12);
+            this.lblGrayOffset.TabIndex = 25;
+            this.lblGrayOffset.Text = "灰度偏色(0-255)";
+            // 
+            // txtGrayOffset
+            // 
+            this.txtGrayOffset.Location = new System.Drawing.Point(297, 159);
+            this.txtGrayOffset.Name = "txtGrayOffset";
+            this.txtGrayOffset.Size = new System.Drawing.Size(78, 21);
+            this.txtGrayOffset.TabIndex = 26;
             // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(395, 253);
+            this.Controls.Add(this.txtGrayOffset);
+            this.Controls.Add(this.lblGrayOffset);
             this.Controls.Add(this.txtSyncInterval);
             this.Controls.Add(this.lblSyncInterval);
             this.Controls.Add(this.button4);
@@ -302,7 +321,7 @@
             this.Controls.Add(this.scaleGroup);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.chkAutoMin);
-            this.Controls.Add(this.chkDoubleCheck);
+            this.Controls.Add(this.chkVerifyMove);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.chkMag);
@@ -346,7 +365,7 @@
         private System.Windows.Forms.CheckBox chkMag;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.CheckBox chkDoubleCheck;
+        private System.Windows.Forms.CheckBox chkVerifyMove;
         private System.Windows.Forms.CheckBox chkAutoMin;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.RadioButton rdoNormalScale;
@@ -356,5 +375,7 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Label lblSyncInterval;
         private System.Windows.Forms.TextBox txtSyncInterval;
+        private System.Windows.Forms.Label lblGrayOffset;
+        private System.Windows.Forms.TextBox txtGrayOffset;
     }
 }

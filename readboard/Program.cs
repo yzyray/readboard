@@ -20,7 +20,7 @@ namespace readboard
         public static int blackZB = 33;
         public static int whiteZB = 33;
         public static Boolean useMag = true;
-        public static Boolean doubleClick = true;
+        public static Boolean verifyMove = true;
         public static Boolean showScaleHint = true;
         public static Boolean showInBoard = false;
         public static Boolean showInBoardHint = true;

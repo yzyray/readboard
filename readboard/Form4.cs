@@ -16,27 +16,30 @@ namespace readboard
             this.txtWpc.Text = Program.whitePC.ToString();
             this.txtWzb.Text = Program.whiteZB.ToString();
             this.chkMag.Checked = Program.useMag;
-            this.chkDoubleCheck.Checked = Program.doubleClick;
+            this.chkVerifyMove.Checked = Program.verifyMove;
             this.chkAutoMin.Checked = Program.autoMin;
             this.txtSyncInterval.Text = Program.timeinterval + "";
+            txtGrayOffset.Text = Program.grayOffset + "";
             if (!Program.isScaled)
             {
                 rdoAdvanceScale.Visible = false;
                 rdoNormalScale.Visible = false;
                 scaleGroup.Visible = false;
                 button3.Visible = false;
-                    label9.Location = new System.Drawing.Point(10, 65);
-                label1.Location = new System.Drawing.Point(10, 92);
-                label2.Location = new System.Drawing.Point(10, 119);
-                label3.Location = new System.Drawing.Point(196, 92);
-                label4.Location = new System.Drawing.Point(196, 119);
-                txtBpc.Location = new System.Drawing.Point(109, 87);
-                txtBzb.Location = new System.Drawing.Point(297, 87);
-                txtWpc.Location = new System.Drawing.Point(109, 113);
-                txtWzb.Location = new System.Drawing.Point(297, 113);
-                label8.Location = new System.Drawing.Point(10, 139);
-                label7.Location = new System.Drawing.Point(10, 159);
-                label6.Location = new System.Drawing.Point(10, 177);
+                    label9.Location = new System.Drawing.Point(10, 60);
+                label1.Location = new System.Drawing.Point(10, 87);
+                label2.Location = new System.Drawing.Point(10, 114);
+                label3.Location = new System.Drawing.Point(196, 87);
+                label4.Location = new System.Drawing.Point(196, 114);
+                txtBpc.Location = new System.Drawing.Point(109, 82);
+                txtBzb.Location = new System.Drawing.Point(297, 82);
+                txtWpc.Location = new System.Drawing.Point(109, 108);
+                txtWzb.Location = new System.Drawing.Point(297, 108);
+                label8.Location = new System.Drawing.Point(10, 163);
+                label7.Location = new System.Drawing.Point(10, 183);
+                label6.Location = new System.Drawing.Point(10, 201);
+                lblGrayOffset.Location=new System.Drawing.Point(10, 141);
+                txtGrayOffset.Location = new System.Drawing.Point(Program.isChn ? 109 : 120, 135);
             }
             if (Program.isAdvScale)
                 rdoAdvanceScale.Checked = true;
@@ -45,7 +48,7 @@ namespace readboard
             if (!Program.isChn) {
                 this.Text = "Settings";
                 this.chkMag.Text = "Show Magnifier";
-                this.chkDoubleCheck.Text = "Verify Placed Stone";
+                this.chkVerifyMove.Text = "Verify Placed Stone";
                 this.chkAutoMin.Text = "Auto Minimize After Sync";
                 this.rdoNormalScale.Text = "NormalScale";
                 this.rdoAdvanceScale.Text = "AdvanceScale";
@@ -55,13 +58,14 @@ namespace readboard
                 this.label3.Text = "B Ratio(0-100)";
                 this.label2.Text = "W Offset(0-255)";
                 this.label4.Text = "W Ratio(0-100)";
-                this.label8.Text = "Notice: all parameter must be integer.";
+                this.label8.Text = "all parameter must be integer";
                 this.label7.Text = "If got some unnecessary stones,try to decrease offset or increase ratio.";//如某种颜色棋子识别过多,可尝试降低偏差或增大占比
                 this.label6.Text = "If lost some stones,try to increase offset or decrease ratio";//如某种颜色棋子识别丢失,可尝试增大偏差或降低占比
                 this.lblSyncInterval.Text = "Sync Interval(ms):";
                 this.button4.Text = "ResetAll";
                 this.button1.Text = "Confirm";
                 this.button2.Text = "Cancel";
+                this.lblGrayOffset.Text = "GrayOffset(0-255)";
                 this.Size= new Size((int)(461 *Program.factor), (int)(292 * Program.factor));
             }
         }
@@ -73,7 +77,7 @@ namespace readboard
             int Wpc = Program.whitePC;
             int Wzb = Program.whiteZB;
             Boolean useMag = chkMag.Checked;
-            Boolean doubleClick = chkDoubleCheck.Checked;
+            Boolean enableVerifyMove = chkVerifyMove.Checked;
             Boolean chkAuto = chkAutoMin.Checked;
             int syncInterval=Program.timeinterval;
             try
@@ -83,6 +87,7 @@ namespace readboard
                 Wpc = Convert.ToInt32(this.txtWpc.Text);
                 Wzb = Convert.ToInt32(this.txtWzb.Text);
                 syncInterval = Convert.ToInt32(this.txtSyncInterval.Text);
+                Program.grayOffset = Convert.ToInt32(this.txtGrayOffset.Text);
             }
             catch (Exception)
             {
@@ -99,14 +104,14 @@ namespace readboard
             Program.blackZB = Bzb;
             Program.whiteZB = Wzb;
             Program.useMag = useMag;
-            Program.doubleClick = doubleClick;
+            Program.verifyMove = enableVerifyMove;
             Program.autoMin = chkAuto;
             Program.isAdvScale = rdoAdvanceScale.Checked;
             string result1 = "config_readboard.txt";
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (doubleClick ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + Form1.type);
+            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (enableVerifyMove ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + Form1.type);
             wr.Close();
             this.Close();
             Program.timeinterval = syncInterval;
@@ -139,20 +144,13 @@ namespace readboard
 
         private void button4_Click(object sender, EventArgs e)
         {
-            string result1 = "config_readboard.txt";
-            FileStream fs = new FileStream(result1, FileMode.Create);
-            StreamWriter wr = null;
-            wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" +"yyyyyyssssk$#" + "_" + Form1.type);
-            wr.Close();
+            if (File.Exists("config_readboard_boardsize.txt"))
+                File.Delete("config_readboard_boardsize.txt");
+            if (File.Exists("config_readboard.txt"))
+                File.Delete("config_readboard.txt");
             MessageBox.Show(Program.isChn ? "已恢复默认设置,请重新打开": "Reset successfully,please restart.");
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
             Application.Exit();
-            System.Environment.Exit(0);
-        }
-
-        private void txtBpc_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

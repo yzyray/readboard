@@ -273,7 +273,7 @@ namespace readboard
                                 Program.whitePC = Convert.ToInt32(arr[2]);
                                 Program.whiteZB = Convert.ToInt32(arr[3]);
                                 Program.useMag = (Convert.ToInt32(arr[4]) == 1);
-                                Program.doubleClick = (Convert.ToInt32(arr[5]) == 1);
+                                Program.verifyMove = (Convert.ToInt32(arr[5]) == 1);
                                 Program.showScaleHint = (Convert.ToInt32(arr[6]) == 1);
                                 Program.showInBoard = (Convert.ToInt32(arr[7]) == 1);
                                 Program.showInBoardHint = (Convert.ToInt32(arr[8]) == 1);
@@ -300,7 +300,7 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 6)
+                    if (arr.Length == 7)
                     {
                         try
                         {
@@ -311,6 +311,7 @@ namespace readboard
                             Program.timeinterval= Convert.ToInt32(arr[4]);
                             Program.timename = Program.timeinterval + "";
                             this.syncBoth= (Convert.ToInt32(arr[5]) == 1);
+                            Program.grayOffset = Convert.ToInt32(arr[6]);
                         }
                         catch (Exception)
                         {
@@ -1316,6 +1317,80 @@ namespace readboard
            public Byte b;
         }
 
+        private Boolean recognizeMove(Bitmap input, int x, int y)
+        {
+            if (input == null)
+                return true;
+            Rectangle rect = new Rectangle(0, 0, input.Width, input.Height);
+            const int PixelWidth = 3;
+            const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
+            BitmapData data = input.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat);
+            RgbInfo[] rgbArray = new RgbInfo[data.Height * data.Width];
+            byte[] pixelData = new Byte[data.Stride];
+            for (int scanline = 0; scanline < data.Height; scanline++)
+            {
+                Marshal.Copy(data.Scan0 + (scanline * data.Stride), pixelData, 0, data.Stride);
+                for (int pixeloffset = 0; pixeloffset < data.Width; pixeloffset++)
+                {
+                    rgbArray[scanline * data.Width + pixeloffset] = new RgbInfo();
+                    rgbArray[scanline * data.Width + pixeloffset].r = pixelData[pixeloffset * PixelWidth + 2];
+                    rgbArray[scanline * data.Width + pixeloffset].g = pixelData[pixeloffset * PixelWidth + 1];
+                    rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
+                }
+            }
+            input.UnlockBits(data);
+
+            int blackPercentStandard = Program.blackZB;
+            int whitePercentStandard = Program.whiteZB;
+            int blackOffsetStandard = Program.blackPC;
+            int whiteOffsetStandard = Program.whitePC;
+            int grayOffsetStandard = Program.grayOffset;
+            if (type != 3 && type != 5)
+            {
+                blackPercentStandard = 37;
+
+                whitePercentStandard = 30;
+                blackOffsetStandard = 96;
+                if (type == 1)
+                    whiteOffsetStandard = 80;
+                else
+                    whiteOffsetStandard = 112;
+                grayOffsetStandard = 50;
+            }
+
+            int blackPercent =
+                       getWhiteBlackColorPercent(
+                           rgbArray, 0, 0, input.Width, input.Height, true, blackOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+            if (blackPercent >= blackPercentStandard)
+            {
+                return true;
+            }
+            else
+            {
+                Boolean isWhite=false;
+                int whitePercent =
+                    getWhiteBlackColorPercent(
+                        rgbArray, 0, 0, input.Width, input.Height, false, whiteOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+                if (whitePercent >= whitePercentStandard)
+                {
+                    if (x == 0
+                        || x == boardW - 1
+                        || y == 0
+                        || y == boardH - 1)
+                    {
+                        if (whitePercent > 85) isWhite = false;
+                        else isWhite = true;
+                    }
+                    else
+                    {
+                        if (whitePercent > 80) isWhite = false;
+                        else isWhite = true;
+                    }
+                }
+                return isWhite;
+            }
+        }
+
         private void recognizeBoard(Bitmap input) {
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return;
@@ -1689,7 +1764,7 @@ namespace readboard
             catch (Exception )
             {
             }
-            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH+"_"+Program.timeinterval+"_"+ (syncBoth?"1":"0"));
+            wr.WriteLine(this.boardW+"_"+this.boardH+"_"+ customW + "_"+ customH+"_"+Program.timeinterval+"_"+ (syncBoth?"1":"0")+ "_"+Program.grayOffset);
             wr.Close();
         }
 
@@ -1700,7 +1775,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             mh.Enabled = false;
             if (dm.IsBind(hwnd) > 0)
@@ -1805,7 +1880,7 @@ namespace readboard
                 dm2.GetCursorPos(out xo, out yo);
                 dm2.MoveTo(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
                 dm2.LeftClick();
-                if (Program.doubleClick)
+                if (Program.verifyMove)
                     dm2.LeftClick();
                 dm2.MoveTo((int)xo, (int)yo);
             }
@@ -1840,38 +1915,37 @@ namespace readboard
 
         private Boolean VerifyMove(int x, int y)
         {
-            if (!Program.doubleClick)
+            if (!Program.verifyMove)
                 return true;
             Thread.Sleep(200);
-            int startX = (int)Math.Floor(sx1 + widthMagrin * x);
-            int startY = (int)Math.Floor(sy1 + heightMagrin * y);
-            int width = (int)Math.Ceiling(widthMagrin);
-            int height = (int)Math.Ceiling(heightMagrin);            
-            /*
+            int startX = (int)Math.Round(sx1 + widthMagrin * x);
+            int startY = (int)Math.Round(sy1 + heightMagrin * y);
+            int width = (int)Math.Round(widthMagrin);
+            int height = (int)Math.Round(heightMagrin);
             Bitmap bmp = null;
-            if (type == 3)
-                bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
-            else if (type == 5)
+             if (type == 5)
             {
                 bmp = new Bitmap(width, height);
                 using (System.Drawing.Graphics graphics = Graphics.FromImage(bmp))
                 {
-                    graphics.CopyFromScreen(sx1, sy1, 0, 0, new System.Drawing.Size(width, height));
+                    graphics.CopyFromScreen(startX, startY, 0, 0, new System.Drawing.Size(width, height));
                 }
             }
-            recognizeBoard(bmp);
-            */
-            return true;
+            else
+                bmp = GetWindowBmp(new IntPtr(hwnd), startX, startY, width, height);
+            return recognizeMove(bmp,x,y);
         }
 
         private void placeMove(object obj) {
             MoveInfo move =(MoveInfo)obj;
             int x = move.x;
             int y = move.y;
+            int times = 10;
             do
             {
                 placeStone(x, y);
-            } while (!VerifyMove(x, y));
+                times--;
+            } while (Program.verifyMove&&!VerifyMove(x, y)&& times>0);
         }
 
         public void place(int x,int y)
@@ -2158,7 +2232,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.doubleClick ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "")+"_"+type);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "")+"_"+type);
             wr.Close();
             if (chkShowInBoard.Checked)
             {
