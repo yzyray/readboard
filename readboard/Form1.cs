@@ -14,6 +14,7 @@ using System.Net.Sockets;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using System.Threading.Tasks;
+using System.Drawing.Imaging;
 
 namespace readboard
 {
@@ -35,7 +36,6 @@ namespace readboard
         public static CDmSoft dm2;
         int hwnd=0;
         Form2 form2;
-        Form3 form3;
         Form8 form8;
 
         Boolean startedSync = false;
@@ -48,9 +48,9 @@ namespace readboard
         int sy1;
         int width;
         int height;
-        int sx1ty5=0;
-        int sy1ty5=0;
-        int all;
+     //   int sx1ty5=0;
+     //   int sy1ty5=0;
+        //int all;
           //  System.Timers.Timer t;
        public static int type=5;
        // Boolean isQTYC = false;
@@ -59,19 +59,18 @@ namespace readboard
         int boardW = 19;
        static double widthMagrin=0;
         static double heightMagrin =0;
-        Boolean noticeLast = true;
+        //Boolean noticeLast = true;
         Boolean syncBoth = false;
         Boolean canUseLW = false;
         Boolean noLw = false;
         Boolean useTcp = false;
-        Boolean savedPlace = false;
-        int savedX;
-        int savedY;
         Thread thread;
         Boolean isMannulCircle = false;
         float factor = 1.0f;
         private KeyboardHookListener hookListener;
         private int port = 24781;
+
+        lw.lwsoft lwh;
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -242,7 +241,7 @@ namespace readboard
             }
         }
 
-        public Form1(String last,  String aitime, String playouts, String firstpo, String nolw, String usetcp,String serverPort)
+        public Form1(String aitime, String playouts, String firstpo, String nolw, String usetcp,String serverPort)
         {
             InitializeComponent();
             GlobalHooker hooker = new GlobalHooker();
@@ -399,14 +398,6 @@ namespace readboard
             else
                 this.button10.Enabled = false;
 
-            if (last.Equals("0"))
-                {
-                noticeLast = true;
-            }
-            if (last.Equals("1"))
-            {
-                noticeLast = false;
-            }
             if (syncBoth)
             {
                 chkBothSync.Checked = true;
@@ -567,13 +558,13 @@ namespace readboard
 
         //[DllImport("user32.dll")]
         //static extern void BlockInput(bool Block);
-        public void Snap( int sx1, int sy1, int sx2, int sy2)
+        public void Snap( int x1, int y1, int x2, int y2)
         {            
             pressed = true;
-            ox1 = Math.Min(sx1, sx2);
-            oy1 = Math.Min(sy1, sy2); 
-            ox2 = Math.Max(sx1, sx2);
-            oy2 = Math.Max(sy1, sy2);
+            ox1 = Math.Min(x1, x2);
+            oy1 = Math.Min(y1, y2); 
+            ox2 = Math.Max(x1, x2);
+            oy2 = Math.Max(y1, y2);
             if (!isMannulCircle)
             {
                 if (!reCalculateRow1(ox1, oy1, ox2, oy2))
@@ -674,35 +665,14 @@ namespace readboard
 
         private void button4_Click(object sender, EventArgs e)
         {
-           
             if (type == 5)
             {
-                //if (!CaptureScreen(ox1, oy1, ox2, oy2))
-                //    return;
-                ////m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
-                //IntPtr hwnds;
-                //if (form3 != null)
-                //{
-                //    hwnds = form3.setPic();
-                //}
-                //else
-                //{
-                //    form3 = new Form3();
-                //    hwnds = form3.setPic();
-                //    form3.Show();
-                //    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
-                //}
                 Send("sync");
-                // MessageBox.Show(hwnds.ToString());
-                //dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
-                //sx1ty5 = ox1;
-                //sy1ty5 = oy1;
                 sx1 = ox1;
                 sy1 = oy1;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
-                all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
-                OutPut3(true, null);
+                OutPut3(true);
             }
             else
             {
@@ -736,10 +706,10 @@ namespace readboard
                 }
 
                 if (type == 0)
-                    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0);
+                    dm.BindWindow(hwnd, "dx2", "normal", "normal", 0);
                 else
                 {
-                    dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
+                    dm.BindWindow(hwnd, "dx2", "windows", "normal", 0);
                 }
            //     startKeepingSync();
                 Send("sync");
@@ -758,7 +728,7 @@ namespace readboard
                     sy1 = (int)qy1;
                     width = (int)qx1 - (int)qx4;
                     height = width;
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                  //  all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 1)
                 {
@@ -775,7 +745,7 @@ namespace readboard
                         width =(int)(width / factor);
                         height = (int)(height / factor);
                             }
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+               //     all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 2)
                 {
@@ -791,7 +761,7 @@ namespace readboard
                     sy1 = (int)qy1 - 1;
                     height = (int)qy4 - (int)qy1 + 4;
                     width = height;
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+              //      all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 3)
                 {
@@ -799,6 +769,8 @@ namespace readboard
                     sy1 = (int)(oy1 - y1);
                     width = (int)((ox2 - ox1) );
                     height = (int)((oy2 - oy1) );
+                    Console.WriteLine(width);
+                    Console.WriteLine(height);
                     if (!Program.isAdvScale)
                     {
                         sx1 = (int)(sx1 / factor);
@@ -812,12 +784,12 @@ namespace readboard
                     //   // width = (int)(width / factor);
                     //  //  height = (int)(height / factor);
                     //}
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                 //   all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     //dm.Capture(sx1, sy1, sx1+width, sy1+ height, "backboard.bmp");
-                    OutPut3(true, null);
+                    OutPut3(true);
                 }
                 else
-                    OutPut(true, null);
+                    OutPut(true);
                 // if (t != null)
                 //  {
                 //       t.Enabled = false;
@@ -1028,36 +1000,15 @@ namespace readboard
             Boolean isRightGoban = true;
             if (type == 5)
             {
-                //if (!CaptureScreen(ox1, oy1, ox2, oy2))
-                //    return;
-                ////m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
-                //IntPtr hwnds;
-                //if (form3 != null)
-                //{
-                //    //form3.Close();
-                //    // form3.Dispose();
-                //    hwnds = form3.setPic();
-                //}
-                //else
-                //{
-                //    form3 = new Form3();
-                //    hwnds = form3.setPic();
-                //    form3.Show();
-                //    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
-                //}
+              
                 Send("sync");
-              //  dm.BindWindow((int)hwnds, "gdi", "normal", "normal", 0);
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a,"");
-              //  startKeepingSync();
-              //  sx1ty5 = ox1;
-              //  sy1ty5 = oy1;
                 sx1 = ox1;
                 sy1 = oy1;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
-                all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
-                OutPut3(true, null);
+                OutPut3(true);
             }
             else
             {
@@ -1085,7 +1036,7 @@ namespace readboard
                     dm.BindWindow(hwnd, "dx2", "normal", "normal", 0);
                 else
                 {
-                    dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
+                    dm.BindWindow(hwnd, "dx2", "windows", "normal", 0);
                 }
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
@@ -1107,7 +1058,7 @@ namespace readboard
                     sy1 = (int)qy1;
                     width = (int)qx1 - (int)qx4;
                     height = width;
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+           //         all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
 
                 if (type == 1)
@@ -1127,7 +1078,7 @@ namespace readboard
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+             //       all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 2)
                 {
@@ -1145,7 +1096,7 @@ namespace readboard
                     sy1 = (int)qy1 - 1;
                     height = (int)qy4 - (int)qy1 + 4;
                     width = height;
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+               //     all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 3)
                 {
@@ -1160,11 +1111,11 @@ namespace readboard
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
-                    OutPut3(true, null);
+              //      all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                    OutPut3(true);
                 }
                 else
-                    OutPut(true, null);
+                    OutPut(true);
             }
 
             keepSync = true;
@@ -1267,33 +1218,7 @@ namespace readboard
                 }
                 if (type == 5)
                 {
-                    //if (!CaptureScreen(ox1, oy1, ox2, oy2))
-                    //{
-                    //    return;
-                    //}
-                    //m.Capture(ox1, oy1, ox2, oy2, "screen.bmp");
-                    //IntPtr hwnds;
-                    //if (form3 != null)
-                    //{
-                    //    form3.Close();
-                    //    form3.Dispose();
-                    //    hwnds = form3.setPic();
-                    //}
-                    //else
-                    //{
-                    //    form3 = new Form3();
-                    //    hwnds = form3.setPic();
-                    //    form3.Show();
-                    //    dm.MoveWindow(form3.getHwnd(), 9999, 9999);
-                    //}
-
-                    //dm.BindWindow((int)hwnds, "dx2", "windows", "normal", 0);
-                   // sx1 = ox1;
-                   // sy1 = ox2;
-                   // width = ox2 - ox1;
-                   // height = oy2 - oy1;
-                   // all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
-                    OutPut3(false, null);
+                    OutPut3(false);
                 }
                 else
                 {
@@ -1315,25 +1240,8 @@ namespace readboard
                         Send("stopsync");
                         stopKeepingSync();
                         return;
-                    }
-                    //    int m = dm.GetWindowRect(hwnd, out x1, out y1, out x2, out y2);
-                    //if (m == 0)
-                    //{       
-                    //        if(canUseLW)
-                    //        {
-                    //            lw.lwsoft lwh;
-                    //            lwh = new lw.lwsoft();
-                    //            lwh.SetShowErrorMsg(0);
-                    //            lwh.UnBindWindow();
-                    //        }
-                    //        button5click = false;
-                            
-                    //        Send("stopsync");
-                    //        keepSync = false;
-                    //        dm.UnBindWindow();
-                    //        return;                
-                    //}
-                    int oldall = all;
+                    }                 
+                   int oldSize = width*height;
                     if (type == 0)
                     {                        
                         dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
@@ -1345,7 +1253,6 @@ namespace readboard
                         sy1 = (int)qy1;
                         width = (int)qx1 - (int)qx4;
                         height = width;
-                        all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     }
                     if (type == 1)
                     {
@@ -1358,7 +1265,6 @@ namespace readboard
                             width = (int)(width / factor);
                             height = (int)(height / factor);
                         }
-                        all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     }
                     if (type == 2)
                     {
@@ -1370,56 +1276,30 @@ namespace readboard
                         sy1 = (int)qy1 - 1;
                         height = (int)qy4 - (int)qy1 + 4;
                         width = height;
-                        all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                     }
-                    //if (type == 3)
-                    //{
-                    //    //sx1 = (int)(ox1  - (int)x1);
-                    //    //sy1 = (int)(oy1 - (int)y1);
-                    //  //  width = (int)((ox2 - ox1) );
-                    //    //height = (int)((oy2 - oy1) );
-                    //    if (!Program.isAdvScale)
-                    //    {
-                    //        sx1 = (int)(sx1 / factor);
-                    //        sy1 = (int)(sy1 / factor);
-                    //        width = (int)(width / factor);
-                    //        height = (int)(height / factor);
-                    //    }
-                    //    all = width / boardWidth * height / boardWidth;
-                    //    all = width / boardWidth * height / boardWidth;
-                    //}
-                    if (oldall != all)
+                  
+                    if (oldSize != width*height)
                     {
                         Send("clear");
                     }
                     if (type == 3)
-                    {
-                        if (canUseLW && syncBoth)
-                        {
-                            lw.lwsoft lwh;
-                            lwh = new lw.lwsoft();
-                            lwh.SetShowErrorMsg(0);
-
-                            Thread.Sleep(100);
-                            lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
-                            OutPut3(false, lwh);
-                        }
-                        else
-                            OutPut3(false, null);
+                    {                        
+                            OutPut3(false);
                     }
-                    // dm.BindWindowEx(hwnd, "gdi", "normal", "normal", "", 0);     
                     else
                    if (canUseLW && syncBoth)
-                    {
-                        lw.lwsoft lwh;
+                    {                 
+                        if(lwh==null)
                         lwh = new lw.lwsoft();
                         lwh.SetShowErrorMsg(0);
                         Thread.Sleep(100);
-                        lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
-                        OutPut(false, lwh);
+                        if (lwh.GetBindWindow() != hwnd)
+                        {
+                            lwh.UnBindWindow();
+                            lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+                        }                  
                     }
-                    else
-                        OutPut(false, null);
+                        OutPut(false);
                 }
                 try
                 {
@@ -1430,222 +1310,195 @@ namespace readboard
             Send("stopsync");
         }
 
-        private void recognizeStons(Bitmap input) {
-            if (input == null || input.Width <= boardW || input.Height <= boardH)
-                return;
-            int red=input.GetPixel(10, 10).R;
-            int green = input.GetPixel(10, 10).G;
-            int blue = input.GetPixel(10, 10).B;
-            //蓝色/红色判断最后一手
+        class RgbInfo {
+            public Byte r;
+           public Byte g;
+           public Byte b;
         }
 
-    private void OutPut(Boolean first,lw.lwsoft lwh) {           
-            if (lwh!=null&&savedPlace)
+        private void recognizeBoard(Bitmap input) {
+            if (input == null || input.Width <= boardW || input.Height <= boardH)
+                return;
+            Rectangle rect = new Rectangle(0, 0, input.Width, input.Height);
+            const int PixelWidth = 3;
+            const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
+            BitmapData data = input.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat);
+            RgbInfo[] rgbArray=new RgbInfo[data.Height* data.Width];
+            byte[] pixelData = new Byte[data.Stride];
+            for (int scanline = 0; scanline < data.Height; scanline++)
             {
-                savedPlace = false;
-                lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
-                lwh.LeftClick();
-            }
-            Bitmap bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
-            recognizeStons(bmp);
-            if (!(width <= boardW || height <= boardH))
-            {
-                String result = "";
-                if(first)
-                Send("start "+ boardW+" "+boardH+" " + hwnd);
-                for (int i = 0; i < boardH; i++)
+                Marshal.Copy(data.Scan0 + (scanline * data.Stride), pixelData, 0, data.Stride);
+                for (int pixeloffset = 0; pixeloffset < data.Width; pixeloffset++)
                 {
-                    for (int j = 0; j < boardW; j++)
+                    // PixelFormat.Format32bppRgb means the data is stored
+                    // in memory as BGR. We want RGB, so we must do some 
+                    // bit-shuffling.
+                    rgbArray[scanline * data.Width + pixeloffset] = new RgbInfo();
+                    rgbArray[scanline * data.Width + pixeloffset].r = pixelData[pixeloffset * PixelWidth + 2];
+                    rgbArray[scanline * data.Width + pixeloffset].g = pixelData[pixeloffset * PixelWidth + 1];
+                    rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
+                }
+            }
+
+            input.UnlockBits(data);
+
+            float hGap = input.Height / (float)boardH;
+            float vGap = input.Width / (float)boardW;
+            int hGapInt = (int)Math.Round(hGap);
+            int vGapInt = (int)Math.Round(vGap);
+          
+            int blackMinPercent = 200;
+            int blackTotalPercent = 0;
+            int blackMinX = -1;
+            int blackMinY = -1;
+            int blackCounts = 0;
+
+            int whiteMinPercent = 200;
+            int whiteTotalPercent = 0;
+            int whiteMinX = -1;
+            int whiteMinY = -1;
+            int whiteCounts = 0;
+            int[] resultValue = new int[boardH * boardW];
+
+            int blackPercentStandard = Program.blackZB;
+            int whitePercentStandard = Program.whiteZB;
+            int blackOffsetStandard = Program.blackPC;
+            int whiteOffsetStandard = Program.whitePC;
+            int grayOffsetStandard = Program.grayOffset;
+            Boolean isPlatform = false;
+            Boolean needFindLastMove = true;
+            String result = "";
+            if (type != 3 && type != 5) {
+                isPlatform = true;
+                 blackPercentStandard = 37;
+                    whitePercentStandard = 30;
+                 blackOffsetStandard = 96;
+                if (type == 1)
+                    whiteOffsetStandard = 80;
+                else
+                    whiteOffsetStandard = 112;
+                grayOffsetStandard = 50;
+            }          
+            for (int y = 0; y < boardH; y++)
+            {               
+                for (int x = 0; x <boardW; x++)
+                {                   
+                    Boolean isBlack = false;
+                    Boolean isWhite = false;
+                    Boolean isLastMove = false;
+                    int blackPercent =
+                        getWhiteBlackColorPercent(
+                            rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+                    if (blackPercent >= blackPercentStandard)
                     {
-                        int numw = 0;
-                        if (type == 1)
+                        isBlack = true;                     
+                        blackTotalPercent += blackPercent;
+                        blackCounts++;
+                        if (blackPercent < blackMinPercent)
                         {
-                            numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW) , sy1 + (int)Math.Round((height * i )/ (float)boardH) , sx1 + (int)Math.Round((width* (j + 1)) / (float)boardW) , sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH) , "FFFFFF-505050", 1.0);
+                            blackMinPercent = blackPercent;
+                            blackMinX = x;
+                            blackMinY = y;
                         }
-                        else
-                            numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FFFFFF-707070", 1.0);
-                     if ((type!=1&&numw < all * 0.32)||(type == 1&& numw < all * 0.30))
+                    }
+                    else
+                    {                        
+                        int whitePercent =
+                            getWhiteBlackColorPercent(
+                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+                        if (whitePercent >= whitePercentStandard)
                         {
-                            int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000000-606060", 1.0);
-                            if (numb < all * 0.37)
+                            if (x == 0
+                                || x == boardW - 1
+                                || y == 0
+                                || y == boardH - 1)
                             {
-                                result = result + "0,";
+                                if (whitePercent > 85) isWhite = false;
+                                else isWhite = true;
                             }
                             else
                             {
-                                if (noticeLast)
-                                {
-                                    if (type == 0)
-                                    {
-                                        if (all * 0.1 < numw && numw < all * 0.17)
-                                            result = result + "3,";
-                                        else
-                                        {
-                                            int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FF0000-202020", 1.0);
-                                            if (numblue > all * 0.02)
-                                                result = result + "3,";
-                                            else
-                                                result = result + "1,";
-                                        }
-                                    }
-                                    else if (type == 1)
-                                    {
-                                        if ( numw > all * 0.05)
-                                            result = result + "3,";
-                                        else
-                                        {
-                                            int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FF0000-202020", 1.0);
-                                            //  dm.GetColorNum(sx1 + (width / boardWidth) * j, sy1 + (height / boardWidth) * i, sx1 + (width / boardWidth) * (j + 1), sy1 + (height / boardWidth) * (i + 1), "FF0000-202020", 1.0);
-                                            if (numred > all * 0.005)
-                                                result = result + "3,";
-                                            else
-                                                result = result + "1,";
-                                        }
-                                    }
-                                    else if (type == 2) {
-                                        int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FFFF00-202020", 1.0);
-
-                                        //dm.GetColorNum(sx1 + (width / boardWidth) * j, sy1 + (height / boardWidth) * i, sx1 + (width / boardWidth) * (j + 1), sy1 + (height / boardWidth) * (i + 1), "FFFF00-202020", 1.0);
-                                        if (numred > all * 0.02)
-                                            result = result + "3,";
-                                        else
-                                            result = result + "1,";
-                                    }
-                                }
-                                else {
-                                    result = result + "1,";
-                                }
+                                if (whitePercent > 80) isWhite = false;
+                                else isWhite = true;
                             }
                         }
-                        else
+                        if (isWhite)
                         {
-                            if (noticeLast)
+                            
+                            whiteTotalPercent += whitePercent;
+                            whiteCounts++;
+                            if (whitePercent < whiteMinPercent)
                             {
-                                if (type == 0)
-                                {
-                                    int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000000-202020", 1.0);
-                                     if (all * 0.1 < numb && numb < all * 0.2)
-                                        result = result + "4,";
-                                    else
-                                    {
-                                        int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "0000FF-202020", 1.0);
-
-                                        if (numblue > all * 0.02)
-                                            result = result + "4,";
-                                        else
-                                            result = result + "2,";
-                                    }
-                                }
-                                else if (type == 1)
-                                {
-                                    int numblue = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "0000FF-202020", 1.0);
-
-                                    if (numblue > all * 0.005)
-                                        result = result + "4,";
-                                    else
-                                    {
-                                        int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FF0000-202020", 1.0);
-                                                                                
-                                        if (numred > all * 0.005)
-                                            result = result + "4,";
-                                        else
-                                            result = result + "2,";
-                                    }
-                                }
-
-                                else if (type == 2)
-                                {
-                                    int numred = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000080-202020", 1.0);
-
-                                    if (numred > all * 0.02)
-                                        result = result + "4,";
-                                    else
-                                        result = result + "2,";
-                                }
+                                whiteMinPercent = whitePercent;
+                                whiteMinX = x;
+                                whiteMinY = y;
                             }
-                            else {
-                                result = result + "2,";
-                            }
-                        }
-                        if (j == (boardW-1))
-                        {
-                            if(result.Length>1)
-                            result = result.Substring(0, result.Length - 1);
-                            Send("re=" + result);
-                            result = "";
                         }
                     }
+                    if (isPlatform&&needFindLastMove)
+                    {
+                        int redPercent = getRedBlueColorPercent(
+                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false,input.Width,input.Height);
+                        int bluePercent = getRedBlueColorPercent(
+                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, input.Width, input.Height);
+                        if (redPercent >= 10 || bluePercent >= 10)
+                        {   needFindLastMove = false;
+                            isLastMove = true;
+                        }
+                    }
+                    if(isBlack)
+                        if(isLastMove)
+                            resultValue[y * boardW + x] = 3;
+                        else
+                            resultValue[y * boardW + x] = 1;
+                    else if(isWhite)
+                        if (isLastMove)
+                            resultValue[y * boardW + x] = 4;
+                        else
+                            resultValue[y * boardW + x] = 2;
+                    else
+                        resultValue[y * boardW + x] = 0;
                 }
-                Send("end");
             }
-        }
-
-        private void OutPut3(Boolean first, lw.lwsoft lwh)
-        {
-            double zhanbiB = Program.blackZB / 100.0;
-            double zhanbiW = Program.whiteZB / 100.0;
-            String pianyiB = Convert.ToString(Program.blackPC, 16);
-            String pianyiW = Convert.ToString(Program.whitePC, 16);           
-            if (lwh != null && savedPlace)
-            {
-                savedPlace = false;
-                lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
-                lwh.LeftClick();
-            }
-            Bitmap bmp=null;
-                if(type==3)
-               bmp= GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
-            if (type == 5)
-            {
-                bmp = new Bitmap(width, height);
-                using (System.Drawing.Graphics graphics = Graphics.FromImage(Program.bitmap))
+            if (needFindLastMove) {
+                if (blackCounts >= 2 && whiteCounts >= 2)
                 {
-                    graphics.CopyFromScreen(ox1, oy1, 0, 0, new System.Drawing.Size(width,height));
-                    //bitmap.Save("screen.bmp");
+                    float blackMaxOffset =
+                        Math.Abs(
+                            blackMinPercent - (blackTotalPercent - blackMinPercent) / (float)(blackCounts - 1));
+                    float whiteMaxOffset =
+                        Math.Abs(
+                            whiteMinPercent - (whiteTotalPercent - whiteMinPercent) / (float)(whiteCounts - 1));
+                    if (blackMaxOffset >= whiteMaxOffset)
+                    {
+                        if (blackMinY >= 0 && blackMinX >= 0)
+                            resultValue[blackMinY * boardW + blackMinX] = 3;
+                    }
+                    else
+                    {
+                        if (whiteMinY >= 0 && whiteMinX >= 0)
+                            resultValue[whiteMinY * boardW + whiteMinX] = 4;
+                    }
+                }
+                else if (blackCounts > 0 && whiteCounts > 0)
+                {
+                    if (blackCounts < whiteCounts)
+                    {
+                        if (blackMinY >= 0 && blackMinX >= 0)
+                            resultValue[blackMinY * boardW + blackMinX] = 3;
+                    }
+                    if (blackCounts > whiteCounts)
+                    {
+                        if (whiteMinY >= 0 && whiteMinX >= 0)
+                            resultValue[whiteMinY * boardW + whiteMinX] = 4;
+                    }
                 }
             }
-            recognizeStons(bmp);
-            if (width <= boardW || height <= boardH)
-                return;
-            String result = "";
-            if (first)
-                Send("start " + boardW + " " + boardH +" "+ hwnd);
             for (int i = 0; i < boardH; i++)
             {
                 for (int j = 0; j < boardW; j++)
                 {
-                    int numb = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "000000-" + pianyiB + pianyiB + pianyiB, 1.0);
-
-                    if (numb < all * zhanbiB)
-                    {
-                        int numw = dm.GetColorNum(sx1 + (int)Math.Round((width * j) / (float)boardW), sy1 + (int)Math.Round((height * i) / (float)boardH), sx1 + (int)Math.Round((width * (j + 1)) / (float)boardW), sy1 + (int)Math.Round((height * (i + 1)) / (float)boardH), "FFFFFF-" + pianyiW + pianyiW + pianyiW, 1.0); 
-                        
-                        if (numw < all * zhanbiW)
-                        {
-
-                            result = result + "0,";
-                        }
-                        else
-                        {
-                            if (j == 0 || j == boardW - 1 || i == 0 || i == boardH - 1) {
-                                if (numw > all * 0.85)
-                                    result = result + "0,";
-                                else
-                                    result = result + "2,";
-                            }
-                            else
-                            {
-                                if (numw > all * 0.8)
-                                    result = result + "0,";
-                                else
-                                    result = result + "2,";
-                            }
-                        }
-                    }
-                    else
-                    {                       
-                            result = result + "1,";                      
-                    }
+                    result += resultValue[i * boardW + j] + ",";
                     if (j == (boardW - 1))
                     {
                         result = result.Substring(0, result.Length - 1);
@@ -1655,6 +1508,105 @@ namespace readboard
                 }
             }
             Send("end");
+        }
+
+        private int getRedBlueColorPercent(RgbInfo[] rgbArray, int startX, int startY, int width, int height, Boolean isBlue, int totalWidth, int totalHeight)
+        {
+            int sum = 0;
+            if (startX + width > totalWidth) startX = totalWidth - width;
+            if (startY + height > totalHeight) startY = totalHeight - height;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    RgbInfo rgbInfo = rgbArray[(startY + y) * totalWidth + startX + x];
+                    int red = rgbInfo.r;
+                    int green = rgbInfo.g;
+                    int blue = rgbInfo.b;
+                    if (isBlue)
+                        {
+                            if (red <= 30 && green <= 30 && blue >= 200)
+                            {
+                                sum++;
+                            }
+                        }
+                        else
+                        {
+                            if (red >= 200 && green <= 30 && blue <= 30)
+                            {
+                                sum++;
+                            }
+                        }                    
+                }
+            }
+            return (100 * sum) / (width * height);
+        }
+
+        private int getWhiteBlackColorPercent(RgbInfo[] rgbArray, int startX, int startY, int width, int height, Boolean isBlack,int offset,int grayOffset,int totalWidth,int totalHeight)
+        {
+            int sum = 0;
+            if (startX + width > totalWidth) startX = totalWidth - width;
+            if (startY + height > totalHeight) startY = totalHeight - height;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    RgbInfo rgbInfo = rgbArray[(startY+y) * totalWidth + startX+x];
+                    int red = rgbInfo.r;
+                    int green = rgbInfo.g;
+                    int blue = rgbInfo.b;
+                    if (Math.Abs(red - green) < grayOffset
+                        && Math.Abs(green - blue) < grayOffset
+                        && Math.Abs(blue - red) < grayOffset)
+                    {
+                        if (isBlack)
+                        {
+                            if (red <= offset && green <= offset && blue <= offset)
+                            {
+                                sum++;
+                            }
+                        }
+                        else
+                        {
+                            int value = 255 - offset;
+                            if (red >= value && green >= value && blue >= value)
+                            {
+                                sum++;
+                            }
+                        }
+                    }
+                }
+            }
+            return (100 * sum) / (width * height);
+        }
+
+        private void OutPut(Boolean first) {       
+            if (first)
+                Send("start " + boardW + " " + boardH + " " + hwnd);
+            Bitmap bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);          
+            recognizeBoard(bmp);            
+        }
+
+        private void OutPut3(Boolean first)
+        {
+            double zhanbiB = Program.blackZB / 100.0;
+            double zhanbiW = Program.whiteZB / 100.0;
+            String pianyiB = Convert.ToString(Program.blackPC, 16);
+            String pianyiW = Convert.ToString(Program.whitePC, 16);         
+            Bitmap bmp=null;
+                if(type==3)
+               bmp= GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
+            else if (type == 5)
+            {
+                bmp = new Bitmap(width, height);
+                using (System.Drawing.Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    graphics.CopyFromScreen(sx1, sy1, 0, 0, new System.Drawing.Size(width,height));                    
+                }
+            }
+            if (first)
+                Send("start " + boardW + " " + boardH);
+            recognizeBoard(bmp);            
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -1840,58 +1792,94 @@ namespace readboard
          //   dm.SetWindowState(hwnd8, 0);
         }
 
-        public void place(int x,int y)
-        {
-            if (!keepSync)
-                return;
-            if (syncBoth&&type == 5)
+        class MoveInfo {
+          public int x;
+          public int y;
+        }
+
+        private void placeStone(int x,int y) {
+            if (syncBoth && type == 5)
             {
                 object xo, yo;
                 dm2.GetCursorPos(out xo, out yo);
-                dm2.MoveTo(sx1ty5 + (int)(widthMagrin * (x + 0.5)), sy1ty5 + (int)(heightMagrin * (y + 0.5)));
-                //Thread.Sleep(50);
+                dm2.MoveTo(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
                 dm2.LeftClick();
-                //Thread.Sleep(50);
-                if(Program.doubleClick)
-                dm2.LeftClick();
+                if (Program.doubleClick)
+                    dm2.LeftClick();
                 dm2.MoveTo((int)xo, (int)yo);
             }
             else
-            if (syncBoth&&hwnd!=0)
+        if (syncBoth && hwnd != 0)
             {
-                if (type == 0 && canUseLW)
+                if (type == 0 && canUseLW && lwh != null)
                 {
-                    savedPlace = true;
-                    savedX = x;
-                    savedY = y;
+                        lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
+                        lwh.LeftClick();
+                }
+                else  if (type == 0)
+                {
+                    object xo, yo;
+                    dm2.GetCursorPos(out xo, out yo);
+                    dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
+                    dm.LeftClick();
+                    dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
+                    dm.LeftClick();
+                    dm2.MoveTo((int)xo, (int)yo);
                 }
                 else
                 {
-                    if (type == 0)
-                    {
-                        object xo, yo;
-                        dm2.GetCursorPos(out xo, out yo);
-
+                    if (Program.isAdvScale)
                         dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
-                        //Thread.Sleep(20);
-                        dm.LeftClick();
-                        dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
-                        dm.LeftClick();
-                        //Thread.Sleep(20);
-                        dm2.MoveTo((int)xo, (int)yo);
-                    }
                     else
-                    {         
-                        if(Program.isAdvScale)
-                            dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
-                        else
-                            dm.MoveTo((int)Math.Round((sx1 + widthMagrin * (x + 0.5))*factor), (int)Math.Round((sy1 + heightMagrin * (y + 0.5))*factor));
-                        dm.LeftClick();
-                    }
+                        dm.MoveTo((int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * factor), (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * factor));
+                    dm.LeftClick();
                 }
             }
         }
- 
+
+        private Boolean VerifyMove(int x, int y)
+        {
+            if (!Program.doubleClick)
+                return true;
+            Thread.Sleep(200);
+            /*
+            Bitmap bmp = null;
+            if (type == 3)
+                bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
+            else if (type == 5)
+            {
+                bmp = new Bitmap(width, height);
+                using (System.Drawing.Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    graphics.CopyFromScreen(sx1, sy1, 0, 0, new System.Drawing.Size(width, height));
+                }
+            }
+            recognizeBoard(bmp);
+            */
+            return true;
+        }
+
+        private void placeMove(object obj) {
+            MoveInfo move =(MoveInfo)obj;
+            int x = move.x;
+            int y = move.y;
+            do
+            {
+                placeStone(x, y);
+            } while (!VerifyMove(x, y));
+        }
+
+        public void place(int x,int y)
+        {
+            if (!keepSync)
+                return;         
+
+                MoveInfo move=new MoveInfo();
+                move.x = x;
+                move.y = y;
+                Thread t = new Thread(placeMove);
+                t.Start(move);  
+        } 
 
         private void textbox1_TextChanged(object sender, EventArgs e)
         {
@@ -2293,11 +2281,13 @@ namespace readboard
             form2.ShowDialog();
         }
 
-        private List<verticalLine> verticalLines = new List<verticalLine>();
-        private List<horizonLine> horizonLines = new List<horizonLine>();
+        private List<verticalLine> verticalLines;
+        private List<horizonLine> horizonLines;
 
         private void boardLineAjust(int boardWidth1,int boardHeight1)
         {
+            verticalLines = new List<verticalLine>();
+            horizonLines = new List<horizonLine>();
             Mat srcImage = OpenCvSharp.Extensions.BitmapConverter.ToMat(Program.bitmap);
             //Mat src_gray = new Mat();
             //   Mat copy = new Mat();
@@ -2666,9 +2656,9 @@ namespace readboard
 
             ox1 = ox1+leftPos- hGap;
             oy1 = oy1+topPos-vGap;
-
-
-          //  Cv2.Canny(srcImage, contours, 100, 250);
+            Console.WriteLine(ox2);
+            Console.WriteLine(ox1);
+            //  Cv2.Canny(srcImage, contours, 100, 250);
             //Rect roi = new Rect(leftPos - vGap, topPos - vGap, rightPos-leftPos + hGap*2, bottomPos- topPos + vGap * 2);//首先要用个rect确定我们的兴趣区域在哪
             //Mat ImageROI = new Mat(contours, roi);
             //Mat ImageShow = new Mat(srcImage, roi);

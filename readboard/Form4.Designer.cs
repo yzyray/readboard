@@ -162,7 +162,7 @@
             // chkMag
             // 
             this.chkMag.AutoSize = true;
-            this.chkMag.Location = new System.Drawing.Point(12, 12);
+            this.chkMag.Location = new System.Drawing.Point(12, 33);
             this.chkMag.Name = "chkMag";
             this.chkMag.Size = new System.Drawing.Size(84, 16);
             this.chkMag.TabIndex = 12;
@@ -190,17 +190,17 @@
             // chkDoubleCheck
             // 
             this.chkDoubleCheck.AutoSize = true;
-            this.chkDoubleCheck.Location = new System.Drawing.Point(109, 12);
+            this.chkDoubleCheck.Location = new System.Drawing.Point(218, 12);
             this.chkDoubleCheck.Name = "chkDoubleCheck";
-            this.chkDoubleCheck.Size = new System.Drawing.Size(276, 16);
+            this.chkDoubleCheck.Size = new System.Drawing.Size(108, 16);
             this.chkDoubleCheck.TabIndex = 15;
-            this.chkDoubleCheck.Text = "前台同步时双击(SABAKI/GOGUI需要去掉此选项)";
+            this.chkDoubleCheck.Text = "落子后进行验证";
             this.chkDoubleCheck.UseVisualStyleBackColor = true;
             // 
             // chkAutoMin
             // 
             this.chkAutoMin.AutoSize = true;
-            this.chkAutoMin.Location = new System.Drawing.Point(184, 33);
+            this.chkAutoMin.Location = new System.Drawing.Point(12, 12);
             this.chkAutoMin.Name = "chkAutoMin";
             this.chkAutoMin.Size = new System.Drawing.Size(198, 16);
             this.chkAutoMin.TabIndex = 16;
@@ -277,15 +277,15 @@
             // lblSyncInterval
             // 
             this.lblSyncInterval.AutoSize = true;
-            this.lblSyncInterval.Location = new System.Drawing.Point(10, 34);
+            this.lblSyncInterval.Location = new System.Drawing.Point(107, 34);
             this.lblSyncInterval.Name = "lblSyncInterval";
-            this.lblSyncInterval.Size = new System.Drawing.Size(101, 12);
+            this.lblSyncInterval.Size = new System.Drawing.Size(107, 12);
             this.lblSyncInterval.TabIndex = 23;
-            this.lblSyncInterval.Text = "同步时间间隔(ms)";
+            this.lblSyncInterval.Text = "同步时间间隔(ms):";
             // 
             // txtSyncInterval
             // 
-            this.txtSyncInterval.Location = new System.Drawing.Point(116, 29);
+            this.txtSyncInterval.Location = new System.Drawing.Point(219, 29);
             this.txtSyncInterval.Name = "txtSyncInterval";
             this.txtSyncInterval.Size = new System.Drawing.Size(56, 21);
             this.txtSyncInterval.TabIndex = 24;

@@ -44,8 +44,8 @@ namespace readboard
                 rdoNormalScale.Checked = true;
             if (!Program.isChn) {
                 this.Text = "Settings";
-                this.chkMag.Text = "UseMagnifier";
-                this.chkDoubleCheck.Text = "DoubleClickOnForeground(uncheck if sabaki/gogui)";
+                this.chkMag.Text = "Show Magnifier";
+                this.chkDoubleCheck.Text = "Verify Placed Stone";
                 this.chkAutoMin.Text = "Auto Minimize After Sync";
                 this.rdoNormalScale.Text = "NormalScale";
                 this.rdoAdvanceScale.Text = "AdvanceScale";
@@ -58,7 +58,7 @@ namespace readboard
                 this.label8.Text = "Notice: all parameter must be integer.";
                 this.label7.Text = "If got some unnecessary stones,try to decrease offset or increase ratio.";//如某种颜色棋子识别过多,可尝试降低偏差或增大占比
                 this.label6.Text = "If lost some stones,try to increase offset or decrease ratio";//如某种颜色棋子识别丢失,可尝试增大偏差或降低占比
-                this.lblSyncInterval.Text = "SyncInterval(ms)";
+                this.lblSyncInterval.Text = "Sync Interval(ms):";
                 this.button4.Text = "ResetAll";
                 this.button1.Text = "Confirm";
                 this.button2.Text = "Cancel";
