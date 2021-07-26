@@ -1371,6 +1371,7 @@ namespace readboard
             if (type != 3 && type != 5) {
                 isPlatform = true;
                  blackPercentStandard = 37;
+
                     whitePercentStandard = 30;
                  blackOffsetStandard = 96;
                 if (type == 1)
@@ -1842,6 +1843,10 @@ namespace readboard
             if (!Program.doubleClick)
                 return true;
             Thread.Sleep(200);
+            int startX = (int)Math.Floor(sx1 + widthMagrin * x);
+            int startY = (int)Math.Floor(sy1 + heightMagrin * y);
+            int width = (int)Math.Ceiling(widthMagrin);
+            int height = (int)Math.Ceiling(heightMagrin);            
             /*
             Bitmap bmp = null;
             if (type == 3)
