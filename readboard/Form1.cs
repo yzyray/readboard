@@ -71,6 +71,9 @@ namespace readboard
         private int port = 24781;
 
         lw.lwsoft lwh;
+        Boolean savedPlace = false;
+        int savedX;
+        int savedY;
 
         int posX = -1;
         int posY = -1;
@@ -244,7 +247,7 @@ namespace readboard
             }
         }
 
-        public Form1(String aitime, String playouts, String firstpo, String nolw, String usetcp,String serverPort)
+        public Form1(String aitime, String playouts, String firstpo,  String usetcp,String serverPort)
         {
             InitializeComponent();
             GlobalHooker hooker = new GlobalHooker();
@@ -392,8 +395,6 @@ namespace readboard
                 case 3:
                     rdoBack.Checked = true;
                     break;
-
-
             }
             this.chkShowInBoard.Checked = Program.showInBoard;
             Program.showInBoard = chkShowInBoard.Checked;
@@ -418,17 +419,11 @@ namespace readboard
             {
                 chkBothSync.Checked = true;
                 chkAutoPlay.Enabled = true;
-                Send("bothSync");
             }
             else
             {
                 chkBothSync.Checked = false;
                 chkAutoPlay.Enabled = false;
-                Send("nobothSync");
-            }
-            if (nolw.Equals("1"))
-            {
-                noLw = true;
             }
             if (usetcp.Equals("1"))
             {
@@ -439,9 +434,7 @@ namespace readboard
             if(!playouts.Equals(" "))
             textBox2.Text = playouts;
             if (!firstpo.Equals(" "))
-                textBox3.Text = firstpo;
-            if (!noLw)
-            {
+                textBox3.Text = firstpo;            
                 try
                 {
                   //  int s = DllRegisterServer();
@@ -451,8 +444,7 @@ namespace readboard
                         try
                         {
                             Thread.Sleep(300);
-                            lw.lwsoft lw;
-                            lw = new lw.lwsoft();
+                            lwh = new lw.lwsoft();
                             canUseLW = true;
                         }
                         catch (Exception )
@@ -469,8 +461,7 @@ namespace readboard
                 catch (Exception)
                 {
                     canUseLW = false;
-                }
-            }
+                }            
             radioWhite.Enabled = false;
             radioBlack.Enabled = false;
             textBox1.Enabled = false;
@@ -1299,23 +1290,18 @@ namespace readboard
                         Send("clear");
                     }
                     if (type == 3)
-                    {                        
-                            OutPut3(false);
+                    {
+                        OutPut3(false);
                     }
-                    else
-                   if (canUseLW && syncBoth)
-                    {                 
-                        if(lwh==null)
-                        lwh = new lw.lwsoft();
-                        lwh.SetShowErrorMsg(0);
-                        Thread.Sleep(100);
-                        if (lwh.GetBindWindow() != hwnd)
-                        {
-                            lwh.UnBindWindow();
+                    else {
+                  if (type==0&&canUseLW && syncBoth)
+                    {
+                            lwh = new lw.lwsoft();
+                            if (lwh.GetBindWindow()!=hwnd)
                             lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
-                        }                  
                     }
-                        OutPut(false);
+                    OutPut(false);
+                    }
                 }
                 try
                 {
@@ -1671,7 +1657,19 @@ namespace readboard
             return (100 * sum) / (width * height);
         }
 
-        private void OutPut(Boolean first) {       
+        private void OutPut(Boolean first) {
+
+            if (lwh != null && savedPlace)
+            {
+                savedPlace = false;
+                int times = 10;
+                do
+                {
+                    lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
+                    lwh.LeftClick();
+                    times--;
+                } while (Program.verifyMove && !VerifyMove(savedX, savedY) && times > 0);
+            }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);
             Bitmap bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);          
@@ -1905,12 +1903,14 @@ namespace readboard
             else
         if (syncBoth && hwnd != 0)
             {
-                if (type == 0 && canUseLW && lwh != null)
+                if (type == 0 && canUseLW)
                 {
-                        lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
-                        lwh.LeftClick();
+                        savedPlace = true;
+                        savedX = x;
+                        savedY = y;                   
                 }
-                else  if (type == 0)
+                else
+         if (type == 0)
                 {
                     object xo, yo;
                     dm2.GetCursorPos(out xo, out yo);
@@ -1933,8 +1933,6 @@ namespace readboard
 
         private Boolean VerifyMove(int x, int y)
         {
-            if (!Program.verifyMove)
-                return true;
             Thread.Sleep(200);
             int startX = (int)Math.Round(sx1 + widthMagrin * x);
             int startY = (int)Math.Round(sy1 + heightMagrin * y);
@@ -1970,7 +1968,6 @@ namespace readboard
         {
             if (!keepSync)
                 return;         
-
                 MoveInfo move=new MoveInfo();
                 move.x = x;
                 move.y = y;
@@ -2070,10 +2067,6 @@ namespace readboard
                     {
                         Send("play>white>" + (textBox1.Text.Equals("") ? "0" : textBox1.Text) + " " + (textBox2.Text.Equals("") ? "0" : textBox2.Text) + " " + (textBox3.Text.Equals("") ? "0" : textBox3.Text));
                     }             
-               // ThreadStart threadStart = new ThreadStart(OutPutTime);
-               // thread = new Thread(OutPutTime);
-               // thread.SetApartmentState(ApartmentState.STA);
-               // thread.Start();
             }
             this.saveOtherConfig();
         }

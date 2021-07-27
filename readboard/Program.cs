@@ -49,16 +49,16 @@ namespace readboard
             Thread thread = new Thread(Start);
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();//启动界面
-            if (arg.Length < 8)
+            if (arg.Length < 7)
                 System.Environment.Exit(0);
-            if (arg[6].Equals("0"))
+            if (arg[5].Equals("0"))
             {
                 isChn = true;
             }
             else {
                 isChn = false;
             }
-                if (arg[5].Equals("0"))
+                if (arg[4].Equals("0"))
             {
                 AllocConsole();
                 hideConsole();
@@ -119,7 +119,7 @@ namespace readboard
             {
                 if (arg[0].Equals("yzy"))
                 {
-                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4], arg[5], arg[7]));                
+                        Application.Run(new Form1(arg[1], arg[2], arg[3], arg[4],  arg[6]));                
                 }
             }
             catch (Exception ex)
