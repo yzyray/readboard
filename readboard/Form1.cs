@@ -802,7 +802,17 @@ namespace readboard
                 //       t.Enabled = false;
                 //   }
             }
-        }
+            if (hwnd>0)
+            {
+                if(dm.IsBind(hwnd) > 0)
+                dm.UnBindWindow();
+                if (canUseLW)
+                {
+                    lw.lwsoft lw = new lw.lwsoft();
+                    lw.ForceUnBindWindow(hwnd);
+                }
+            }
+            }
 
         private void minWindow(String a) {
             this.WindowState = FormWindowState.Minimized;
@@ -1178,11 +1188,15 @@ namespace readboard
 
         private void stopSync()
         {
-            dm.UnBindWindow();
-            if (canUseLW)
+            if (hwnd > 0)
             {
-                lw.lwsoft lw = new lw.lwsoft();
-                lw.UnBindWindow();
+                if (dm.IsBind(hwnd) > 0)
+                    dm.UnBindWindow();
+                if (canUseLW)
+                {
+                    lw.lwsoft lw = new lw.lwsoft();
+                    lw.ForceUnBindWindow(hwnd);
+                }
             }
             Send("stopsync");
             stopKeepingSync();
@@ -1804,7 +1818,7 @@ namespace readboard
             {
                 lw.lwsoft lw = new lw.lwsoft();
                 if (lw.IsBind(hwnd) > 0)
-                    lw.UnBindWindow();
+                    lw.ForceUnBindWindow(hwnd);
             }
             Send("stopsync");
             Send("nobothSync");
@@ -2300,16 +2314,8 @@ namespace readboard
             else
             {
                 isContinuousSyncing = false;
-                dm.UnBindWindow();
-                if (canUseLW)
-                {
-                    lw.lwsoft lw = new lw.lwsoft();
-                    lw.UnBindWindow();
-                }
-                Send("stopsync");
-                stopKeepingSync();               
+                stopSync();
                 this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
-                keepSync = false;
             }
         }
 
