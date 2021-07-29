@@ -62,7 +62,7 @@ namespace readboard
         //Boolean noticeLast = true;
         Boolean syncBoth = false;
         Boolean canUseLW = false;
-        Boolean noLw = false;
+        //Boolean noLw = false;
         Boolean useTcp = false;
         Thread thread;
         Boolean isMannulCircle = false;
@@ -216,40 +216,83 @@ namespace readboard
             {               
                 while (true)
                 {
-                    byte[] data = new byte[20000];
+                    try
+                    {
+                        byte[] data = new byte[20000];
                     int numBytesRead = io.Read(data, 0, data.Length);
                     if (numBytesRead > 0)
                     {
                         readStr = Encoding.UTF8.GetString(data, 0, numBytesRead);
                         Console.WriteLine(readStr);
+                    }                    
+                        this.Invoke(new Action(() => { readPlace(readStr); }));
                     }
-                    this.Invoke(new Action(() => { readPlace(readStr); }));
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Console.WriteLine("err");
+                Console.WriteLine(e);
             }
         }
         private void readPlace(String a) {
             if (a.StartsWith("place"))
             {
                 char[] separator = { ' ' }; string[] arr = a.Split(separator);
-              place(int.Parse(arr[1]), int.Parse(arr[2]));
+                try
+                {
+                    Form1.pcurrentWin.place(int.Parse(arr[1]), int.Parse(arr[2]));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
             if (a.StartsWith("loss"))
             {
-              lossFocus();
+                Form1.pcurrentWin.lossFocus();
             }
             if (a.StartsWith("notinboard"))
             {
-                stopInBoard();
+                Form1.pcurrentWin.stopInBoard();
+            }
+            if (a.StartsWith("version"))
+            {
+                Form1.pcurrentWin.sendVersion();
+            }
+            if (a.StartsWith("quit"))
+            {
+                Control.CheckForIllegalCrossThreadCalls = false;
+                Form1.pcurrentWin.shutdown();
             }
         }
 
         public Form1(String aitime, String playouts, String firstpo,  String usetcp,String serverPort)
         {
             InitializeComponent();
+            if (usetcp.Equals("1"))
+            {
+                useTcp = true;
+            }
+            if (useTcp)
+            {
+                try
+                {
+                    port = Convert.ToInt32(serverPort);
+                    client = new TcpClient("127.0.0.1", port);
+                    io = client.GetStream();
+                    threadReceive = new Thread(new ThreadStart(Receive));
+                    threadReceive.IsBackground = true;
+                    threadReceive.Start();
+                }
+                catch
+                {
+                    MessageBox.Show(Program.isChn ? "棋盘同步工具与Lizzie连接失败" : "Can not connect to Lizzie");
+                }
+            }
             GlobalHooker hooker = new GlobalHooker();
             hookListener = new KeyboardHookListener(hooker);
             hookListener.KeyDown += HookListener_KeyDown;
@@ -413,22 +456,7 @@ namespace readboard
             if (type == 0 || type == 1 || type == 2)
                 this.button10.Enabled = true;
             else
-                this.button10.Enabled = false;
-
-            if (syncBoth)
-            {
-                chkBothSync.Checked = true;
-                chkAutoPlay.Enabled = true;
-            }
-            else
-            {
-                chkBothSync.Checked = false;
-                chkAutoPlay.Enabled = false;
-            }
-            if (usetcp.Equals("1"))
-            {
-                useTcp = true;
-            }            
+                this.button10.Enabled = false;    
             if (!aitime.Equals(" "))
                 textBox1.Text = aitime;
             if(!playouts.Equals(" "))
@@ -466,22 +494,16 @@ namespace readboard
             radioBlack.Enabled = false;
             textBox1.Enabled = false;
             textBox2.Enabled = false;
-            textBox3.Enabled = false;
-            if (useTcp)
+            textBox3.Enabled = false;          
+            if (syncBoth)
             {
-                try
-                {
-                    port= Convert.ToInt32(serverPort); 
-                    client = new TcpClient("127.0.0.1", port);
-                    threadReceive = new Thread(new ThreadStart(Receive));
-                    threadReceive.IsBackground = true;
-                    threadReceive.Start();
-                    io = client.GetStream();
-                }
-                catch
-                {
-                    MessageBox.Show(Program.isChn?"棋盘同步工具与Lizzie连接失败":"Can not connect to Lizzie");
-                }
+                chkBothSync.Checked = true;
+                chkAutoPlay.Enabled = true;
+            }
+            else
+            {
+                chkBothSync.Checked = false;
+                chkAutoPlay.Enabled = false;
             }
             if (!Program.isChn) {
                 this.rdoFox.Text = "FoxWQ";
@@ -512,7 +534,11 @@ namespace readboard
                 this.button6.Text = "ClearBoard";
                 this.button11.Text = "CircleRow1";
                this.Text = "Board Synchronization Tool";
-            }           
+            }
+            if (useTcp)
+            {
+                Send("ready");
+            }
         }
         MouseHookListener mh;
         /// <summary>
@@ -1573,12 +1599,12 @@ namespace readboard
                 }
                 else if (blackCounts > 0 && whiteCounts > 0)
                 {
-                    if (blackCounts < whiteCounts)
+                    if (blackCounts > whiteCounts)
                     {
                         if (blackMinY >= 0 && blackMinX >= 0)
                             resultValue[blackMinY * boardW + blackMinX] = 3;
                     }
-                    if (blackCounts > whiteCounts)
+                    if (blackCounts < whiteCounts)
                     {
                         if (whiteMinY >= 0 && whiteMinX >= 0)
                             resultValue[whiteMinY * boardW + whiteMinX] = 4;

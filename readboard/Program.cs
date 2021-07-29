@@ -82,7 +82,7 @@ namespace readboard
                     {
                         Form1.pcurrentWin.sendVersion();
                     }
-                    if (a.Equals("quit"))
+                    if (a.StartsWith("quit"))
                     {
                         Control.CheckForIllegalCrossThreadCalls = false;
                         Form1.pcurrentWin.shutdown();
