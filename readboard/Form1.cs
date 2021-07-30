@@ -1356,11 +1356,11 @@ namespace readboard
                     }
                     else {
                   if (type==0&&canUseLW && syncBoth)
-                    {
+                    {                         
                             lwh = new lw.lwsoft();
                             lwh.SetShowErrorMsg(0);
                             if (hwndFoxPlace > 0|| hwndFoxPlace==-100)
-                            {                                 
+                            {
                                 int finalWidth = 0;
                                 hwndFoxPlace = -100;
                                 String hwnds = dm.EnumWindowByProcess("foxwq.exe", "", "#32770", 16);
@@ -1388,9 +1388,8 @@ namespace readboard
                                 if (hwndFoxPlace>0&&lwh.GetBindWindow() != hwndFoxPlace)
                                     lwh.BindWindow(hwndFoxPlace, 0, 4, 0, 0, 0);
                             }
-                            else { 
-                            if (lwh.GetBindWindow()!=hwnd)
-                            lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+                            else {                                
+                                    lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
                             }
                         }
                     OutPut(false);
@@ -1759,9 +1758,10 @@ namespace readboard
                 do
                 {
                     lwh.MoveTo((int)Math.Round(px1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(py1 + heightMagrin * (savedY + 0.5)));
-                    lwh.LeftClick();
+                    lwh.LeftClick();                  
                     times--;
                 } while (Program.verifyMove && !VerifyMove(savedX, savedY,true) && times > 0);
+                lwh.UnBindWindow();
             }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);
