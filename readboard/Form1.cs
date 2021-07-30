@@ -35,6 +35,7 @@ namespace readboard
         public static CDmSoft dm;
         public static CDmSoft dm2;
         int hwnd=0;
+        int hwndFoxPlace = 0;
         Form2 form2;
         Form8 form8;
 
@@ -44,6 +45,8 @@ namespace readboard
         object qy1;
         
         Boolean keepSync = false;
+        int px1;
+        int py1;
         int sx1;
         int sy1;
         int width;
@@ -449,7 +452,9 @@ namespace readboard
 
             }
             dm = new CDmSoft();
+            dm.SetShowErrorMsg(0);
             dm2 = new CDmSoft();
+            dm2.SetShowErrorMsg(0);
             this.MaximizeBox = false;
             pcurrentWin = this;  
 
@@ -578,9 +583,8 @@ namespace readboard
         {
             string startup = Application.ExecutablePath;
             int pp = startup.LastIndexOf("\\");
-            startup = startup.Substring(0, pp);
-          
-            dm.SetShowErrorMsg(0);
+            startup = startup.Substring(0, pp);          
+            
             mh = new MouseHookListener(new GlobalHooker());
             
             mh.MouseMove += mh_MouseMoveEvent;
@@ -739,10 +743,10 @@ namespace readboard
                 }
 
                 if (type == 0)
-                    dm.BindWindow(hwnd, "dx2", "normal", "normal", 0);
+                    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0);
                 else
                 {
-                    dm.BindWindow(hwnd, "dx2", "windows", "normal", 0);
+                    dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
                 }
            //     startKeepingSync();
                 Send("sync");
@@ -949,7 +953,8 @@ namespace readboard
                     int y2;
                     if (type == 0)
                 {
-                    //hwnd = dm.FindWindow("#32770", "");
+                   hwnd = dm.FindWindow("#32770", "");
+                        hwndFoxPlace = -1;
                     String hwnds = dm.EnumWindowByProcess("foxwq.exe", "", "#32770", 16);
                     string[] hwndArray = hwnds.Split(',');
                     foreach (string oneHwnd in hwndArray)
@@ -967,7 +972,7 @@ namespace readboard
                             y1 = rect.Top;
                             if (x1 >= -9999 && y1 >= -9999 && x2 - x1 > finalWidth || finalWidth == 0)
                             {
-                                hwnd = hwndTemp;
+                                    hwndFoxPlace = hwndTemp;
                                 finalWidth = x2 - x1;
                             }
                         }
@@ -1076,10 +1081,10 @@ namespace readboard
                     return;
                 }
                 if (type == 0)
-                    dm.BindWindow(hwnd, "dx2", "normal", "normal", 0);
+                    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0);
                 else
                 {
-                    dm.BindWindow(hwnd, "dx2", "windows", "normal", 0);
+                    dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
                 }
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
@@ -1096,6 +1101,21 @@ namespace readboard
                     object qx4;
                     object qy4;
                     dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
+                    if (hwndFoxPlace > 0)
+                    {
+                        CDmSoft dm3=new CDmSoft();
+                        dm3.SetShowErrorMsg(0);
+                        dm3.BindWindow(hwndFoxPlace, "gdi", "normal", "normal", 0);
+                        object ppx1;
+                        object ppy1;
+                        object ppx4;
+                        object ppy4;
+                        dm3.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out ppx1, out ppy1);
+                        dm3.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out ppx4, out ppy4);
+                        dm3.UnBindWindow();
+                        px1 = (int)ppx4;
+                        py1 = (int)ppy1;
+                    }
                     // dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|-1|2E2E2E-050505,0|-2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|-1|-2E2E2E-050505,1|-1|-2E2E2E-050505,1|-2|-2E2E2E-050505", 1.0, 1, out qx4, out qy4);
                     sx1 = (int)qx4;
                     sy1 = (int)qy1;
@@ -1204,6 +1224,7 @@ namespace readboard
             }
             if (!startedSync)
             {
+                hwndFoxPlace = -1;
                 startContinuousSync(false);
             }
             else
@@ -1337,9 +1358,41 @@ namespace readboard
                   if (type==0&&canUseLW && syncBoth)
                     {
                             lwh = new lw.lwsoft();
+                            lwh.SetShowErrorMsg(0);
+                            if (hwndFoxPlace > 0|| hwndFoxPlace==-100)
+                            {                                 
+                                int finalWidth = 0;
+                                hwndFoxPlace = -100;
+                                String hwnds = dm.EnumWindowByProcess("foxwq.exe", "", "#32770", 16);
+                                string[] hwndArray = hwnds.Split(',');
+                                foreach (string oneHwnd in hwndArray)
+                                {
+                                    if (oneHwnd.Length == 0)
+                                        continue;
+                                    if (dm.GetWindowTitle(int.Parse(oneHwnd)).Equals("CChessboardPanel"))
+                                    {
+                                        int hwndTemp = int.Parse(oneHwnd);
+                                        p = new IntPtr(hwndTemp);
+                                        GetWindowRect(p, ref rect);
+                                        x2 = rect.Right;
+                                        y2 = rect.Bottom;
+                                        x1 = rect.Left;
+                                        y1 = rect.Top;
+                                        if (x1 >= -9999 && y1 >= -9999 && x2 - x1 > finalWidth || finalWidth == 0)
+                                        {
+                                            hwndFoxPlace = hwndTemp;
+                                            finalWidth = x2 - x1;
+                                        }
+                                    }
+                                }                                
+                                if (hwndFoxPlace>0&&lwh.GetBindWindow() != hwndFoxPlace)
+                                    lwh.BindWindow(hwndFoxPlace, 0, 4, 0, 0, 0);
+                            }
+                            else { 
                             if (lwh.GetBindWindow()!=hwnd)
                             lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
-                    }
+                            }
+                        }
                     OutPut(false);
                     }
                 }
@@ -1705,10 +1758,10 @@ namespace readboard
                 int times = 10;
                 do
                 {
-                    lwh.MoveTo((int)Math.Round(sx1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(sy1 + heightMagrin * (savedY + 0.5)));
+                    lwh.MoveTo((int)Math.Round(px1 + widthMagrin * (savedX + 0.5)), (int)Math.Round(py1 + heightMagrin * (savedY + 0.5)));
                     lwh.LeftClick();
                     times--;
-                } while (Program.verifyMove && !VerifyMove(savedX, savedY) && times > 0);
+                } while (Program.verifyMove && !VerifyMove(savedX, savedY,true) && times > 0);
             }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);
@@ -1971,11 +2024,11 @@ namespace readboard
             }
         }
 
-        private Boolean VerifyMove(int x, int y)
+        private Boolean VerifyMove(int x, int y,Boolean isLw)
         {
             Thread.Sleep(200);
-            int startX = (int)Math.Round(sx1 + widthMagrin * x);
-            int startY = (int)Math.Round(sy1 + heightMagrin * y);
+            int startX = (int)Math.Round(isLw?px1:sx1 + widthMagrin * x);
+            int startY = (int)Math.Round(isLw ? py1 : sy1 + heightMagrin * y);
             int width = (int)Math.Round(widthMagrin);
             int height = (int)Math.Round(heightMagrin);
             Bitmap bmp = null;
@@ -2001,7 +2054,7 @@ namespace readboard
             {
                 placeStone(x, y);
                 times--;
-            } while (Program.verifyMove&&!VerifyMove(x, y)&& times>0);
+            } while (Program.verifyMove&&!VerifyMove(x, y,false)&& times>0);
         }
 
         public void place(int x,int y)
