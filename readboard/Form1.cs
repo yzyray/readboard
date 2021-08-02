@@ -51,7 +51,7 @@ namespace readboard
         int sy1;
         int width;
         int height;
-        int rectSize;
+        //int rectSize;
         int rectX1;
         int rectY1;
         int iActulaWidth = Screen.PrimaryScreen.Bounds.Width;
@@ -78,7 +78,7 @@ namespace readboard
         private KeyboardHookListener hookListener;
         private int port = 24781;
 
-        lw.lwsoft lwh;
+       
         Boolean savedPlace = false;
         int savedX;
         int savedY;
@@ -480,7 +480,7 @@ namespace readboard
                         try
                         {
                             Thread.Sleep(300);
-                            lwh = new lw.lwsoft();
+                            lw.lwsoft lw = new lw.lwsoft();
                             canUseLW = true;
                         }
                         catch (Exception )
@@ -832,14 +832,6 @@ namespace readboard
                 //       t.Enabled = false;
                 //   }
             }
-            if (canUseLW)
-            {
-                lw.lwsoft lw = new lw.lwsoft();
-                if (hwndFoxPlace > 0)
-                    lw.ForceUnBindWindow(hwndFoxPlace);
-                if (hwnd > 0)
-                    lw.ForceUnBindWindow(hwnd);
-            }
         }
 
         private void minWindow(String a) {
@@ -1069,7 +1061,6 @@ namespace readboard
                 y2 = rect.Bottom;
                 x1 = rect.Left;
                 y1 = rect.Top;
-                rectSize = (x2-x1)*(y2-y1);
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                 {
                     if(!isSimpleSync&&startedSync)
@@ -1271,11 +1262,8 @@ namespace readboard
                     y2 = rect.Bottom ;
                     x1 = rect.Left ;
                     y1 = rect.Top;
-                    Boolean changedSize = rectSize != (x2 - x1) * (y2 - y1);
-                    if(changedSize)
-                    {
-                        rectSize = (x2 - x1) * (y2 - y1);
-                        Send("clear");
+
+                    int size = width * height;                      
                         if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                         {
                             //MessageBox.Show("请选择棋盘,同步停止");
@@ -1315,12 +1303,13 @@ namespace readboard
                                 return;
                             }
                         }
+                    Boolean changedSize = size != width * height;
+                    if (changedSize) {
+                        Send("clear");
                     }
                     if (type == 0) {
                         if (canUseLW && syncBoth)
-                        {
-                            lwh = new lw.lwsoft();
-                            lwh.SetShowErrorMsg(0);
+                        {                          
                             if (hwndFoxPlace > 0 || hwndFoxPlace == -100)
                             {                               
                                 int finalWidth = 0;
@@ -1347,21 +1336,11 @@ namespace readboard
                                         }
                                     }
                                 }
-                                if (hwndFoxPlace > 0&&changedSize)
+                                if (hwndFoxPlace > 0)
                                 {
                                     getFoxPos(new IntPtr(hwndFoxPlace), true);
-                                }
-                                if (hwndFoxPlace > 0 && lwh.GetBindWindow() != hwndFoxPlace)
-                                    lwh.BindWindow(hwndFoxPlace, 0, 4, 0, 0, 0);
-                            }
-                            else
-                            {
-                                if ( changedSize)
-                                {
-                                    getFoxPos(new IntPtr(hwnd), true);
-                                }
-                                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
-                            }
+                                }                                
+                            }                            
                         }
                     }
                     if (type == 3)
@@ -1729,8 +1708,11 @@ namespace readboard
         private void OutPut(Boolean first) {
             if (width < this.boardW || height < this.boardH)
                 return;
-            if (lwh != null && savedPlace)
+            if (savedPlace&&syncBoth)
             {
+                lw.lwsoft lwh = new lw.lwsoft();
+                lwh.SetShowErrorMsg(0);
+                lwh.BindWindow(hwndFoxPlace>0? hwndFoxPlace:hwnd, 0, 4, 0, 0, 0);
                 savedPlace = false;
                 int times = 10;
                 do
@@ -1739,7 +1721,7 @@ namespace readboard
                     lwh.LeftClick();                  
                     times--;
                 } while (Program.verifyMove && !VerifyMove(savedX, savedY,true) && times > 0);
-                lwh.UnBindWindow();
+                lwh.ForceUnBindWindow(hwndFoxPlace > 0 ? hwndFoxPlace : hwnd);
             }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);
@@ -2164,9 +2146,10 @@ namespace readboard
             }
             if (keepSync)
             {
-               // keepSync = false;
-               // Thread.Sleep(timeinterval*3/2 + 50);               
-               // keepSync = true;
+                // keepSync = false;
+                // Thread.Sleep(timeinterval*3/2 + 50);               
+                // keepSync = true;
+                hwndFoxPlace = -100;
                 Send("sync");
                 if (radioBlack.Checked)
                     {
@@ -3317,7 +3300,9 @@ namespace readboard
             else { 
             sx1 = upLeft.X;
             sy1 = upLeft.Y;
-            this.width =   upRight.X - upLeft.X;
+                px1 = upLeft.X;
+                py1 = upLeft.Y;
+                this.width =   upRight.X - upLeft.X;
             this.height = this.width;
             }
             return true;
@@ -3333,9 +3318,9 @@ namespace readboard
             switch (direction)
                 {
                 case 0:
-                    for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
                     {
-                        for (int x = 0; x < width; x++)
+                        for (int y = 0; y < height; y++)
                         {
                             if (getMultiColorPixel(rgbArray, x, y,width,height, colorInfos))
                             {
@@ -3347,9 +3332,9 @@ namespace readboard
                     }
                     break;
                 case 1:
-                    for (int y = 0; y < height; y++)
+                    for (int x = width - 1; x >= 0; x--)
                     {
-                        for (int x = width-1; x >= 0; x--)
+                        for (int y = 0; y < height; y++)
                         {
                             if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
                             {
@@ -3361,9 +3346,9 @@ namespace readboard
                     }
                     break;
                 case 2:
-                    for (int y = height-1; y>=0; y--)
+                    for (int x = 0; x < width; x++)
                     {
-                        for (int x = 0; x <width; x++)
+                        for (int y = height - 1; y >= 0; y--)
                         {
                             if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
                             {
@@ -3375,9 +3360,9 @@ namespace readboard
                     }
                     break;
                 case 3:
-                    for (int y = height - 1; y >= 0; y--)
+                    for (int x = width - 1; x >= 0; x--)
                     {
-                        for (int x = width - 1; x >= 0; x--)
+                        for (int y = height - 1; y >= 0; y--)
                         {
                             if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
                             {
