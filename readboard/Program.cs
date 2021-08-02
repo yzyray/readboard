@@ -61,7 +61,7 @@ namespace readboard
                 if (arg[4].Equals("0"))
             {
                 AllocConsole();
-                //hideConsole();
+                hideConsole();
                 while (true)
                 {
                     String a = Console.ReadLine();
