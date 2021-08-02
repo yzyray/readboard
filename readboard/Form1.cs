@@ -895,7 +895,6 @@ namespace readboard
             this.button10.Text = "一键同步";
             //if (this.factor <= 1)
             //{ 
-            this.button3.Enabled = true;
             this.button4.Enabled = true;
             this.btnKeepSync.Enabled = true;
             this.rdoFox.Enabled = true;
@@ -1728,7 +1727,8 @@ namespace readboard
         }
 
         private void OutPut(Boolean first) {
-
+            if (width < this.boardW || height < this.boardH)
+                return;
             if (lwh != null && savedPlace)
             {
                 savedPlace = false;
@@ -1749,6 +1749,8 @@ namespace readboard
 
         private void OutPut3(Boolean first)
         {
+            if (width < this.boardW || height < this.boardH)
+                return;
             double zhanbiB = Program.blackZB / 100.0;
             double zhanbiW = Program.whiteZB / 100.0;
             String pianyiB = Convert.ToString(Program.blackPC, 16);
@@ -2076,9 +2078,10 @@ namespace readboard
             int curX = Control.MousePosition.X;
             int curY = Control.MousePosition.Y;
             SetCursorPos(x, y);
+            mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
             mouse_event((int)(MouseEventFlags.LeftDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
             mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
-            SetCursorPos(curX, curY);
+             SetCursorPos(curX, curY);
         }
 
         private void textbox1_TextChanged(object sender, EventArgs e)
