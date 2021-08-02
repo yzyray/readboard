@@ -193,9 +193,9 @@
             this.chkVerifyMove.AutoSize = true;
             this.chkVerifyMove.Location = new System.Drawing.Point(218, 12);
             this.chkVerifyMove.Name = "chkVerifyMove";
-            this.chkVerifyMove.Size = new System.Drawing.Size(108, 16);
+            this.chkVerifyMove.Size = new System.Drawing.Size(132, 16);
             this.chkVerifyMove.TabIndex = 15;
-            this.chkVerifyMove.Text = "落子后进行验证";
+            this.chkVerifyMove.Text = "验证落子以确保成功";
             this.chkVerifyMove.UseVisualStyleBackColor = true;
             // 
             // chkAutoMin

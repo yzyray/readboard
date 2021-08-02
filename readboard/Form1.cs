@@ -33,7 +33,7 @@ namespace readboard
         public static int oy1;
         int oy2;
         public static CDmSoft dm;
-        public static CDmSoft dm2;
+        //public static CDmSoft dm2;
         int hwnd=0;
         int hwndFoxPlace = 0;
         Form2 form2;
@@ -41,8 +41,8 @@ namespace readboard
 
         Boolean startedSync = false;
         Boolean isContinuousSyncing = false;
-        object qx1;
-        object qy1;
+        //object qx1;
+       // object qy1;
         
         Boolean keepSync = false;
         int px1;
@@ -51,11 +51,16 @@ namespace readboard
         int sy1;
         int width;
         int height;
-     //   int sx1ty5=0;
-     //   int sy1ty5=0;
+        int rectSize;
+        int rectX1;
+        int rectY1;
+        int iActulaWidth = Screen.PrimaryScreen.Bounds.Width;
+        int iActulaHeight = Screen.PrimaryScreen.Bounds.Height;
+        //   int sx1ty5=0;
+        //   int sy1ty5=0;
         //int all;
-          //  System.Timers.Timer t;
-       public static int type=5;
+        //  System.Timers.Timer t;
+        public static int type=5;
        // Boolean isQTYC = false;
        // int boardWidth=19;
         int boardH = 19;
@@ -453,8 +458,6 @@ namespace readboard
             }
             dm = new CDmSoft();
             dm.SetShowErrorMsg(0);
-            dm2 = new CDmSoft();
-            dm2.SetShowErrorMsg(0);
             this.MaximizeBox = false;
             pcurrentWin = this;  
 
@@ -609,22 +612,22 @@ namespace readboard
                 else if(type==3)
                 {
                     object curX, curY;
-                    dm2.GetCursorPos(out curX, out curY);
+                    dm.GetCursorPos(out curX, out curY);
                    // BlockInput(true);
-                    dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                    dm.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(35);
-                        hwnd = dm2.GetMousePointWindow();
+                        hwnd = dm.GetMousePointWindow();
                     });
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(30);
-                        dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        dm.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                         Thread.Sleep(20);
-                        dm2.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        dm.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                         Thread.Sleep(50);
-                        dm2.MoveTo((int)curX, (int)curY);
+                        dm.MoveTo((int)curX, (int)curY);
                     });
                   //  BlockInput(false);                   
                 }
@@ -742,13 +745,6 @@ namespace readboard
                     }
                 }
 
-                if (type == 0)
-                    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0);
-                else
-                {
-                    dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
-                }
-           //     startKeepingSync();
                 Send("sync");
                 if (type == 0)
                 {
@@ -756,15 +752,17 @@ namespace readboard
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘":"Not right board");
                     }
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
-                    object qx4;
-                    object qy4;
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
-                    // dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|-1|2E2E2E-050505,0|-2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|-1|-2E2E2E-050505,1|-1|-2E2E2E-050505,1|-2|-2E2E2E-050505", 1.0, 1, out qx4, out qy4);
-                    sx1 = (int)qx4;
-                    sy1 = (int)qy1;
-                    width = (int)qx1 - (int)qx4;
-                    height = width;
+                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
+                    //object qx4;
+                    //object qy4;
+                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
+                    //// dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|-1|2E2E2E-050505,0|-2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|-1|-2E2E2E-050505,1|-1|-2E2E2E-050505,1|-2|-2E2E2E-050505", 1.0, 1, out qx4, out qy4);
+                    //sx1 = (int)qx4;
+                    //sy1 = (int)qy1;
+                    //width = (int)qx1 - (int)qx4;
+                    //height = width;
+                    if (!getFoxPos(new IntPtr(hwnd),false))
+                        return;
                   //  all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 1)
@@ -790,15 +788,17 @@ namespace readboard
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);
-                    object qx4;
-                    object qy4;
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 1, out qx4, out qy4);
-                    sx1 = (int)qx1 - 1;
-                    sy1 = (int)qy1 - 1;
-                    height = (int)qy4 - (int)qy1 + 4;
-                    width = height;
-              //      all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                    if (!getSinaPos(new IntPtr(hwnd)))
+                        return;
+                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);
+                    //object qx4;
+                    //object qy4;
+                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 1, out qx4, out qy4);
+                    //sx1 = (int)qx1 - 1;
+                    //sy1 = (int)qy1 - 1;
+                    //height = (int)qy4 - (int)qy1 + 4;
+                    //width = height;
+                    //      all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 3)
                 {
@@ -832,17 +832,15 @@ namespace readboard
                 //       t.Enabled = false;
                 //   }
             }
-            if (hwnd>0)
+            if (canUseLW)
             {
-                if(dm.IsBind(hwnd) > 0)
-                dm.UnBindWindow();
-                if (canUseLW)
-                {
-                    lw.lwsoft lw = new lw.lwsoft();
+                lw.lwsoft lw = new lw.lwsoft();
+                if (hwndFoxPlace > 0)
+                    lw.ForceUnBindWindow(hwndFoxPlace);
+                if (hwnd > 0)
                     lw.ForceUnBindWindow(hwnd);
-                }
             }
-            }
+        }
 
         private void minWindow(String a) {
             this.WindowState = FormWindowState.Minimized;
@@ -1072,7 +1070,7 @@ namespace readboard
                 y2 = rect.Bottom;
                 x1 = rect.Left;
                 y1 = rect.Top;
-
+                rectSize = (x2-x1)*(y2-y1);
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                 {
                     if(!isSimpleSync&&startedSync)
@@ -1080,48 +1078,29 @@ namespace readboard
                     stopKeepingSync();
                     return;
                 }
-                if (type == 0)
-                    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0);
-                else
-                {
-                    dm.BindWindow(hwnd, "gdi", "windows", "normal", 0);
-                }
+              
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
                 Send("sync");
                 if (type == 0)
                 {
+                    rectX1 = x1;
+                    rectY1 = y1;
                     if (!dm.GetWindowClass(hwnd).ToLower().Equals("#32770"))
                     {
                         if (!isSimpleSync && startedSync)
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
-                    object qx4;
-                    object qy4;
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
+                    if (!getFoxPos(new IntPtr(hwnd),false))
+                        return;
                     if (hwndFoxPlace > 0)
                     {
-                        CDmSoft dm3=new CDmSoft();
-                        dm3.SetShowErrorMsg(0);
-                        dm3.BindWindow(hwndFoxPlace, "gdi", "normal", "normal", 0);
-                        object ppx1;
-                        object ppy1;
-                        object ppx4;
-                        object ppy4;
-                        dm3.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out ppx1, out ppy1);
-                        dm3.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out ppx4, out ppy4);
-                        dm3.UnBindWindow();
-                        px1 = (int)ppx4;
-                        py1 = (int)ppy1;
+                        getFoxPos(new IntPtr(hwndFoxPlace), true);
                     }
-                    // dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|-1|2E2E2E-050505,0|-2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|-1|-2E2E2E-050505,1|-1|-2E2E2E-050505,1|-2|-2E2E2E-050505", 1.0, 1, out qx4, out qy4);
-                    sx1 = (int)qx4;
-                    sy1 = (int)qy1;
-                    width = (int)qx1 - (int)qx4;
-                    height = width;
-           //         all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                    else {
+                        getFoxPos(new IntPtr(hwnd), true);
+                    }
                 }
 
                 if (type == 1)
@@ -1151,15 +1130,8 @@ namespace readboard
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);
-                    object qx4;
-                    object qy4;
-                    dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 1, out qx4, out qy4);
-                    sx1 = (int)qx1 - 1;
-                    sy1 = (int)qy1 - 1;
-                    height = (int)qy4 - (int)qy1 + 4;
-                    width = height;
-               //     all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                    if (!getSinaPos(new IntPtr(hwnd)))
+                        return;
                 }
                 if (type == 3)
                 {
@@ -1235,15 +1207,13 @@ namespace readboard
 
         private void stopSync()
         {
-            if (hwnd > 0)
-            {
-                if (dm.IsBind(hwnd) > 0)
-                    dm.UnBindWindow();
                 if (canUseLW)
                 {
                     lw.lwsoft lw = new lw.lwsoft();
+                if(hwndFoxPlace>0)
+                    lw.ForceUnBindWindow(hwndFoxPlace);
+                if (hwnd > 0)
                     lw.ForceUnBindWindow(hwnd);
-                }
             }
             Send("stopsync");
             stopKeepingSync();
@@ -1302,65 +1272,58 @@ namespace readboard
                     y2 = rect.Bottom ;
                     x1 = rect.Left ;
                     y1 = rect.Top;
-                    if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
+                    Boolean changedSize = rectSize != (x2 - x1) * (y2 - y1);
+                    if(changedSize)
                     {
-                        //MessageBox.Show("请选择棋盘,同步停止");
-                        Send("stopsync");
-                        stopKeepingSync();
-                        return;
-                    }                 
-                   int oldSize = width*height;
-                    if (type == 0)
-                    {                        
-                        dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
-                        object qx4;
-                        object qy4;
-                        dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
-                        // dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|-1|2E2E2E-050505,0|-2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|-1|-2E2E2E-050505,1|-1|-2E2E2E-050505,1|-2|-2E2E2E-050505", 1.0, 1, out qx4, out qy4);
-                        sx1 = (int)qx4;
-                        sy1 = (int)qy1;
-                        width = (int)qx1 - (int)qx4;
-                        height = width;
-                    }
-                    if (type == 1)
-                    {
-                        sx1 = 0;
-                        sy1 = 0;
-                        width = x2 - x1;
-                        height = y2 - y1;
-                        if (!Program.isAdvScale)
+                        rectSize = (x2 - x1) * (y2 - y1);
+                        Send("clear");
+                        if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                         {
-                            width = (int)(width / factor);
-                            height = (int)(height / factor);
+                            //MessageBox.Show("请选择棋盘,同步停止");
+                            Send("stopsync");
+                            stopKeepingSync();
+                            return;
+                        }                      
+                        if (type == 0)
+                        {
+                            rectX1 = x1;
+                            rectY1 = y1;
+                            if (!getFoxPos(new IntPtr(hwnd), false))
+                            {
+                                Send("stopsync");
+                                stopKeepingSync();
+                                return;
+                            }                          
+                        }
+                        if (type == 1)
+                        {
+                            sx1 = 0;
+                            sy1 = 0;
+                            width = x2 - x1;
+                            height = y2 - y1;
+                            if (!Program.isAdvScale)
+                            {
+                                width = (int)(width / factor);
+                                height = (int)(height / factor);
+                            }
+                        }
+                        if (type == 2)
+                        {
+                            if (!getSinaPos(new IntPtr(hwnd)))
+                            {
+                                Send("stopsync");
+                                stopKeepingSync();
+                                return;
+                            }
                         }
                     }
-                    if (type == 2)
-                    {
-                        dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);
-                        object qx4;
-                        object qy4;
-                        dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 1, out qx4, out qy4);
-                        sx1 = (int)qx1 - 1;
-                        sy1 = (int)qy1 - 1;
-                        height = (int)qy4 - (int)qy1 + 4;
-                        width = height;
-                    }
-                  
-                    if (oldSize != width*height)
-                    {
-                        Send("clear");
-                    }
-                    if (type == 3)
-                    {
-                        OutPut3(false);
-                    }
-                    else {
-                  if (type==0&&canUseLW && syncBoth)
-                    {                         
+                    if (type == 0) {
+                        if (canUseLW && syncBoth)
+                        {
                             lwh = new lw.lwsoft();
                             lwh.SetShowErrorMsg(0);
-                            if (hwndFoxPlace > 0|| hwndFoxPlace==-100)
-                            {
+                            if (hwndFoxPlace > 0 || hwndFoxPlace == -100)
+                            {                               
                                 int finalWidth = 0;
                                 hwndFoxPlace = -100;
                                 String hwnds = dm.EnumWindowByProcess("foxwq.exe", "", "#32770", 16);
@@ -1384,14 +1347,29 @@ namespace readboard
                                             finalWidth = x2 - x1;
                                         }
                                     }
-                                }                                
-                                if (hwndFoxPlace>0&&lwh.GetBindWindow() != hwndFoxPlace)
+                                }
+                                if (hwndFoxPlace > 0&&changedSize)
+                                {
+                                    getFoxPos(new IntPtr(hwndFoxPlace), true);
+                                }
+                                if (hwndFoxPlace > 0 && lwh.GetBindWindow() != hwndFoxPlace)
                                     lwh.BindWindow(hwndFoxPlace, 0, 4, 0, 0, 0);
                             }
-                            else {                                
-                                    lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+                            else
+                            {
+                                if ( changedSize)
+                                {
+                                    getFoxPos(new IntPtr(hwnd), true);
+                                }
+                                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
                             }
                         }
+                    }
+                    if (type == 3)
+                    {
+                        OutPut3(false);
+                    }
+                    else {                
                     OutPut(false);
                     }
                 }
@@ -1887,16 +1865,12 @@ namespace readboard
             wr.Close();
             saveOtherConfig();
             mh.Enabled = false;
-            if (dm.IsBind(hwnd) > 0)
-            {
-                dm.UnBindWindow();
-                dm.Dispose();
-            }
-            dm2.Dispose();
             if (canUseLW)
             {
                 lw.lwsoft lw = new lw.lwsoft();
-                if (lw.IsBind(hwnd) > 0)
+                if (hwndFoxPlace > 0)
+                    lw.ForceUnBindWindow(hwndFoxPlace);
+                if (hwnd > 0)
                     lw.ForceUnBindWindow(hwnd);
             }
             Send("stopsync");
@@ -1985,41 +1959,43 @@ namespace readboard
         private void placeStone(int x,int y) {
             if (syncBoth && type == 5)
             {
-                object xo, yo;
-                dm2.GetCursorPos(out xo, out yo);
-                dm2.MoveTo(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
-                dm2.LeftClick();
-                if (Program.verifyMove)
-                    dm2.LeftClick();
-                dm2.MoveTo((int)xo, (int)yo);
+                foreMouseClick(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
             }
             else
         if (syncBoth && hwnd != 0)
             {
                 if (type == 0 && canUseLW)
                 {
-                        savedPlace = true;
-                        savedX = x;
-                        savedY = y;                   
+                    savedPlace = true;
+                    savedX = x;
+                    savedY = y;
                 }
                 else
          if (type == 0)
                 {
                     object xo, yo;
-                    dm2.GetCursorPos(out xo, out yo);
-                    dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
+                    dm.GetCursorPos(out xo, out yo);
+                    dm.MoveTo((int)Math.Round(rectX1+sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(rectY1+sy1 + heightMagrin * (y + 0.5)));
                     dm.LeftClick();
-                    dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
                     dm.LeftClick();
-                    dm2.MoveTo((int)xo, (int)yo);
+                    dm.MoveTo((int)xo, (int)yo);
                 }
                 else
                 {
+                    int xx = 0;
+                    int yy=0;
                     if (Program.isAdvScale)
-                        dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
-                    else
-                        dm.MoveTo((int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * factor), (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * factor));
-                    dm.LeftClick();
+                    {   // dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
+                        xx = (int)Math.Round(sx1 + widthMagrin * (x + 0.5));
+                        yy = (int)Math.Round(sy1 + heightMagrin * (y + 0.5));
+                    }
+                    else {
+                        xx = (int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * factor);
+                        yy = (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * factor);
+                    }
+                        //dm.MoveTo((int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * factor), (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * factor));
+                        backMouseClick(xx, yy, hwnd);
+                    //dm.LeftClick();
                 }
             }
         }
@@ -2066,7 +2042,44 @@ namespace readboard
                 move.y = y;
                 Thread t = new Thread(placeMove);
                 t.Start(move);  
-        } 
+        }
+
+        uint WM_LBUTTONDOWN = 0x201;
+        uint WM_LBUTTONUP = 0x202;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+
+        private void backMouseClick(int x,int y,int hwnd) {
+            PostMessage(new IntPtr(hwnd), WM_LBUTTONDOWN, 0, x + (y << 16));
+            PostMessage(new IntPtr(hwnd), WM_LBUTTONUP, 0, x + (y << 16));
+        }
+
+        public enum MouseEventFlags
+        {
+            Move = 0x0001,
+            LeftDown = 0x0002,
+            LeftUp = 0x0004,
+            RightDown = 0x0008,
+            RightUp = 0x0010,
+            MiddleDown = 0x0020,
+            MiddleUp = 0x0040,
+            Wheel = 0x0800,
+            Absolute = 0x8000
+        }
+        [DllImport("user32.dll")]
+        private static extern int SetCursorPos(int x, int y);
+        [DllImport("User32")]
+        public extern static void mouse_event(int dwFlags, int dx, int dy, int dwData, IntPtr dwExtraInfo);
+
+        private void foreMouseClick(int x, int y) {
+            int curX = Control.MousePosition.X;
+            int curY = Control.MousePosition.Y;
+            SetCursorPos(x, y);
+            mouse_event((int)(MouseEventFlags.LeftDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+            mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+            SetCursorPos(curX, curY);
+        }
 
         private void textbox1_TextChanged(object sender, EventArgs e)
         {
@@ -2993,7 +3006,441 @@ namespace readboard
             //  Console.WriteLine(linesPoint.Length);
             return linesPoint;
         }
-    }
+
+        private Boolean getSinaPos(IntPtr hwnd)
+        {
+            IntPtr hscrdc = GetWindowDC(hwnd);
+            RECT rect = new RECT();
+            GetWindowRect(hwnd, ref rect);
+            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
+            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
+            SelectObject(hmemdc, hbitmap);
+            PrintWindow(hwnd, hmemdc, 0);
+            Bitmap input = Bitmap.FromHbitmap(hbitmap);
+            input.Save("tst.bmp");
+            DeleteDC(hscrdc);
+            DeleteDC(hmemdc);
+
+            if (input == null || input.Width <= boardW || input.Height <= boardH)
+                return false;
+            Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
+            const int PixelWidth = 3;
+            const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
+            BitmapData data = input.LockBits(rect2, ImageLockMode.ReadOnly, PixelFormat);
+            RgbInfo[] rgbArray = new RgbInfo[data.Height * data.Width];
+            byte[] pixelData = new Byte[data.Stride];
+            for (int scanline = 0; scanline < data.Height; scanline++)
+            {
+                Marshal.Copy(data.Scan0 + (scanline * data.Stride), pixelData, 0, data.Stride);
+                for (int pixeloffset = 0; pixeloffset < data.Width; pixeloffset++)
+                {
+                    // PixelFormat.Format32bppRgb means the data is stored
+                    // in memory as BGR. We want RGB, so we must do some 
+                    // bit-shuffling.
+                    rgbArray[scanline * data.Width + pixeloffset] = new RgbInfo();
+                    rgbArray[scanline * data.Width + pixeloffset].r = pixelData[pixeloffset * PixelWidth + 2];
+                    rgbArray[scanline * data.Width + pixeloffset].g = pixelData[pixeloffset * PixelWidth + 1];
+                    rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
+                }
+            }
+            int width = data.Width;
+            int height = data.Height;
+            input.UnlockBits(data);
+            //251,218,162 左到右 上到下 251,218,162 向下1,2 偏移 < 5(左上角)(实际找到正数第二的点sx1 - 1, sy1 - 1)
+            //251,218,162 左到右 下到上251,218,162 向下1,2 偏移 < 5(左下角)(实际找到倒数第三的点, height + 4)
+            // "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);      
+            // "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 1, out qx4, out qy4);
+            List<ColorInfo> colorInfos = new List<ColorInfo>();
+            ColorInfo colorInfo1 = new ColorInfo();
+            colorInfo1.r = 251;
+            colorInfo1.g = 218;
+            colorInfo1.b = 162;
+            colorInfo1.rOffset = 5;
+            colorInfo1.gOffset = 5;
+            colorInfo1.bOffset = 5;
+            colorInfos.Add(colorInfo1);
+            ColorInfo colorInfo2 = new ColorInfo();
+            colorInfo2.r = 251;
+            colorInfo2.g = 218;
+            colorInfo2.b = 162;
+            colorInfo2.rOffset = 5;
+            colorInfo2.gOffset = 5;
+            colorInfo2.bOffset = 5;
+            colorInfo2.xOffset = 0;
+            colorInfo2.yOffset = 1;
+            colorInfos.Add(colorInfo2);
+            ColorInfo colorInfo3 = new ColorInfo();
+            colorInfo3.r = 251;
+            colorInfo3.g = 218;
+            colorInfo3.b = 162;
+            colorInfo3.rOffset = 5;
+            colorInfo3.gOffset = 5;
+            colorInfo3.bOffset = 5;
+            colorInfo3.xOffset = 0;
+            colorInfo3.yOffset = 2;
+            colorInfos.Add(colorInfo3);
+
+            Point upLeft = getMultiColorPos(rgbArray, width, height, colorInfos, 0);
+            Point downLeft = getMultiColorPos(rgbArray, width, height, colorInfos, 2);
+            if (upLeft.X < 0 || upLeft.Y < 0 || downLeft.X < 0 || downLeft.Y <= 0)
+                return false;
+            sx1 = upLeft.X-1;
+            sy1 = upLeft.Y - 1;
+            this.height = downLeft.Y - upLeft.Y + 4;
+            this.width = this.height;
+            return true;
+        }
+
+        private Boolean getFoxPos(IntPtr hwnd,Boolean getTopLeft) {
+            IntPtr hscrdc = GetWindowDC(hwnd);
+            RECT rect = new RECT();
+            GetWindowRect(hwnd, ref rect);
+            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
+            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
+            SelectObject(hmemdc, hbitmap);
+            PrintWindow(hwnd, hmemdc, 0);
+            Bitmap input = Bitmap.FromHbitmap(hbitmap);
+            input.Save("tst.bmp");
+            DeleteDC(hscrdc);
+            DeleteDC(hmemdc);
+
+            if (input == null || input.Width <= boardW || input.Height <= boardH)
+                return false;
+            Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
+            const int PixelWidth = 3;
+            const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
+            BitmapData data = input.LockBits(rect2, ImageLockMode.ReadOnly, PixelFormat);
+            RgbInfo[] rgbArray = new RgbInfo[data.Height * data.Width];
+            byte[] pixelData = new Byte[data.Stride];
+            for (int scanline = 0; scanline < data.Height; scanline++)
+            {
+                Marshal.Copy(data.Scan0 + (scanline * data.Stride), pixelData, 0, data.Stride);
+                for (int pixeloffset = 0; pixeloffset < data.Width; pixeloffset++)
+                {
+                    // PixelFormat.Format32bppRgb means the data is stored
+                    // in memory as BGR. We want RGB, so we must do some 
+                    // bit-shuffling.
+                    rgbArray[scanline * data.Width + pixeloffset] = new RgbInfo();
+                    rgbArray[scanline * data.Width + pixeloffset].r = pixelData[pixeloffset * PixelWidth + 2];
+                    rgbArray[scanline * data.Width + pixeloffset].g = pixelData[pixeloffset * PixelWidth + 1];
+                    rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
+                }
+            }
+            int width = data.Width;
+            int height = data.Height;
+            input.UnlockBits(data);
+
+            //49,49,49 左到右 上到下 46,46,46 向下1,2 向右1,2 偏移 < 5(左上角)
+
+            //  "313131-050505", "2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
+
+
+            List<ColorInfo> colorInfos = new List<ColorInfo>();
+            ColorInfo colorInfo1 = new ColorInfo();
+            colorInfo1.r = 49;
+            colorInfo1.g = 49;
+            colorInfo1.b = 49;
+            colorInfo1.rOffset = 5;
+            colorInfo1.gOffset = 5;
+            colorInfo1.bOffset = 5;
+            colorInfos.Add(colorInfo1);
+            ColorInfo colorInfo2 = new ColorInfo();
+            colorInfo2.r = 46;
+            colorInfo2.g = 46;
+            colorInfo2.b = 46;
+            colorInfo2.rOffset = 5;
+            colorInfo2.gOffset = 5;
+            colorInfo2.bOffset = 5;
+            colorInfo2.xOffset = 0;
+            colorInfo2.yOffset = 1;
+            colorInfos.Add(colorInfo2);
+            ColorInfo colorInfo3 = new ColorInfo();
+            colorInfo3.r = 46;
+            colorInfo3.g = 46;
+            colorInfo3.b = 46;
+            colorInfo3.rOffset = 5;
+            colorInfo3.gOffset = 5;
+            colorInfo3.bOffset = 5;
+            colorInfo3.xOffset = 0;
+            colorInfo3.yOffset = 2;
+            colorInfos.Add(colorInfo3);
+            ColorInfo colorInfo4 = new ColorInfo();
+            colorInfo4.r = 46;
+            colorInfo4.g = 46;
+            colorInfo4.b = 46;
+            colorInfo4.rOffset = 5;
+            colorInfo4.gOffset = 5;
+            colorInfo4.bOffset = 5;
+            colorInfo4.xOffset = 1;
+            colorInfo4.yOffset = 0;
+            colorInfos.Add(colorInfo4);
+            ColorInfo colorInfo5 = new ColorInfo();
+            colorInfo5.r = 46;
+            colorInfo5.g = 46;
+            colorInfo5.b = 46;
+            colorInfo5.rOffset = 5;
+            colorInfo5.gOffset = 5;
+            colorInfo5.bOffset = 5;
+            colorInfo5.xOffset = 2;
+            colorInfo5.yOffset = 0;
+            colorInfos.Add(colorInfo5);
+            ColorInfo colorInfo6 = new ColorInfo();
+            colorInfo6.r = 46;
+            colorInfo6.g = 46;
+            colorInfo6.b = 46;
+            colorInfo6.rOffset = 5;
+            colorInfo6.gOffset = 5;
+            colorInfo6.bOffset = 5;
+            colorInfo6.xOffset = 2;
+            colorInfo6.yOffset = 1;
+            colorInfo6.isReverse = true;
+            colorInfos.Add(colorInfo6);
+            ColorInfo colorInfo7 = new ColorInfo();
+            colorInfo7.r = 46;
+            colorInfo7.g = 46;
+            colorInfo7.b = 46;
+            colorInfo7.rOffset = 5;
+            colorInfo7.gOffset = 5;
+            colorInfo7.bOffset = 5;
+            colorInfo7.xOffset = 1;
+            colorInfo7.yOffset = 1;
+            colorInfo7.isReverse = true;
+            colorInfos.Add(colorInfo7);
+            ColorInfo colorInfo8 = new ColorInfo();
+            colorInfo8.r = 46;
+            colorInfo8.g = 46;
+            colorInfo8.b = 46;
+            colorInfo8.rOffset = 5;
+            colorInfo8.gOffset = 5;
+            colorInfo8.bOffset = 5;
+            colorInfo8.xOffset = 1;
+            colorInfo8.yOffset = 2;
+            colorInfo8.isReverse = true;
+            colorInfos.Add(colorInfo8);
+            // "313131-050505", "-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
+            //49,49,49  右到左 上到下 46,46,46 向下1,2 向左1,2 偏移 < 5(右上角)
+            List<ColorInfo> colorInfos2 = new List<ColorInfo>();
+            ColorInfo colorInfo21 = new ColorInfo();
+            colorInfo21.r = 49;
+            colorInfo21.g = 49;
+            colorInfo21.b = 49;
+            colorInfo21.rOffset = 5;
+            colorInfo21.gOffset = 5;
+            colorInfo21.bOffset = 5;
+            colorInfos2.Add(colorInfo21);
+            ColorInfo colorInfo22 = new ColorInfo();
+            colorInfo22.r = 46;
+            colorInfo22.g = 46;
+            colorInfo22.b = 46;
+            colorInfo22.rOffset = 5;
+            colorInfo22.gOffset = 5;
+            colorInfo22.bOffset = 5;
+            colorInfo22.xOffset = 0;
+            colorInfo22.yOffset = 1;
+            colorInfos2.Add(colorInfo22);
+            ColorInfo colorInfo23 = new ColorInfo();
+            colorInfo23.r = 46;
+            colorInfo23.g = 46;
+            colorInfo23.b = 46;
+            colorInfo23.rOffset = 5;
+            colorInfo23.gOffset = 5;
+            colorInfo23.bOffset = 5;
+            colorInfo23.xOffset = 0;
+            colorInfo23.yOffset = 2;
+            colorInfos2.Add(colorInfo23);
+            ColorInfo colorInfo24 = new ColorInfo();
+            colorInfo24.r = 46;
+            colorInfo24.g = 46;
+            colorInfo24.b = 46;
+            colorInfo24.rOffset = 5;
+            colorInfo24.gOffset = 5;
+            colorInfo24.bOffset = 5;
+            colorInfo24.xOffset = -1;
+            colorInfo24.yOffset = 0;
+            colorInfos2.Add(colorInfo24);
+            ColorInfo colorInfo25 = new ColorInfo();
+            colorInfo25.r = 46;
+            colorInfo25.g = 46;
+            colorInfo25.b = 46;
+            colorInfo25.rOffset = 5;
+            colorInfo25.gOffset = 5;
+            colorInfo25.bOffset = 5;
+            colorInfo25.xOffset = -2;
+            colorInfo25.yOffset = 0;
+            colorInfos2.Add(colorInfo25);
+            ColorInfo colorInfo26 = new ColorInfo();
+            colorInfo26.r = 46;
+            colorInfo26.g = 46;
+            colorInfo26.b = 46;
+            colorInfo26.rOffset = 5;
+            colorInfo26.gOffset = 5;
+            colorInfo26.bOffset = 5;
+            colorInfo26.xOffset = -2;
+            colorInfo26.yOffset = 1;
+            colorInfo26.isReverse = true;
+            colorInfos2.Add(colorInfo26);
+            ColorInfo colorInfo27 = new ColorInfo();
+            colorInfo27.r = 46;
+            colorInfo27.g = 46;
+            colorInfo27.b = 46;
+            colorInfo27.rOffset = 5;
+            colorInfo27.gOffset = 5;
+            colorInfo27.bOffset = 5;
+            colorInfo27.xOffset = -1;
+            colorInfo27.yOffset = 1;
+            colorInfo27.isReverse = true;
+            colorInfos2.Add(colorInfo27);
+            ColorInfo colorInfo28 = new ColorInfo();
+            colorInfo28.r = 46;
+            colorInfo28.g = 46;
+            colorInfo28.b = 46;
+            colorInfo28.rOffset = 5;
+            colorInfo28.gOffset = 5;
+            colorInfo28.bOffset = 5;
+            colorInfo28.xOffset = -1;
+            colorInfo28.yOffset = 2;
+            colorInfo28.isReverse = true;
+            colorInfos2.Add(colorInfo28);
+            
+            Point upLeft = getMultiColorPos( rgbArray,width,height, colorInfos, 0);
+            Point upRight = getMultiColorPos(rgbArray, width, height, colorInfos2, 1);
+            if (upLeft.X < 0 || upLeft.Y < 0 || upRight.X < 0 || upRight.Y <= 0)
+                return false;
+            if (getTopLeft)
+            {
+                px1= upLeft.X;
+                py1 = upLeft.Y;
+            }
+            else { 
+            sx1 = upLeft.X;
+            sy1 = upLeft.Y;
+            this.width =   upRight.X - upLeft.X;
+            this.height = this.width;
+            }
+            return true;
+        }
+
+        private Point getMultiColorPos(RgbInfo[] rgbArray,int width,int height, List<ColorInfo> colorInfos,int direction)
+        {
+            Point returnPoint = new Point();
+            returnPoint.X = -1;
+            returnPoint.Y = -1;
+           
+          
+            switch (direction)
+                {
+                case 0:
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            if (getMultiColorPixel(rgbArray, x, y,width,height, colorInfos))
+                            {
+                                returnPoint.X = x;
+                                returnPoint.Y = y;
+                                return returnPoint;
+                            }
+                        }
+                    }
+                    break;
+                case 1:
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = width-1; x >= 0; x--)
+                        {
+                            if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
+                            {
+                                returnPoint.X = x;
+                                returnPoint.Y = y;
+                                return returnPoint;
+                            }
+                        }
+                    }
+                    break;
+                case 2:
+                    for (int y = height-1; y>=0; y--)
+                    {
+                        for (int x = 0; x <width; x++)
+                        {
+                            if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
+                            {
+                                returnPoint.X = x;
+                                returnPoint.Y = y;
+                                return returnPoint;
+                            }
+                        }
+                    }
+                    break;
+                case 3:
+                    for (int y = height - 1; y >= 0; y--)
+                    {
+                        for (int x = width - 1; x >= 0; x--)
+                        {
+                            if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
+                            {
+                                returnPoint.X = x;
+                                returnPoint.Y = y;
+                                return returnPoint;
+                            }
+                        }
+                    }
+                    break;
+            }
+            return returnPoint;
+        }
+        private Boolean getMultiColorPixel(RgbInfo[] rgbArray,int x,int y, int width,int heigt,List<ColorInfo> colorInfos)
+        {
+            RgbInfo rgb1 = rgbArray[y * width + x];
+            ColorInfo cl1 = colorInfos[0];
+            if (Math.Abs(cl1.r - rgb1.r) < cl1.rOffset && Math.Abs(cl1.g - rgb1.g) < cl1.gOffset && Math.Abs(cl1.b - rgb1.b) < cl1.bOffset)
+            {
+                for (int i = 0; i < colorInfos.Count; i++)
+                {
+                    ColorInfo cl = colorInfos[i];
+                    if (x + cl.xOffset >= 0 && y + cl.yOffset >= 0)
+                    {
+                        int index = (y + cl.yOffset) * width + x + cl.xOffset;
+                        if (index < rgbArray.Length)
+                        {
+                            RgbInfo rgb = rgbArray[index];
+                            if (cl.isReverse)
+                            {
+                                if (Math.Abs(cl.r - rgb.r) < cl.rOffset && Math.Abs(cl.g - rgb.g) < cl.gOffset && Math.Abs(cl.b - rgb.b) < cl.bOffset)
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            if (Math.Abs(cl.r - rgb.r) >= cl.rOffset || Math.Abs(cl.g - rgb.g) >= cl.gOffset || Math.Abs(cl.b - rgb.b) >= cl.bOffset)
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                            return false;
+                    }
+                    else
+                        return false;
+                }
+                return true;
+            }
+            else
+                return false;
+        }
+    }    
+}
+
+class ColorInfo
+{
+    public int xOffset;
+    public int yOffset;
+    public int r;
+    public int g;
+    public int b;
+    public int rOffset;
+    public int gOffset;
+    public int bOffset;
+    public Boolean isReverse=false;
 }
 
 class wholeOffset
