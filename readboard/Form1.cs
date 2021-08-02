@@ -707,7 +707,6 @@ namespace readboard
         {
             if (type == 5)
             {
-                Send("sync");
                 sx1 = ox1;
                 sy1 = oy1;
                 width = ox2 - ox1;
@@ -744,8 +743,6 @@ namespace readboard
                         return;
                     }
                 }
-
-                Send("sync");
                 if (type == 0)
                 {
                     if (!dm.GetWindowClass(hwnd).ToLower().Equals("#32770"))
@@ -1029,16 +1026,16 @@ namespace readboard
                 {
                     Thread.Sleep(100);
                 }
-                catch (Exception) { }
+                catch (Exception) {
+
+                }
             }
         }
 
         private void startContinuousSync(Boolean isSimpleSync) {
             Boolean isRightGoban = true;
             if (type == 5)
-            {
-              
-                Send("sync");
+            {              
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a,"");
                 sx1 = ox1;
@@ -1071,7 +1068,6 @@ namespace readboard
               
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
-                Send("sync");
                 if (type == 0)
                 {
                     rectX1 = x1;
@@ -1082,8 +1078,12 @@ namespace readboard
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    if (!getFoxPos(new IntPtr(hwnd),false))
+                    if (!getFoxPos(new IntPtr(hwnd), false))
+                    {
+                        Send("stopsync");
+                        stopKeepingSync();
                         return;
+                    }
                     if (hwndFoxPlace > 0)
                     {
                         getFoxPos(new IntPtr(hwndFoxPlace), true);
@@ -1121,7 +1121,11 @@ namespace readboard
                         isRightGoban = false;
                     }
                     if (!getSinaPos(new IntPtr(hwnd)))
+                    {
+                        Send("stopsync");
+                        stopKeepingSync();
                         return;
+                    }
                 }
                 if (type == 3)
                 {
@@ -1215,7 +1219,8 @@ namespace readboard
    
 
         private void OutPutTime()
-        {                               
+        {
+            Send("sync");
             while (keepSync)
             {
                   if (Program.showInBoard&&type!=5)
@@ -1941,21 +1946,11 @@ namespace readboard
         }
 
         private void placeStone(int x,int y) {
-            if (syncBoth && type == 5)
+            if ( type == 5)
             {
                 foreMouseClick(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
             }
-            else
-        if (syncBoth && hwnd != 0)
-            {
-                if (type == 0 && canUseLW)
-                {
-                    savedPlace = true;
-                    savedX = x;
-                    savedY = y;
-                }
-                else
-         if (type == 0)
+            else if (type == 0&&!canUseLW)
                 {
                     object xo, yo;
                     dm.GetCursorPos(out xo, out yo);
@@ -1981,7 +1976,6 @@ namespace readboard
                         backMouseClick(xx, yy, hwnd);
                     //dm.LeftClick();
                 }
-            }
         }
 
         private Boolean VerifyMove(int x, int y,Boolean isLw)
@@ -2006,15 +2000,25 @@ namespace readboard
         }
 
         private void placeMove(object obj) {
+            if (!syncBoth)
+                return;
             MoveInfo move =(MoveInfo)obj;
             int x = move.x;
             int y = move.y;
             int times = 10;
+            if (type == 0 && canUseLW)
+            {
+                savedPlace = true;
+                savedX = x;
+                savedY = y;
+            }
+            else { 
             do
             {
                 placeStone(x, y);
                 times--;
             } while (Program.verifyMove&&!VerifyMove(x, y,false)&& times>0);
+            }
         }
 
         public void place(int x,int y)
