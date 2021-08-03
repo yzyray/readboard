@@ -29,8 +29,8 @@ namespace readboard
         public static Boolean isScaled = false;
         public static String version = "730";
         public static Boolean isChn = false;
-        public static String timename="200";
-        public static int timeinterval=200;
+        public static String timename="300";
+        public static int timeinterval=300;
         public static int grayOffset = 50;
 
         public static double factor = 1.0;
