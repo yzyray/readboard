@@ -58,7 +58,7 @@ namespace readboard
         //   int sy1ty5=0;
         //int all;
         //  System.Timers.Timer t;
-        public static int type = 5;
+        public static int type = 0;
         // Boolean isQTYC = false;
         // int boardWidth=19;
         int boardH = 19;
@@ -547,11 +547,8 @@ namespace readboard
                 this.button6.Text = "ClearBoard";
                 this.button11.Text = "CircleRow1";
                 this.Text = "Board Synchronization Tool";
-            }
-            if (useTcp)
-            {
+            }           
                 Send("ready");
-            }
         }
         MouseHookListener mh;
         /// <summary>
