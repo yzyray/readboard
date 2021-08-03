@@ -710,17 +710,17 @@ namespace readboard
         private void button4_Click(object sender, EventArgs e)
         {
             if (type == 5)
-            {
-                if (width <= this.boardW)
-                {
-                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
-                    return;
-                }
+            {                
                 sx1 = ox1;
                 sy1 = oy1;
                 width = ox2 - ox1;
                 height = oy2 - oy1;
                 OutPut3(true);
+                if (width <= this.boardW)
+                {
+                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    return;
+                }
             }
             else
             {
