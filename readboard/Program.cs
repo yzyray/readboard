@@ -29,8 +29,8 @@ namespace readboard
         public static Boolean isScaled = false;
         public static String version = "730";
         public static Boolean isChn = false;
-        public static String timename="200";
-        public static int timeinterval=200;
+        public static String timename="300";
+        public static int timeinterval=300;
         public static int grayOffset = 50;
 
         public static double factor = 1.0;
@@ -47,7 +47,6 @@ namespace readboard
             //Start();
             ThreadStart threadStart = new ThreadStart(Start);
             Thread thread = new Thread(Start);
-            thread.SetApartmentState(ApartmentState.STA);
             thread.Start();//启动界面
             if (arg.Length < 7)
                 System.Environment.Exit(0);
@@ -65,10 +64,18 @@ namespace readboard
                 while (true)
                 {
                     String a = Console.ReadLine();
+                
                     if (a.StartsWith("place"))
                     {
                         char[] separator = { ' ' }; string[] arr = a.Split(separator);
-                        Form1.pcurrentWin.place(int.Parse(arr[1]), int.Parse(arr[2]));
+                        try
+                        {
+                            Form1.pcurrentWin.place(int.Parse(arr[1]), int.Parse(arr[2]));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.Error.WriteLine(e);
+                        }
                     }
                     if (a.StartsWith("loss"))
                     {
@@ -124,7 +131,7 @@ namespace readboard
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.Error.WriteLine(ex.Message);
                 System.Environment.Exit(0);
             }
         }
