@@ -98,74 +98,59 @@ namespace readboard
             public int Bottom;
         }
 
+
+        private static Bitmap GetWindowImage(IntPtr hWnd)
+        {
+            try
+            {
+                RECT rect = new RECT();
+                GetWindowRect(hWnd, ref rect);
+                int rectWidth = rect.Right - rect.Left;
+                int rectHeight = rect.Bottom - rect.Top;
+                if (rectWidth <= 0 || rectHeight <= 0) return null;
+                Bitmap bmp = new Bitmap(rectWidth, rectHeight);
+                Graphics g = Graphics.FromImage(bmp);
+                IntPtr dc = g.GetHdc();
+                PrintWindow(hWnd, dc, 0);
+                g.ReleaseHdc();
+                g.Dispose();
+                return bmp;
+            }
+            catch { return null; }
+        }
+
         public Bitmap GetWindowBmp(IntPtr hWnd, int x, int y, int width, int height)
         {
             if (x < 0 || y < 0 || width <= 0 || height <= 0)
                 return null;
-            IntPtr hscrdc = GetWindowDC(hWnd);
+            try
+            {
+                IntPtr hscrdc = GetWindowDC(hWnd);
             RECT rect = new RECT();
             GetWindowRect(hWnd, ref rect);
-            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
-            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
-            SelectObject(hmemdc, hbitmap);
-            PrintWindow(hWnd, hmemdc, 0);
-            Bitmap bmp = Bitmap.FromHbitmap(hbitmap);
-            DeleteDC(hscrdc);
-            DeleteDC(hmemdc);
+            int rectWidth = rect.Right - rect.Left;
+            int rectHeight = rect.Bottom - rect.Top;
+            if (rectWidth<=0|| rectHeight<=0||x+width>rectWidth||y+height>rectHeight) return null;
+            Bitmap bmp = new Bitmap(rectWidth, rectHeight);
+            Graphics g = Graphics.FromImage(bmp);
+            IntPtr dc = g.GetHdc();
+            PrintWindow(hWnd, dc, 0);
+            g.ReleaseHdc();
+            g.Dispose();
             Bitmap mybit = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(mybit);
-            g.DrawImage(bmp /* 原图 */,
+            Graphics g1 = Graphics.FromImage(mybit);
+            g1.DrawImage(bmp /* 原图 */,
                      new Rectangle(new System.Drawing.Point(0, 0), new System.Drawing.Size(width, height)), // 目标位置 
                      new Rectangle(new System.Drawing.Point(x, y), new System.Drawing.Size(width, height)), // 原图位置 
                     GraphicsUnit.Pixel);
+            g1.Dispose();
             return mybit;
+            }
+            catch { return null; }
         }
 
         //API声明
 
-        [DllImport("gdi32.dll")]
-        public static extern IntPtr CreateDC(
-                    string lpszDriver,        // driver name驱动名
-                    string lpszDevice,        // device name设备名
-                    string lpszOutput,        // not used; should be NULL
-                    IntPtr lpInitData  // optional printer data
-         );
-
-        [DllImport("gdi32.dll")]
-        public static extern int BitBlt(
-         IntPtr hdcDest, // handle to destination DC目标设备的句柄
-         int nXDest,  // x-coord of destination upper-left corner目标对象的左上角的X坐标
-         int nYDest,  // y-coord of destination upper-left corner目标对象的左上角的Y坐标
-         int nWidth,  // width of destination rectangle目标对象的矩形宽度
-         int nHeight, // height of destination rectangle目标对象的矩形长度
-         IntPtr hdcSrc,  // handle to source DC源设备的句柄
-         int nXSrc,   // x-coordinate of source upper-left corner源对象的左上角的X坐标
-         int nYSrc,   // y-coordinate of source upper-left corner源对象的左上角的Y坐标
-         UInt32 dwRop  // raster operation code光栅的操作值
-         );
-
-        [DllImport("gdi32.dll")]
-        public static extern IntPtr CreateCompatibleDC(
-         IntPtr hdc // handle to DC
-         );
-
-        [DllImport("gdi32.dll")]
-        public static extern IntPtr CreateCompatibleBitmap(
-         IntPtr hdc,        // handle to DC
-         int nWidth,     // width of bitmap, in pixels
-         int nHeight     // height of bitmap, in pixels
-         );
-
-        [DllImport("gdi32.dll")]
-        public static extern IntPtr SelectObject(
-         IntPtr hdc,          // handle to DC
-         IntPtr hgdiobj   // handle to object
-         );
-
-        [DllImport("gdi32.dll")]
-        public static extern int DeleteDC(
-         IntPtr hdc          // handle to DC
-         );
 
         [DllImport("user32.dll")]
         public static extern bool PrintWindow(
@@ -1524,12 +1509,22 @@ namespace readboard
             }
         }
 
-        private void recognizeBoard(Bitmap input, RgbInfo[] rgbArray)
-        {
-            if (input == null || input.Width <= boardW || input.Height <= boardH)
-                return;
-            if (rgbArray == null || rgbArray.Length == 0) { 
-            Rectangle rect = new Rectangle(0, 0, input.Width, input.Height);
+        private void recognizeBoard( RgbInfo[] rgbArray)
+        {           
+            if (rgbArray == null || rgbArray.Length == 0) {
+                Bitmap input=null;
+                if (type == 5)
+                {
+                    input = new Bitmap(width, height);
+                    using (System.Drawing.Graphics graphics = Graphics.FromImage(input))
+                    {
+                        graphics.CopyFromScreen(sx1, sy1, 0, 0, new System.Drawing.Size(width, height));
+                    }
+                }
+                else input = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
+                if (input == null || input.Width <= boardW || input.Height <= boardH)
+                    return;
+                Rectangle rect = new Rectangle(0, 0, input.Width, input.Height);
             const int PixelWidth = 3;
             const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
             BitmapData data = input.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat);
@@ -1551,8 +1546,8 @@ namespace readboard
             }
             input.UnlockBits(data);
             }
-            float hGap = input.Height / (float)boardH;
-            float vGap = input.Width / (float)boardW;
+            float hGap = height / (float)boardH;
+            float vGap = width / (float)boardW;
             int hGapInt = (int)Math.Round(hGap);
             int vGapInt = (int)Math.Round(vGap);
 
@@ -1599,7 +1594,7 @@ namespace readboard
                     Boolean isLastMove = false;
                     int blackPercent =
                         getWhiteBlackColorPercent(
-                            rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+                            rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, width, height);
                     if (blackPercent >= blackPercentStandard)
                     {
                         isBlack = true;
@@ -1616,7 +1611,7 @@ namespace readboard
                     {
                         int whitePercent =
                             getWhiteBlackColorPercent(
-                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, width, height);
                         if (whitePercent >= whitePercentStandard)
                         {
                             if (x == 0
@@ -1649,9 +1644,9 @@ namespace readboard
                     if (isPlatform && needFindLastMove)
                     {
                         int redPercent = getRedBlueColorPercent(
-                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, input.Width, input.Height);
+                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, width, height);
                         int bluePercent = getRedBlueColorPercent(
-                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, input.Width, input.Height);
+                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, width, height);
                         if (redPercent >= 10 || bluePercent >= 10)
                         {
                             needFindLastMove = false;
@@ -1813,9 +1808,8 @@ namespace readboard
                 lwh.ForceUnBindWindow(hwnd);
             }
             if (first)
-                Send("start " + boardW + " " + boardH + " " + hwnd);
-            Bitmap bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
-            recognizeBoard(bmp, rgbArray);
+                Send("start " + boardW + " " + boardH + " " + hwnd);         
+            recognizeBoard(rgbArray);
         }
 
         private void OutPut3(Boolean first)
@@ -1826,20 +1820,9 @@ namespace readboard
             double zhanbiW = Program.whiteZB / 100.0;
             String pianyiB = Convert.ToString(Program.blackPC, 16);
             String pianyiW = Convert.ToString(Program.whitePC, 16);
-            Bitmap bmp = null;
-            if (type == 3)
-                bmp = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
-            else if (type == 5)
-            {
-                bmp = new Bitmap(width, height);
-                using (System.Drawing.Graphics graphics = Graphics.FromImage(bmp))
-                {
-                    graphics.CopyFromScreen(sx1, sy1, 0, 0, new System.Drawing.Size(width, height));
-                }
-            }
             if (first)
                 Send("start " + boardW + " " + boardH);
-            recognizeBoard(bmp,null);
+            recognizeBoard(null);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -3092,17 +3075,7 @@ namespace readboard
 
         private Boolean getTygemPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
-            IntPtr hscrdc = GetWindowDC(hwnd);
-            RECT rect = new RECT();
-            GetWindowRect(hwnd, ref rect);
-            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
-            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
-            SelectObject(hmemdc, hbitmap);
-            PrintWindow(hwnd, hmemdc, 0);
-            Bitmap input = Bitmap.FromHbitmap(hbitmap);
-            DeleteDC(hscrdc);
-            DeleteDC(hmemdc);
-
+            Bitmap input = GetWindowImage(hwnd);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return false;
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
@@ -3144,17 +3117,7 @@ namespace readboard
         }
             private Boolean getSinaPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
-            IntPtr hscrdc = GetWindowDC(hwnd);
-            RECT rect = new RECT();
-            GetWindowRect(hwnd, ref rect);
-            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
-            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
-            SelectObject(hmemdc, hbitmap);
-            PrintWindow(hwnd, hmemdc, 0);
-            Bitmap input = Bitmap.FromHbitmap(hbitmap);
-            DeleteDC(hscrdc);
-            DeleteDC(hmemdc);
-
+            Bitmap input = GetWindowImage(hwnd);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return false;
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
@@ -3227,17 +3190,7 @@ namespace readboard
 
         private Boolean getFoxPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
-            IntPtr hscrdc = GetWindowDC(hwnd);
-            RECT rect = new RECT();
-            GetWindowRect(hwnd, ref rect);
-            IntPtr hbitmap = CreateCompatibleBitmap(hscrdc, rect.Right - rect.Left, rect.Bottom - rect.Top);
-            IntPtr hmemdc = CreateCompatibleDC(hscrdc);
-            SelectObject(hmemdc, hbitmap);
-            PrintWindow(hwnd, hmemdc, 0);
-            Bitmap input = Bitmap.FromHbitmap(hbitmap);
-            DeleteDC(hscrdc);
-            DeleteDC(hmemdc);
-
+            Bitmap input = GetWindowImage(hwnd);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return false;
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
