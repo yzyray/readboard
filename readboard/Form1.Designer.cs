@@ -141,7 +141,7 @@
             // rdoFore
             // 
             this.rdoFore.AutoSize = true;
-            this.rdoFore.Location = new System.Drawing.Point(154, 11);
+            this.rdoFore.Location = new System.Drawing.Point(239, 11);
             this.rdoFore.Name = "rdoFore";
             this.rdoFore.Size = new System.Drawing.Size(83, 16);
             this.rdoFore.TabIndex = 14;
@@ -165,7 +165,7 @@
             // rdoBack
             // 
             this.rdoBack.AutoSize = true;
-            this.rdoBack.Location = new System.Drawing.Point(239, 11);
+            this.rdoBack.Location = new System.Drawing.Point(154, 11);
             this.rdoBack.Name = "rdoBack";
             this.rdoBack.Size = new System.Drawing.Size(83, 16);
             this.rdoBack.TabIndex = 12;

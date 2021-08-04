@@ -99,7 +99,69 @@ namespace readboard
         }
 
 
-        private static Bitmap GetWindowImage(IntPtr hWnd)
+        [DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
+        public static extern IntPtr DeleteDC(IntPtr hdc);
+
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        public static extern IntPtr DeleteObject(IntPtr hObject);
+
+        [DllImport("gdi32.dll", EntryPoint = "BitBlt")]
+        public static extern bool BitBlt(IntPtr hdcDest, int nXDest,
+        int nYDest, int nWidth, int nHeight, IntPtr hdcSrc,
+        int nXSrc, int nYSrc, int dwRop);
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateCompatibleBitmap")]
+        public static extern IntPtr CreateCompatibleBitmap(IntPtr hdc,
+        int nWidth, int nHeight);
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC")]
+        public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+
+        [DllImport("gdi32.dll", EntryPoint = "SelectObject")]
+        public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobjBmp);
+
+        [DllImport("user32.dll", EntryPoint = "GetDC")]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll", EntryPoint = "ReleaseDC")]
+        public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        private Bitmap GetWindowImage(IntPtr hwnd) {
+            StringBuilder className = new StringBuilder(256);
+            GetClassName(hwnd, className, className.Capacity);
+            if (className.ToString().Equals("SunAwtFrame"))
+            {
+              return GetWindowPrintImage(hwnd);
+            }
+            else { 
+                try
+            {
+                RECT rect = new RECT();
+                GetWindowRect(hwnd, ref rect);
+                int rectWidth = rect.Right - rect.Left;
+                int rectHeight = rect.Bottom - rect.Top;
+                IntPtr windc = GetDC(hwnd);
+                IntPtr hDCMem = CreateCompatibleDC(windc);
+                IntPtr hbitmap = CreateCompatibleBitmap(windc, rectWidth, rectHeight);
+                IntPtr hOldBitmap = (IntPtr)SelectObject(hDCMem, hbitmap);
+                BitBlt(hDCMem, 0, 0, rectWidth, rectHeight, windc, 0, 0, 13369376);
+                hbitmap = (IntPtr)SelectObject(hDCMem, hOldBitmap);
+                Bitmap bitmap = Bitmap.FromHbitmap(hbitmap);
+                DeleteObject(hbitmap);
+                DeleteObject(hOldBitmap);
+                DeleteDC(hDCMem);
+                ReleaseDC(hwnd, windc);
+                return bitmap;
+            }
+            catch (Exception e)
+            {
+                SendError(e.ToString());
+                return null;
+            }
+            }
+        }
+
+        private static Bitmap GetWindowPrintImage(IntPtr hWnd)
         {
             try
             {
@@ -125,43 +187,26 @@ namespace readboard
                 return null;
             try
             {
-                IntPtr hscrdc = GetWindowDC(hWnd);
-            RECT rect = new RECT();
-            GetWindowRect(hWnd, ref rect);
-            int rectWidth = rect.Right - rect.Left;
-            int rectHeight = rect.Bottom - rect.Top;
-            if (rectWidth<=0|| rectHeight<=0||x+width>rectWidth||y+height>rectHeight) return null;
-            Bitmap bmp = new Bitmap(rectWidth, rectHeight);
-            Graphics g = Graphics.FromImage(bmp);
-            IntPtr dc = g.GetHdc();
-            PrintWindow(hWnd, dc, 0);
-            g.ReleaseHdc();
-            g.Dispose();
-            Bitmap mybit = new Bitmap(width, height);
-            Graphics g1 = Graphics.FromImage(mybit);
-            g1.DrawImage(bmp /* 原图 */,
-                     new Rectangle(new System.Drawing.Point(0, 0), new System.Drawing.Size(width, height)), // 目标位置 
-                     new Rectangle(new System.Drawing.Point(x, y), new System.Drawing.Size(width, height)), // 原图位置 
-                    GraphicsUnit.Pixel);
-            g1.Dispose();
-            return mybit;
+                Bitmap bmp = GetWindowImage(hWnd);
+                if (bmp == null)
+                    return null;
+                Bitmap mybit = new Bitmap(width, height);
+                Graphics g1 = Graphics.FromImage(mybit);
+                g1.DrawImage(bmp /* 原图 */,
+                         new Rectangle(new System.Drawing.Point(0, 0), new System.Drawing.Size(width, height)), // 目标位置 
+                         new Rectangle(new System.Drawing.Point(x, y), new System.Drawing.Size(width, height)), // 原图位置 
+                        GraphicsUnit.Pixel);
+                g1.Dispose();
+                return mybit;
             }
             catch { return null; }
         }
-
-        //API声明
-
 
         [DllImport("user32.dll")]
         public static extern bool PrintWindow(
          IntPtr hwnd,               // Window to copy,Handle to the window that will be copied.
          IntPtr hdcBlt,             // HDC to print into,Handle to the device context.
          UInt32 nFlags              // Optional flags,Specifies the drawing options. It can be one of the following values.
-         );
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowDC(
-         IntPtr hwnd
          );
 
         private void SendError(String strMsg)
@@ -627,6 +672,7 @@ namespace readboard
                     {
                         Thread.Sleep(35);
                         hwnd = dm.GetMousePointWindow();
+                        Console.WriteLine(hwnd);
                     });
                     Task.Factory.StartNew(() =>
                     {
@@ -1246,13 +1292,7 @@ namespace readboard
             }
             ThreadStart threadStart = new ThreadStart(OutPutTime);
             thread = new Thread(OutPutTime);
-            thread.Start();
-            if (Program.showInBoard && type != 5)
-            {
-                object startX, startY;
-                object rectWidth, rectHeight;
-                dm.GetClientRect(hwnd, out (startX), out (startY), out (rectWidth), out (rectHeight));
-            }
+            thread.Start();          
         }
         private void button5_Click(object sender, EventArgs e)
         {
@@ -2421,12 +2461,6 @@ namespace readboard
                     Form7 form7 = new Form7();
                     form7.ShowDialog();
 
-                }
-                if (this.keepSync && type != 5)
-                {
-                    object startX, startY;
-                    object rectWidth, rectHeight;
-                    dm.GetClientRect(hwnd, out (startX), out (startY), out (rectWidth), out (rectHeight));
                 }
             }
             else
