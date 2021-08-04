@@ -534,11 +534,10 @@ namespace readboard
                 //注册成功!             
                 try
                 {
-                    Thread.Sleep(300);
                     lw.lwsoft lw = new lw.lwsoft();
                     canUseLW = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     canUseLW = false;
                 }
@@ -1292,6 +1291,7 @@ namespace readboard
             }
             ThreadStart threadStart = new ThreadStart(OutPutTime);
             thread = new Thread(OutPutTime);
+            thread.SetApartmentState(ApartmentState.STA);
             thread.Start();          
         }
         private void button5_Click(object sender, EventArgs e)
@@ -1855,11 +1855,7 @@ namespace readboard
         private void OutPut3(Boolean first)
         {
             if (width < this.boardW || height < this.boardH)
-                return;
-            double zhanbiB = Program.blackZB / 100.0;
-            double zhanbiW = Program.whiteZB / 100.0;
-            String pianyiB = Convert.ToString(Program.blackPC, 16);
-            String pianyiW = Convert.ToString(Program.whitePC, 16);
+                return;            
             if (first)
                 Send("start " + boardW + " " + boardH);
             recognizeBoard(null);
@@ -2119,7 +2115,7 @@ namespace readboard
             int x = move.x;
             int y = move.y;
             int times = 10;
-            if (type == 0 && canUseLW)
+            if ((type == 0) && canUseLW)
             {
                 savedPlace = true;
                 savedX = x;
@@ -2495,6 +2491,7 @@ namespace readboard
                 this.button4.Enabled = false;
                 this.btnKeepSync.Enabled = false;
                 thread = new Thread(startContinuous);
+                thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
                 if (Program.autoMin && this.WindowState != FormWindowState.Minimized)
                 {
