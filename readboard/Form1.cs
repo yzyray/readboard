@@ -84,6 +84,9 @@ namespace readboard
         int posX = -1;
         int posY = -1;
 
+        private Boolean isJavaFrame=false;
+        private int javaX,javaY;
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
@@ -127,9 +130,7 @@ namespace readboard
         public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
         private Bitmap GetWindowImage(IntPtr hwnd) {
-            StringBuilder className = new StringBuilder(256);
-            GetClassName(hwnd, className, className.Capacity);
-            if (className.ToString().Equals("SunAwtFrame"))
+            if (isJavaFrame)
             {
               return GetWindowPrintImage(hwnd);
             }
@@ -761,7 +762,8 @@ namespace readboard
         private void button4_Click(object sender, EventArgs e)
         {
             if (type == 5)
-            {                
+            {
+                isJavaFrame = false;
                 sx1 = ox1;
                 sy1 = oy1;
                 width = ox2 - ox1;
@@ -805,6 +807,16 @@ namespace readboard
                         MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         return;
                     }
+                }
+                StringBuilder className = new StringBuilder(256);
+                GetClassName(new IntPtr(hwnd), className, className.Capacity);
+                if (className.ToString().Equals("SunAwtFrame"))
+                {
+                    isJavaFrame = true;
+                }
+                else
+                {
+                    isJavaFrame = false;
                 }
                 RgbInfo[] rgbArray = new RgbInfo[0];
                 if (type == 0)
@@ -977,10 +989,13 @@ namespace readboard
         private void stopKeepingSync()
         {
             startedSync = false;
-            if (thread != null && thread.IsAlive)
-                thread.Abort();
             Action2<String> a = new Action2<String>(Action2Test);
-            Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
+            if (!isContinuousSyncing)
+            {
+                Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
+            }
+            if (thread != null && thread.IsAlive)
+                thread.Abort();           
         }
 
         public void resetBtnKeepSyncName()
@@ -1129,6 +1144,7 @@ namespace readboard
             Boolean isRightGoban = true;
             if (type == 5)
             {
+                isJavaFrame = false;
                 Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
                 sx1 = ox1;
@@ -1170,8 +1186,19 @@ namespace readboard
                     stopKeepingSync();
                     return;
                 }
-
-                Action2<String> a = new Action2<String>(startKeepingSync);
+                StringBuilder className = new StringBuilder(256);
+                GetClassName(new IntPtr(hwnd), className, className.Capacity);
+                if (className.ToString().Equals("SunAwtFrame"))
+                {
+                    isJavaFrame = true;
+                    javaX = x1;
+                    javaY = y1;
+                }
+                else
+                {
+                    isJavaFrame = false;                   
+                }
+                    Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
                 if (type == 0)
                 {
@@ -1387,6 +1414,11 @@ namespace readboard
                         Send("stopsync");
                         stopKeepingSync();
                         return;
+                    }
+                    if (isJavaFrame)
+                    {
+                        javaX = x1;
+                        javaY = y1;
                     }
                     RgbInfo[] rgbArray=new RgbInfo[0];
                     if (type == 0)
@@ -2053,7 +2085,11 @@ namespace readboard
 
         private void placeStone(int x, int y)
         {
-            if (type == 5)
+            if (isJavaFrame)
+            {
+                foreMouseClick(javaX+sx1 + (int)(widthMagrin * (x + 0.5)), javaY+sy1 + (int)(heightMagrin * (y + 0.5)));
+            }
+           else if (type == 5)
             {
                 foreMouseClick(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
             }
