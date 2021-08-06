@@ -56,6 +56,7 @@
             this.txtSyncInterval = new System.Windows.Forms.TextBox();
             this.lblGrayOffset = new System.Windows.Forms.Label();
             this.txtGrayOffset = new System.Windows.Forms.TextBox();
+            this.chkEnhanceScreen = new System.Windows.Forms.CheckBox();
             this.scaleGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -307,11 +308,22 @@
             this.txtGrayOffset.Size = new System.Drawing.Size(78, 21);
             this.txtGrayOffset.TabIndex = 26;
             // 
+            // chkEnhanceScreen
+            // 
+            this.chkEnhanceScreen.AutoSize = true;
+            this.chkEnhanceScreen.Location = new System.Drawing.Point(117, 33);
+            this.chkEnhanceScreen.Name = "chkEnhanceScreen";
+            this.chkEnhanceScreen.Size = new System.Drawing.Size(72, 16);
+            this.chkEnhanceScreen.TabIndex = 27;
+            this.chkEnhanceScreen.Text = "强化截图";
+            this.chkEnhanceScreen.UseVisualStyleBackColor = true;
+            // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(395, 253);
+            this.Controls.Add(this.chkEnhanceScreen);
             this.Controls.Add(this.txtGrayOffset);
             this.Controls.Add(this.lblGrayOffset);
             this.Controls.Add(this.txtSyncInterval);
@@ -377,5 +389,6 @@
         private System.Windows.Forms.TextBox txtSyncInterval;
         private System.Windows.Forms.Label lblGrayOffset;
         private System.Windows.Forms.TextBox txtGrayOffset;
+        private System.Windows.Forms.CheckBox chkEnhanceScreen;
     }
 }

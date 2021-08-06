@@ -19,6 +19,7 @@ namespace readboard
             this.chkVerifyMove.Checked = Program.verifyMove;
             this.chkAutoMin.Checked = Program.autoMin;
             this.txtSyncInterval.Text = Program.timeinterval + "";
+            this.chkEnhanceScreen.Checked = Program.useEnhanceScreen;
             txtGrayOffset.Text = Program.grayOffset + "";
             if (!Program.isScaled)
             {
@@ -66,8 +67,12 @@ namespace readboard
                 this.button1.Text = "Confirm";
                 this.button2.Text = "Cancel";
                 this.lblGrayOffset.Text = "GrayOffset(0-255)";
+                this.chkEnhanceScreen.Text = "EnhScreen";
                 this.Size= new Size((int)(461 *Program.factor), (int)(292 * Program.factor));
             }
+            var toolTip1 = new ToolTip();
+
+            toolTip1.SetToolTip(this.chkEnhanceScreen, Program.isChn?@"关闭则无法获取桌面外窗口信息,如遇到野狐原棋盘少子等情况可尝试关闭": @"If unchecked,can not get info out of scrren.If origin board comes up lack of stones try closing it.");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -116,6 +121,7 @@ namespace readboard
             this.Close();
             Program.timeinterval = syncInterval;
             Program.timename = syncInterval + "";
+            Program.useEnhanceScreen = chkEnhanceScreen.Checked;
             Form1.pcurrentWin.resetBtnKeepSyncName();
             Form1.pcurrentWin.saveOtherConfig();
         }

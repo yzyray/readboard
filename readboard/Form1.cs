@@ -52,8 +52,6 @@ namespace readboard
         //int rectSize;
         int rectX1;
         int rectY1;
-        int iActulaWidth = Screen.PrimaryScreen.Bounds.Width;
-        int iActulaHeight = Screen.PrimaryScreen.Bounds.Height;
         //   int sx1ty5=0;
         //   int sy1ty5=0;
         //int all;
@@ -74,7 +72,7 @@ namespace readboard
         Boolean isMannulCircle = false;
         float factor = 1.0f;
         private KeyboardHookListener hookListener;
-        private int port = 24781;
+        private int port = 0;
 
 
         Boolean savedPlace = false;
@@ -86,7 +84,11 @@ namespace readboard
 
         private Boolean isJavaFrame=false;
         private int javaX,javaY;
-
+        lw.lwsoft lw;
+        Boolean canUsePrintWindow = true;
+        Boolean isFirstGetPos = true;
+        Boolean cansetFirstGetPos = true;
+        Boolean isSecondTime = false;
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
@@ -128,44 +130,76 @@ namespace readboard
 
         [DllImport("user32.dll", EntryPoint = "ReleaseDC")]
         public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-        private Bitmap GetWindowImage(IntPtr hwnd) {
-            if (isJavaFrame)
-            {
-              return GetWindowPrintImage(hwnd);
-            }
-            else { 
-                try
-            {
-                RECT rect = new RECT();
-                GetWindowRect(hwnd, ref rect);
-                int rectWidth = rect.Right - rect.Left;
-                int rectHeight = rect.Bottom - rect.Top;
-                IntPtr windc = GetDC(hwnd);
-                IntPtr hDCMem = CreateCompatibleDC(windc);
-                IntPtr hbitmap = CreateCompatibleBitmap(windc, rectWidth, rectHeight);
-                IntPtr hOldBitmap = (IntPtr)SelectObject(hDCMem, hbitmap);
-                BitBlt(hDCMem, 0, 0, rectWidth, rectHeight, windc, 0, 0, 13369376);
-                hbitmap = (IntPtr)SelectObject(hDCMem, hOldBitmap);
-                Bitmap bitmap = Bitmap.FromHbitmap(hbitmap);
-                DeleteObject(hbitmap);
-                DeleteObject(hOldBitmap);
-                DeleteDC(hDCMem);
-                ReleaseDC(hwnd, windc);
-                return bitmap;
-            }
-            catch (Exception e)
-            {
-                SendError(e.ToString());
-                return null;
-            }
-            }
+        private Bitmap GetWindowImage(IntPtr hwnd)
+        {
+            return GetWindowImage(hwnd, false, - 1, -1, -1, -1,true);
+        }
+        private Bitmap GetWindowImage(IntPtr hwnd,Boolean usePrintWindow)
+        {
+            return GetWindowImage(hwnd, false, -1, -1, -1, -1, usePrintWindow);
         }
 
-        private static Bitmap GetWindowPrintImage(IntPtr hWnd)
+        private Bitmap GetWindowImage(IntPtr hwnd,Boolean calcRect,int x,int y,int w,int h,Boolean usePrintWindow)
+        {
+            if (isJavaFrame)
+            {
+                return GetWindowPrintImage(hwnd);
+            }
+            else
+            {
+                try
+                {
+                    cansetFirstGetPos = true; 
+                    RECT rect = new RECT();
+                    GetWindowRect(hwnd, ref rect);
+                    int screenWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+                    int screenHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+                    if (usePrintWindow) { 
+                    if (calcRect)
+                    {
+                        int startx = rect.Left + x;
+                        int endx = rect.Left + x + w;
+                        int starty = rect.Top + y;
+                        int endy = rect.Top + y + h;
+                        if (Program.useEnhanceScreen && canUsePrintWindow && (startx< 0 ||startx > screenWidth || starty < 0 ||endy > screenHeight))
+                        {
+                            return GetWindowPrintImage(hwnd);
+                        }
+                    }
+                    else
+                    if (Program.useEnhanceScreen && canUsePrintWindow && (rect.Left < 0 || rect.Left > screenWidth || rect.Top < 0 || rect.Bottom > screenHeight))
+                    {
+                        return GetWindowPrintImage(hwnd);
+                    }
+                    }
+                    int rectWidth = rect.Right - rect.Left;
+                    int rectHeight = rect.Bottom - rect.Top;
+                    IntPtr windc = GetDC(hwnd);
+                    IntPtr hDCMem = CreateCompatibleDC(windc);
+                    IntPtr hbitmap = CreateCompatibleBitmap(windc, rectWidth, rectHeight);
+                    IntPtr hOldBitmap = (IntPtr)SelectObject(hDCMem, hbitmap);
+                    BitBlt(hDCMem, 0, 0, rectWidth, rectHeight, windc, 0, 0, 13369376);
+                    hbitmap = (IntPtr)SelectObject(hDCMem, hOldBitmap);
+                    Bitmap bitmap = Bitmap.FromHbitmap(hbitmap);
+                    DeleteObject(hbitmap);
+                    DeleteObject(hOldBitmap);
+                    DeleteDC(hDCMem);
+                    ReleaseDC(hwnd, windc);
+                    return bitmap;
+                }
+                catch (Exception e)
+                {
+                    SendError(e.ToString());
+                    return null;
+                }
+            }
+        }        
+
+        private Bitmap GetWindowPrintImage(IntPtr hWnd)
         {
             try
             {
+                cansetFirstGetPos = false;
                 RECT rect = new RECT();
                 GetWindowRect(hWnd, ref rect);
                 int rectWidth = rect.Right - rect.Left;
@@ -182,13 +216,13 @@ namespace readboard
             catch { return null; }
         }
 
-        public Bitmap GetWindowBmp(IntPtr hWnd, int x, int y, int width, int height)
+        private Bitmap GetWindowBmp(IntPtr hWnd, int x, int y, int width, int height)
         {
             if (x < 0 || y < 0 || width <= 0 || height <= 0)
                 return null;
             try
             {
-                Bitmap bmp = GetWindowImage(hWnd);
+                Bitmap bmp = GetWindowImage(hWnd,true,x,y,width,height,true);
                 if (bmp == null)
                     return null;
                 Bitmap mybit = new Bitmap(width, height);
@@ -416,7 +450,7 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 9)
+                    if (arr.Length == 10)
                     {
                         try
                         {
@@ -430,12 +464,13 @@ namespace readboard
                             Program.grayOffset = Convert.ToInt32(arr[6]);
                             posX = Convert.ToInt32(arr[7]);
                             posY = Convert.ToInt32(arr[8]);
+                            Program.useEnhanceScreen = (Convert.ToInt32(arr[5]) == 9);
                             if (posX != -1 && posY != -1)
                             {
                                 var h = Screen.PrimaryScreen.Bounds.Height;
                                 var w = Screen.PrimaryScreen.Bounds.Width;
                                 this.Location = new System.Drawing.Point(Math.Min(Math.Max(0, posX), w - 476), Math.Min(Math.Max(0, posY), h - 217));
-                            }
+                            }                         
                         }
                         catch (Exception)
                         {
@@ -535,7 +570,7 @@ namespace readboard
                 //注册成功!             
                 try
                 {
-                    lw.lwsoft lw = new lw.lwsoft();
+                    lw = new lw.lwsoft();
                     canUseLW = true;
                 }
                 catch (Exception ex)
@@ -761,6 +796,13 @@ namespace readboard
 
         private void button4_Click(object sender, EventArgs e)
         {
+            canUsePrintWindow = true;
+            isFirstGetPos = true;
+            isSecondTime = false;
+            oneTimeSync();
+        }
+
+        private void oneTimeSync() {
             if (type == 5)
             {
                 isJavaFrame = false;
@@ -778,7 +820,8 @@ namespace readboard
             else
             {
                 if (hwnd <= 0)
-                { MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                {
+                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     return;
                 }
                 int x1;
@@ -863,7 +906,7 @@ namespace readboard
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
                     if (!getSinaPos(new IntPtr(hwnd), rgbArray))
-                        return; 
+                        return;
                     //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);
                     //object qx4;
                     //object qy4;
@@ -898,7 +941,7 @@ namespace readboard
                     OutPut3(true);
                 }
                 else
-                    OutPut(true, rgbArray);
+                    OutPut(true, rgbArray, null);
                 // if (t != null)
                 //  {
                 //       t.Enabled = false;
@@ -966,7 +1009,6 @@ namespace readboard
             this.rdoSina.Enabled = true;
             //} 
             this.rdoTygem.Enabled = true;
-
             this.rdoBack.Enabled = true;
             this.rdo19x19.Enabled = true;
             // checkBox1.Enabled = true;
@@ -1142,6 +1184,8 @@ namespace readboard
         private void startContinuousSync(Boolean isSimpleSync)
         {
             Boolean isRightGoban = true;
+            isFirstGetPos = true;
+            canUsePrintWindow = true;
             if (type == 5)
             {
                 isJavaFrame = false;
@@ -1340,12 +1384,6 @@ namespace readboard
 
         private void stopSync()
         {
-            if (canUseLW)
-            {
-                lw.lwsoft lw = new lw.lwsoft();
-                if (hwnd > 0)
-                    lw.ForceUnBindWindow(hwnd);
-            }
             Send("stopsync");
             stopKeepingSync();
             keepSync = false;
@@ -1357,7 +1395,13 @@ namespace readboard
 
         private void OutPutTime()
         {
+            lw.lwsoft lwh=null;
             Send("sync");
+            if (canUseLW&&type==0)
+            {
+                lwh = new lw.lwsoft();
+                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+            }
             while (keepSync)
             {
                 if (Program.showInBoard && type != 5)
@@ -1392,8 +1436,7 @@ namespace readboard
                     OutPut3(false);
                 }
                 else
-                {
-                  
+                {                   
                     int x1;
                     int y1;
                     int x2;
@@ -1488,7 +1531,12 @@ namespace readboard
                     }
                     else
                     {
-                        OutPut(false, rgbArray);
+                        if (canUseLW&&type==0)
+                        {
+                            OutPut(false, rgbArray, lwh);
+                        }
+                        else
+                        OutPut(false, rgbArray,null);
                     }
                 }
                 try
@@ -1774,20 +1822,45 @@ namespace readboard
                     }
                 }
             }
+            Boolean allBlack = true;
+            Boolean allWhite = true;
+            List<String> sendList = new List<string>();
             for (int i = 0; i < boardH; i++)
             {
                 for (int j = 0; j < boardW; j++)
                 {
-                    result += resultValue[i * boardW + j] + ",";
+                    int resultHere = resultValue[i * boardW + j];
+                    if (resultHere ==2|| resultHere ==4)
+                        allBlack = false;
+                    if (resultHere == 1 || resultHere == 3)
+                        allWhite = false;
+                    result += resultHere + ",";
                     if (j == (boardW - 1))
                     {
                         result = result.Substring(0, result.Length - 1);
-                        Send("re=" + result);
+                        //Send("re=" + result);
+                        sendList.Add("re=" + result);
                         result = "";
                     }
                 }
             }
-            Send("end");
+            if (!allWhite && !allBlack)
+            {
+                foreach(String line in sendList)
+                {
+                    Send(line);
+                }
+                Send("end");
+            }         
+            if (allBlack)
+            {
+                canUsePrintWindow = false;
+                if (!startedSync&&!isSecondTime)
+                {
+                    isSecondTime = true;
+                     oneTimeSync();
+                }
+            }
         }
 
         private int getRedBlueColorPercent(RgbInfo[] rgbArray, int startX, int startY, int width, int height, Boolean isBlue, int totalWidth, int totalHeight)
@@ -1860,15 +1933,12 @@ namespace readboard
             return (100 * sum) / (width * height);
         }
 
-        private void OutPut(Boolean first, RgbInfo[] rgbArray)
+        private void OutPut(Boolean first, RgbInfo[] rgbArray, lw.lwsoft lwh)
         {
             if (width < this.boardW || height < this.boardH)
                 return;
-            if (savedPlace && syncBoth)
-            {
-                lw.lwsoft lwh = new lw.lwsoft();
-                lwh.SetShowErrorMsg(0);
-                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+            if (savedPlace && syncBoth&&lwh!=null)
+            {             
                 savedPlace = false;
                 int times = 10;
                 do
@@ -1877,7 +1947,6 @@ namespace readboard
                     lwh.LeftClick();
                     times--;
                 } while (Program.verifyMove && !VerifyMove(savedX, savedY, true) && times > 0);
-                lwh.ForceUnBindWindow(hwnd);
             }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);         
@@ -1976,7 +2045,7 @@ namespace readboard
             catch (Exception)
             {
             }
-            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY);
+            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY+"_"+ (Program.useEnhanceScreen ? "1" : "0"));
             wr.Close();
         }
 
@@ -1991,13 +2060,7 @@ namespace readboard
             wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             saveOtherConfig();
-            mh.Enabled = false;
-            if (canUseLW)
-            {
-                lw.lwsoft lw = new lw.lwsoft();
-                if (hwnd > 0)
-                    lw.ForceUnBindWindow(hwnd);
-            }
+            mh.Enabled = false;              
             Send("stopsync");
             Send("nobothSync");
             Send("endsync");
@@ -3142,7 +3205,7 @@ namespace readboard
 
         private Boolean getTygemPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
-            Bitmap input = GetWindowImage(hwnd);
+            Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return false;
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
@@ -3175,6 +3238,8 @@ namespace readboard
                 if (cl.r > 233 && cl.g > 203 && cl.b > 120 && cl.b < 180)
                 {
                     found = true;
+                    if(cansetFirstGetPos)
+                    isFirstGetPos = false;
                 }
             }
             catch (Exception)
@@ -3184,7 +3249,7 @@ namespace readboard
         }
             private Boolean getSinaPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
-            Bitmap input = GetWindowImage(hwnd);
+            Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return false;
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
@@ -3252,12 +3317,14 @@ namespace readboard
             sy1 = upLeft.Y - 1;
             this.height = downLeft.Y - upLeft.Y + 4;
             this.width = this.height;
+            if (cansetFirstGetPos)
+                isFirstGetPos = false;
             return true;
         }
 
         private Boolean getFoxPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
-            Bitmap input = GetWindowImage(hwnd);
+            Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
                 return false;
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
@@ -3464,7 +3531,9 @@ namespace readboard
                 sx1 = upLeft.X;
                 sy1 = upLeft.Y;
                 this.width = upRight.X - upLeft.X;
-                this.height = this.width;            
+                this.height = this.width;
+            if (cansetFirstGetPos)
+                isFirstGetPos = false;
             return true;
         }
 

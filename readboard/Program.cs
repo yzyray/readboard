@@ -32,6 +32,7 @@ namespace readboard
         public static String timename="200";
         public static int timeinterval=200;
         public static int grayOffset = 50;
+        public static Boolean useEnhanceScreen = true;
 
         public static double factor = 1.0;
 
@@ -64,8 +65,7 @@ namespace readboard
                 hideConsole();
                 while (true)
                 {
-                    String a = Console.ReadLine();
-                
+                    String a = Console.ReadLine();                
                     if (a.StartsWith("place"))
                     {
                         char[] separator = { ' ' }; string[] arr = a.Split(separator);
