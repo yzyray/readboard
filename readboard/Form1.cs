@@ -256,17 +256,20 @@ namespace readboard
                 }
                 catch (Exception e)
                 {
+                    Console.OutputEncoding = System.Text.Encoding.UTF8;
                     Console.Error.WriteLine(e.Message);
                 }
             }
             else
             {
+                Console.OutputEncoding = System.Text.Encoding.UTF8;
                 Console.Error.WriteLine("error: " +strMsg);
             }
         }
 
         private void Send(String strMsg)
         {
+            //Console.OutputEncoding = Encoding.UTF8;
             if (useTcp)
             {
                 try
@@ -277,12 +280,13 @@ namespace readboard
                 }
                 catch (Exception e)
                 {
+                    Console.OutputEncoding = System.Text.Encoding.UTF8;
                     Console.Error.WriteLine(e.Message);
                 }
             }
             else
             {
-                Console.Error.WriteLine(strMsg);
+                Console.WriteLine(strMsg);
             }
         }
 
@@ -1689,12 +1693,16 @@ namespace readboard
             int blackOffsetStandard = Program.blackPC;
             int whiteOffsetStandard = Program.whitePC;
             int grayOffsetStandard = Program.grayOffset;
-            Boolean isPlatform = false;
-            Boolean needFindLastMove = true;
+            //Boolean isPlatform = false;
+            Boolean needCheckRedBlue = true;
+            int redCount = 0;
+            int blueCount = 0;
+            int blueRedX = -1;
+            int blueRedY = -1;
             String result = "";
             if (type != 3 && type != 5)
             {
-                isPlatform = true;
+                //isPlatform = true;
                 blackPercentStandard = 37;
 
                 whitePercentStandard = 30;
@@ -1761,16 +1769,31 @@ namespace readboard
                             }
                         }
                     }
-                    if (isPlatform && needFindLastMove)
+                    if (needCheckRedBlue && (isWhite || isBlack))
                     {
                         int redPercent = getRedBlueColorPercent(
                                 rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, width, height);
                         int bluePercent = getRedBlueColorPercent(
                                 rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, width, height);
-                        if (redPercent >= 10 || bluePercent >= 10)
+                        if (bluePercent >= 1 )
                         {
-                            needFindLastMove = false;
-                            isLastMove = true;
+                            blueCount++;
+                            if (redCount > 1 && blueCount > 1) needCheckRedBlue = false;
+                            else
+                            {
+                                blueRedX = x;
+                                blueRedY = y;
+                            }
+                        }
+                        if (redPercent >= 1)
+                        {
+                            redCount++;
+                            if (redCount > 1 && blueCount > 1) needCheckRedBlue = false;
+                            else
+                            {
+                                blueRedX = x;
+                                blueRedY = y;
+                            }
                         }
                     }
                     if (isBlack)
@@ -1787,9 +1810,15 @@ namespace readboard
                         resultValue[y * boardW + x] = 0;
                 }
             }
-            if (needFindLastMove)
+            if ((redCount == 1 && blueCount != 1) || (redCount != 1 && blueCount == 1))
             {
-                if (blackCounts >= 2 && whiteCounts >= 2)
+                if (resultValue[blueRedY * boardW + blueRedX] == 1)
+                    resultValue[blueRedY * boardW + blueRedX] = 3;
+                else if (resultValue[blueRedY * boardW + blueRedX] == 2)
+                    resultValue[blueRedY * boardW + blueRedX] = 4;
+            }
+            else { 
+               if (blackCounts >= 2 && whiteCounts >= 2)
                 {
                     float blackMaxOffset =
                         Math.Abs(
@@ -1878,14 +1907,14 @@ namespace readboard
                     int blue = rgbInfo.b;
                     if (isBlue)
                     {
-                        if (red <= 30 && green <= 30 && blue >= 200)
+                        if (red <= 50 && green <= 50 && blue >= 150)
                         {
                             sum++;
                         }
                     }
                     else
                     {
-                        if (red >= 200 && green <= 30 && blue <= 30)
+                        if (red >= 150 && green <= 50 && blue <= 50)
                         {
                             sum++;
                         }

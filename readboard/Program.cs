@@ -27,7 +27,7 @@ namespace readboard
         public static Boolean autoMin = true;
         public static Boolean isAdvScale = false;
         public static Boolean isScaled = false;
-        public static String version = "730";
+        public static String version = "808";
         public static Boolean isChn = false;
         public static String timename="200";
         public static int timeinterval=200;
@@ -122,7 +122,7 @@ namespace readboard
         private static void Start()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetCompatibleTextRenderingDefault(false);           
             try
             {
                 if (arg[0].Equals("yzy"))
@@ -132,9 +132,11 @@ namespace readboard
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.Message);
+                Console.OutputEncoding = System.Text.Encoding.UTF8;
+                Console.Error.WriteLine("error "+ex.Message);
                 System.Environment.Exit(0);
             }
+          
         }
     }
 
