@@ -27,7 +27,7 @@ namespace readboard
         public static Boolean autoMin = true;
         public static Boolean isAdvScale = false;
         public static Boolean isScaled = false;
-        public static String version = "808";
+        public static String version = "819";
         public static Boolean isChn = false;
         public static String timename="200";
         public static int timeinterval=200;

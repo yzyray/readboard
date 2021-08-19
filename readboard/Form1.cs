@@ -37,7 +37,6 @@ namespace readboard
         int hwnd = 0;
         //int hwndFoxPlace = 0;
         Form2 form2;
-        Form8 form8;
 
         Boolean startedSync = false;
         Boolean isContinuousSyncing = false;
@@ -68,7 +67,8 @@ namespace readboard
         Boolean canUseLW = false;
         //Boolean noLw = false;
         Boolean useTcp = false;
-        Thread thread;
+        Thread threadFastSync;
+        Thread threadKeepSync;
         Boolean isMannulCircle = false;
         float factor = 1.0f;
         private KeyboardHookListener hookListener;
@@ -468,7 +468,7 @@ namespace readboard
                             Program.grayOffset = Convert.ToInt32(arr[6]);
                             posX = Convert.ToInt32(arr[7]);
                             posY = Convert.ToInt32(arr[8]);
-                            Program.useEnhanceScreen = (Convert.ToInt32(arr[5]) == 9);
+                            Program.useEnhanceScreen = (Convert.ToInt32(arr[9]) == 1);
                             if (posX != -1 && posY != -1)
                             {
                                 var h = Screen.PrimaryScreen.Bounds.Height;
@@ -1033,15 +1033,13 @@ namespace readboard
         }
 
         private void stopKeepingSync()
-        {
-            startedSync = false;
+        {         
             Action2<String> a = new Action2<String>(Action2Test);
             if (!isContinuousSyncing)
             {
                 Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
-            }
-            if (thread != null && thread.IsAlive)
-                thread.Abort();           
+            }      
+            startedSync = false;
         }
 
         public void resetBtnKeepSyncName()
@@ -1073,9 +1071,17 @@ namespace readboard
             IntPtr p = new IntPtr(hwnd);
             while (isContinuousSyncing)
             {
-                if (!startedSync)
+                if (threadKeepSync != null && threadKeepSync.IsAlive)
                 {
-                    hwnd = -1;
+                    Thread.Sleep(100);
+                    continue;
+                }
+                    if (startedSync)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
+                hwnd = -1;
                     int finalWidth = 0;
                     int x1;
                     int y1;
@@ -1172,16 +1178,8 @@ namespace readboard
                     if (hwnd > 0 && isContinuousSyncing)
                     {
                         startContinuousSync(true);
-                    }
-                }
-                try
-                {
-                    Thread.Sleep(100);
-                }
-                catch (Exception)
-                {
-
-                }
+                    }                
+                    Thread.Sleep(100);                
             }
         }
 
@@ -1355,7 +1353,7 @@ namespace readboard
                     Send("play>white>" + (textBox1.Text.Equals("") ? "0" : textBox1.Text) + " " + (textBox2.Text.Equals("") ? "0" : textBox2.Text) + " " + (textBox3.Text.Equals("") ? "0" : textBox3.Text));
                 }
             }
-            if (Program.autoMin && isRightGoban && this.WindowState != FormWindowState.Minimized)
+            if (!isContinuousSyncing&&Program.autoMin && isRightGoban && this.WindowState != FormWindowState.Minimized)
             {
                 Action2<String> a = new Action2<String>(minWindow);
                 Invoke(a, "");
@@ -1364,10 +1362,9 @@ namespace readboard
             {
                 stopSync();
             }
-            ThreadStart threadStart = new ThreadStart(OutPutTime);
-            thread = new Thread(OutPutTime);
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();          
+            threadKeepSync = new Thread(OutPutTime);
+            threadKeepSync.SetApartmentState(ApartmentState.STA);
+            threadKeepSync.Start();          
         }
         private void button5_Click(object sender, EventArgs e)
         {
@@ -1394,8 +1391,6 @@ namespace readboard
         }
 
         public delegate void Action2<in T>(T t);
-
-
 
         private void OutPutTime()
         {
@@ -2146,26 +2141,16 @@ namespace readboard
         {
             this.chkShowInBoard.Checked = false;
         }
-        public void lossFocus()
-        {
-            int hwnd8;
-            if (form8 != null)
-            {
-                hwnd8 = form8.getHwnd();
-            }
-            else
-            {
-                form8 = new Form8();
-                hwnd8 = form8.getHwnd();
-                //form8.Show();
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetForegroundWindow", CharSet = System.Runtime.InteropServices.CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetF();
 
-            }
-            if (dm.GetWindowState(hwnd8, 1) == 0)
+        public void lossFocus()
+        {           
+            if ((int)GetF()!=dm.FindWindow("SunAwtDialog", "FloatBoard"))              
             {
-                dm.SetWindowState(hwnd8, 1);
+                mouse_event((int)(MouseEventFlags.MiddleDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+                mouse_event((int)(MouseEventFlags.MiddleUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
             }
-            //  dm.MoveWindow(hwnd8, -9999, -5000);
-            //   dm.SetWindowState(hwnd8, 0);
         }
 
         class MoveInfo
@@ -2612,24 +2597,28 @@ namespace readboard
         {
             if (!isContinuousSyncing)
             {
+                while (threadFastSync != null && threadFastSync.IsAlive)
+                {
+                    isContinuousSyncing = false;
+                    Thread.Sleep(50);
+                }
                 isContinuousSyncing = true;
-                ThreadStart threadStart = new ThreadStart(startContinuous);
                 this.button3.Enabled = false;
                 this.button4.Enabled = false;
                 this.btnKeepSync.Enabled = false;
-                thread = new Thread(startContinuous);
-                thread.SetApartmentState(ApartmentState.STA);
-                thread.Start();
+                threadFastSync = new Thread(startContinuous);
+                threadFastSync.SetApartmentState(ApartmentState.STA);
+                threadFastSync.Start();
                 if (Program.autoMin && this.WindowState != FormWindowState.Minimized)
                 {
                     minWindow("");
                 }
             }
             else
-            {
-                isContinuousSyncing = false;
+            {               
                 stopSync();
                 this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
+                isContinuousSyncing = false;
             }
         }
 
