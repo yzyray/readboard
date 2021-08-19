@@ -1400,12 +1400,7 @@ namespace readboard
         private void OutPutTime()
         {
             lw.lwsoft lwh=null;
-            Send("sync");
-            if (canUseLW&&type==0)
-            {
-                lwh = new lw.lwsoft();
-                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
-            }
+            Send("sync");            
             while (keepSync)
             {
                 if (Program.showInBoard && type != 5)
@@ -1581,7 +1576,7 @@ namespace readboard
                 }
             }
             input.UnlockBits(data);
-
+            input.Dispose();
             int blackPercentStandard = Program.blackZB;
             int whitePercentStandard = Program.whiteZB;
             int blackOffsetStandard = Program.blackPC;
@@ -1669,6 +1664,7 @@ namespace readboard
                 }
             }
             input.UnlockBits(data);
+            input.Dispose();
             }
             float hGap = height / (float)boardH;
             float vGap = width / (float)boardW;
@@ -1966,8 +1962,10 @@ namespace readboard
         {
             if (width < this.boardW || height < this.boardH)
                 return;
-            if (savedPlace && syncBoth&&lwh!=null)
-            {             
+            if (savedPlace && syncBoth)
+            {
+                lwh = new lw.lwsoft();
+                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);                
                 savedPlace = false;
                 int times = 10;
                 do
@@ -1976,6 +1974,7 @@ namespace readboard
                     lwh.LeftClick();
                     times--;
                 } while (Program.verifyMove && !VerifyMove(savedX, savedY, true) && times > 0);
+                lwh.UnBindWindow();
             }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);         
@@ -3260,6 +3259,7 @@ namespace readboard
             int width = data.Width;
             int height = data.Height;
             input.UnlockBits(data);
+            input.Dispose();
             Boolean found = false;
             try
             {
@@ -3276,7 +3276,7 @@ namespace readboard
             }
             return found;
         }
-            private Boolean getSinaPos(IntPtr hwnd, RgbInfo[] rgbArray)
+        private Boolean getSinaPos(IntPtr hwnd, RgbInfo[] rgbArray)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
@@ -3304,6 +3304,7 @@ namespace readboard
             int width = data.Width;
             int height = data.Height;
             input.UnlockBits(data);
+            input.Dispose();
             //251,218,162 左到右 上到下 251,218,162 向下1,2 偏移 < 5(左上角)(实际找到正数第二的点sx1 - 1, sy1 - 1)
             //251,218,162 左到右 下到上251,218,162 向下1,2 偏移 < 5(左下角)(实际找到倒数第三的点, height + 4)
             // "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);      
@@ -3379,7 +3380,7 @@ namespace readboard
             int width = data.Width;
             int height = data.Height;
             input.UnlockBits(data);
-
+            input.Dispose();
             //49,49,49 左到右 上到下 46,46,46 向下1,2 向右1,2 偏移 < 5(左上角)
 
             //  "313131-050505", "2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
@@ -3571,8 +3572,6 @@ namespace readboard
             Point returnPoint = new Point();
             returnPoint.X = -1;
             returnPoint.Y = -1;
-
-
             switch (direction)
             {
                 case 0:
