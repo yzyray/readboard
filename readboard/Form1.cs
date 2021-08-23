@@ -89,6 +89,8 @@ namespace readboard
         Boolean isFirstGetPos = true;
         Boolean cansetFirstGetPos = true;
         Boolean isSecondTime = false;
+
+        Boolean needForceUnbind = false;
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
@@ -1040,6 +1042,12 @@ namespace readboard
                 Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
             }      
             startedSync = false;
+            if (needForceUnbind)
+            {
+                needForceUnbind = false;
+                lw.lwsoft lwh = new lw.lwsoft();
+                lwh.ForceUnBindWindow(hwnd);
+            }
         }
 
         public void resetBtnKeepSyncName()
@@ -1570,8 +1578,7 @@ namespace readboard
                     rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
                 }
             }
-            input.UnlockBits(data);
-            input.Dispose();
+            input.UnlockBits(data);          
             int blackPercentStandard = Program.blackZB;
             int whitePercentStandard = Program.whiteZB;
             int blackOffsetStandard = Program.blackPC;
@@ -1595,6 +1602,7 @@ namespace readboard
                            rgbArray, 0, 0, input.Width, input.Height, true, blackOffsetStandard, grayOffsetStandard, input.Width, input.Height);
             if (blackPercent >= blackPercentStandard)
             {
+                input.Dispose();
                 return true;
             }
             else
@@ -1619,6 +1627,7 @@ namespace readboard
                         else isWhite = true;
                     }
                 }
+                input.Dispose();
                 return isWhite;
             }
         }
@@ -1960,7 +1969,8 @@ namespace readboard
             if (savedPlace && syncBoth)
             {
                 lwh = new lw.lwsoft();
-                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);                
+                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+                needForceUnbind = true;
                 savedPlace = false;
                 int times = 10;
                 do
@@ -2087,6 +2097,11 @@ namespace readboard
             Send("stopsync");
             Send("nobothSync");
             Send("endsync");
+            if (needForceUnbind)
+            {
+                lw.lwsoft lwh = new lw.lwsoft();
+                lwh.ForceUnBindWindow(hwnd);
+            }
             System.Diagnostics.Process.GetCurrentProcess().Kill();
             Application.Exit();
         }
