@@ -2634,6 +2634,8 @@ namespace readboard
                 stopSync();
                 this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
                 isContinuousSyncing = false;
+                Action2<String> a = new Action2<String>(Action2Test);
+                Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
             }
         }
 
