@@ -456,7 +456,7 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 10)
+                    if (arr.Length == 11)
                     {
                         try
                         {
@@ -471,12 +471,13 @@ namespace readboard
                             posX = Convert.ToInt32(arr[7]);
                             posY = Convert.ToInt32(arr[8]);
                             Program.useEnhanceScreen = (Convert.ToInt32(arr[9]) == 1);
+                            Program.playPonder = (Convert.ToInt32(arr[10]) == 1);
                             if (posX != -1 && posY != -1)
                             {
                                 var h = Screen.PrimaryScreen.Bounds.Height;
                                 var w = Screen.PrimaryScreen.Bounds.Width;
                                 this.Location = new System.Drawing.Point(Math.Min(Math.Max(0, posX), w - 476), Math.Min(Math.Max(0, posY), h - 217));
-                            }                         
+                            }  
                         }
                         catch (Exception)
                         {
@@ -543,7 +544,7 @@ namespace readboard
                 case 3:
                     rdoBack.Checked = true;
                     break;
-            }
+            }          
             this.chkShowInBoard.Checked = Program.showInBoard;
             Program.showInBoard = chkShowInBoard.Checked;
             if (Program.showScaleHint && factor > 1)
@@ -641,7 +642,17 @@ namespace readboard
                 this.Text = "Board Synchronization Tool";
             }           
                 Send("ready");
+            sendPonderStatus();
         }
+
+        public void sendPonderStatus()
+        {
+            if(Program.playPonder)
+                Send("playponder on");
+            else
+                Send("playponder off");
+        }
+
         MouseHookListener mh;
         /// <summary>
         /// 注册
@@ -1859,6 +1870,11 @@ namespace readboard
                 for (int j = 0; j < boardW; j++)
                 {
                     int resultHere = resultValue[i * boardW + j];
+                    if (resultHere == 0)
+                    {
+                        allBlack = false;
+                        allWhite = false;
+                    }
                     if (resultHere ==2|| resultHere ==4)
                         allBlack = false;
                     if (resultHere == 1 || resultHere == 3)
@@ -2078,7 +2094,7 @@ namespace readboard
             catch (Exception)
             {
             }
-            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY+"_"+ (Program.useEnhanceScreen ? "1" : "0"));
+            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY+"_"+ (Program.useEnhanceScreen ? "1" : "0")+"_"+ (Program.playPonder ? "1" : "0"));
             wr.Close();
         }
 

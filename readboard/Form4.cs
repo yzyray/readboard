@@ -21,6 +21,7 @@ namespace readboard
             this.txtSyncInterval.Text = Program.timeinterval + "";
             this.chkEnhanceScreen.Checked = Program.useEnhanceScreen;
             txtGrayOffset.Text = Program.grayOffset + "";
+            this.chkPonder.Checked = Program.playPonder;
             if (!Program.isScaled)
             {
                 rdoAdvanceScale.Visible = false;
@@ -48,9 +49,10 @@ namespace readboard
                 rdoNormalScale.Checked = true;
             if (!Program.isChn) {
                 this.Text = "Settings";
+                this.chkPonder.Text = "Ponder";
                 this.chkMag.Text = "Show Magnifier";
                 this.chkVerifyMove.Text = "Verify Placed Stone";
-                this.chkAutoMin.Text = "Auto Minimize After Sync";
+                this.chkAutoMin.Text = "Auto Minimize";
                 this.rdoNormalScale.Text = "NormalScale";
                 this.rdoAdvanceScale.Text = "AdvanceScale";
                 this.button3.Text = "HowToKnowMyScaleType";
@@ -71,8 +73,9 @@ namespace readboard
                 this.Size= new Size((int)(461 *Program.factor), (int)(292 * Program.factor));
             }
             var toolTip1 = new ToolTip();
-
             toolTip1.SetToolTip(this.chkEnhanceScreen, Program.isChn?@"关闭则无法获取桌面外窗口信息,如遇到野狐原棋盘少子等情况可尝试关闭": @"If unchecked,can not get info out of scrren.If origin board comes up lack of stones try closing it.");
+            var toolTip2 = new ToolTip();
+            toolTip2.SetToolTip(this.chkPonder, Program.isChn ? @"双向同步自动落子时,引擎在对手的回合计算" : @"Engine thinking on opponent's turn when auto playing.");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -122,8 +125,10 @@ namespace readboard
             Program.timeinterval = syncInterval;
             Program.timename = syncInterval + "";
             Program.useEnhanceScreen = chkEnhanceScreen.Checked;
+            Program.playPonder = this.chkPonder.Checked;
             Form1.pcurrentWin.resetBtnKeepSyncName();
             Form1.pcurrentWin.saveOtherConfig();
+            Form1.pcurrentWin.sendPonderStatus();
         }
 
         private void button2_Click(object sender, EventArgs e)

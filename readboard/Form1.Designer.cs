@@ -408,11 +408,11 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(136, 15);
+            this.label5.Location = new System.Drawing.Point(137, 15);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(107, 12);
             this.label5.TabIndex = 31;
-            this.label5.Text = "双向自动落子条件:";
+            this.label5.Text = "引擎自动落子条件:";
             // 
             // groupBox4
             // 
