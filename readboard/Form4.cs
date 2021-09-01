@@ -73,7 +73,7 @@ namespace readboard
                 this.Size= new Size((int)(461 *Program.factor), (int)(292 * Program.factor));
             }
             var toolTip1 = new ToolTip();
-            toolTip1.SetToolTip(this.chkEnhanceScreen, Program.isChn?@"关闭则无法获取桌面外窗口信息,如遇到野狐原棋盘少子等情况可尝试关闭": @"If unchecked,can not get info out of scrren.If origin board comes up lack of stones try closing it.");
+            toolTip1.SetToolTip(this.chkEnhanceScreen, Program.isChn?@"关闭则无法获取桌面外窗口信息,如遇到原棋盘少子等情况可尝试关闭": @"If unchecked,can not get info out of scrren.If origin board comes up lack of stones try closing it.");
             var toolTip2 = new ToolTip();
             toolTip2.SetToolTip(this.chkPonder, Program.isChn ? @"双向同步自动落子时,引擎在对手的回合计算" : @"Engine thinking on opponent's turn when auto playing.");
         }
