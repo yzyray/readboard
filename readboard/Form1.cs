@@ -465,7 +465,7 @@ namespace readboard
                             customW = Convert.ToInt32(arr[2]);
                             customH = Convert.ToInt32(arr[3]);
                             Program.timeinterval = Convert.ToInt32(arr[4]);
-                            Program.timename = Program.timeinterval + "";
+                            Program.timename = Program.timeinterval.ToString();
                             this.syncBoth = (Convert.ToInt32(arr[5]) == 1);
                             Program.grayOffset = Convert.ToInt32(arr[6]);
                             posX = Convert.ToInt32(arr[7]);
@@ -491,37 +491,37 @@ namespace readboard
                     {
                         this.rdo19x19.Checked = true;
                         if (customW > 0)
-                            this.txtBoardWidth.Text = customW + "";
+                            this.txtBoardWidth.Text = customW.ToString();
                         if (customH > 0)
-                            this.txtBoardHeight.Text = customH + "";
+                            this.txtBoardHeight.Text = customH.ToString();
                     }
                     else if (boardW == 13)
                     {
                         this.rdo13x13.Checked = true;
                         if (customW > 0)
-                            this.txtBoardWidth.Text = customW + "";
+                            this.txtBoardWidth.Text = customW.ToString();
                         if (customH > 0)
-                            this.txtBoardHeight.Text = customH + "";
+                            this.txtBoardHeight.Text = customH.ToString();
                     }
                     else if (boardW == 9)
                     {
                         this.rdo9x9.Checked = true;
                         if (customW > 0)
-                            this.txtBoardWidth.Text = customW + "";
+                            this.txtBoardWidth.Text = customW.ToString();
                         if (customH > 0)
-                            this.txtBoardHeight.Text = customH + "";
+                            this.txtBoardHeight.Text = customH.ToString();
                     }
                     else
                     {
-                        this.txtBoardWidth.Text = this.boardW + "";
-                        this.txtBoardHeight.Text = this.boardH + "";
+                        this.txtBoardWidth.Text = this.boardW.ToString();
+                        this.txtBoardHeight.Text = this.boardH.ToString();
                         this.rdoOtherBoard.Checked = true;
                     }
                 }
                 else
                 {
-                    this.txtBoardWidth.Text = this.boardW + "";
-                    this.txtBoardHeight.Text = this.boardH + "";
+                    this.txtBoardWidth.Text = this.boardW.ToString();
+                    this.txtBoardHeight.Text = this.boardH.ToString();
                     this.rdoOtherBoard.Checked = true;
                 }
             }

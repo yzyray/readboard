@@ -18,9 +18,9 @@ namespace readboard
             this.chkMag.Checked = Program.useMag;
             this.chkVerifyMove.Checked = Program.verifyMove;
             this.chkAutoMin.Checked = Program.autoMin;
-            this.txtSyncInterval.Text = Program.timeinterval + "";
+            this.txtSyncInterval.Text = Program.timeinterval.ToString();
             this.chkEnhanceScreen.Checked = Program.useEnhanceScreen;
-            txtGrayOffset.Text = Program.grayOffset + "";
+            txtGrayOffset.Text = Program.grayOffset.ToString();
             this.chkPonder.Checked = Program.playPonder;
             if (!Program.isScaled)
             {
@@ -123,7 +123,7 @@ namespace readboard
             wr.Close();
             this.Close();
             Program.timeinterval = syncInterval;
-            Program.timename = syncInterval + "";
+            Program.timename = syncInterval.ToString();
             Program.useEnhanceScreen = chkEnhanceScreen.Checked;
             Program.playPonder = this.chkPonder.Checked;
             Form1.pcurrentWin.resetBtnKeepSyncName();
