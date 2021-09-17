@@ -25,15 +25,16 @@ namespace readboard
         public static Boolean showInBoard = false;
         public static Boolean showInBoardHint = true;
         public static Boolean autoMin = true;
-        public static Boolean isAdvScale = false;
+       // public const Boolean isAdvScale = false;
         public static Boolean isScaled = false;
-        public static String version = "826";
+        public static String version = "916";
         public static Boolean isChn = false;
         public static String timename="200";
         public static int timeinterval=200;
         public static int grayOffset = 50;
         public static Boolean useEnhanceScreen = true;
         public static Boolean playPonder = true;
+     //   public static Boolean scaleForBack = false;
 
         public static double factor = 1.0;
 

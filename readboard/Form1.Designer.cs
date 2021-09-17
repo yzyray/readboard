@@ -76,9 +76,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(155, 125);
+            this.button2.Location = new System.Drawing.Point(232, 188);
+            this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(83, 23);
+            this.button2.Size = new System.Drawing.Size(124, 34);
             this.button2.TabIndex = 1;
             this.button2.Text = "框选棋盘";
             this.button2.UseVisualStyleBackColor = true;
@@ -87,9 +88,10 @@
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("宋体", 9F);
-            this.button3.Location = new System.Drawing.Point(7, 125);
+            this.button3.Location = new System.Drawing.Point(10, 188);
+            this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(145, 23);
+            this.button3.Size = new System.Drawing.Size(218, 34);
             this.button3.TabIndex = 2;
             this.button3.Text = "选择棋盘(点击棋盘内部)";
             this.button3.UseVisualStyleBackColor = true;
@@ -97,9 +99,10 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(117, 152);
+            this.button4.Location = new System.Drawing.Point(176, 228);
+            this.button4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(82, 23);
+            this.button4.Size = new System.Drawing.Size(123, 34);
             this.button4.TabIndex = 3;
             this.button4.Text = "单次同步";
             this.button4.UseVisualStyleBackColor = true;
@@ -107,9 +110,10 @@
             // 
             // btnKeepSync
             // 
-            this.btnKeepSync.Location = new System.Drawing.Point(7, 152);
+            this.btnKeepSync.Location = new System.Drawing.Point(10, 228);
+            this.btnKeepSync.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnKeepSync.Name = "btnKeepSync";
-            this.btnKeepSync.Size = new System.Drawing.Size(107, 23);
+            this.btnKeepSync.Size = new System.Drawing.Size(160, 34);
             this.btnKeepSync.TabIndex = 4;
             this.btnKeepSync.Text = "持续同步(200ms)";
             this.btnKeepSync.UseVisualStyleBackColor = true;
@@ -117,9 +121,10 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(372, 152);
+            this.button6.Location = new System.Drawing.Point(558, 228);
+            this.button6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(80, 23);
+            this.button6.Size = new System.Drawing.Size(120, 34);
             this.button6.TabIndex = 5;
             this.button6.Text = "清空棋盘";
             this.button6.UseVisualStyleBackColor = true;
@@ -132,18 +137,21 @@
             this.groupBox1.Controls.Add(this.rdoBack);
             this.groupBox1.Controls.Add(this.rdoTygem);
             this.groupBox1.Controls.Add(this.rdoFox);
-            this.groupBox1.Location = new System.Drawing.Point(7, -2);
+            this.groupBox1.Location = new System.Drawing.Point(10, -3);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(326, 32);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Size = new System.Drawing.Size(489, 48);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             // 
             // rdoFore
             // 
             this.rdoFore.AutoSize = true;
-            this.rdoFore.Location = new System.Drawing.Point(239, 11);
+            this.rdoFore.Location = new System.Drawing.Point(358, 16);
+            this.rdoFore.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdoFore.Name = "rdoFore";
-            this.rdoFore.Size = new System.Drawing.Size(83, 16);
+            this.rdoFore.Size = new System.Drawing.Size(123, 22);
             this.rdoFore.TabIndex = 14;
             this.rdoFore.TabStop = true;
             this.rdoFore.Text = "其他(前台)";
@@ -153,9 +161,10 @@
             // rdoSina
             // 
             this.rdoSina.AutoSize = true;
-            this.rdoSina.Location = new System.Drawing.Point(104, 11);
+            this.rdoSina.Location = new System.Drawing.Point(156, 16);
+            this.rdoSina.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdoSina.Name = "rdoSina";
-            this.rdoSina.Size = new System.Drawing.Size(47, 16);
+            this.rdoSina.Size = new System.Drawing.Size(69, 22);
             this.rdoSina.TabIndex = 13;
             this.rdoSina.TabStop = true;
             this.rdoSina.Text = "新浪";
@@ -165,9 +174,10 @@
             // rdoBack
             // 
             this.rdoBack.AutoSize = true;
-            this.rdoBack.Location = new System.Drawing.Point(154, 11);
+            this.rdoBack.Location = new System.Drawing.Point(231, 16);
+            this.rdoBack.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdoBack.Name = "rdoBack";
-            this.rdoBack.Size = new System.Drawing.Size(83, 16);
+            this.rdoBack.Size = new System.Drawing.Size(123, 22);
             this.rdoBack.TabIndex = 12;
             this.rdoBack.TabStop = true;
             this.rdoBack.Text = "其他(后台)";
@@ -177,9 +187,10 @@
             // rdoTygem
             // 
             this.rdoTygem.AutoSize = true;
-            this.rdoTygem.Location = new System.Drawing.Point(54, 11);
+            this.rdoTygem.Location = new System.Drawing.Point(81, 16);
+            this.rdoTygem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdoTygem.Name = "rdoTygem";
-            this.rdoTygem.Size = new System.Drawing.Size(47, 16);
+            this.rdoTygem.Size = new System.Drawing.Size(69, 22);
             this.rdoTygem.TabIndex = 11;
             this.rdoTygem.TabStop = true;
             this.rdoTygem.Text = "弈城";
@@ -189,9 +200,10 @@
             // rdoFox
             // 
             this.rdoFox.AutoSize = true;
-            this.rdoFox.Location = new System.Drawing.Point(5, 11);
+            this.rdoFox.Location = new System.Drawing.Point(8, 16);
+            this.rdoFox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdoFox.Name = "rdoFox";
-            this.rdoFox.Size = new System.Drawing.Size(47, 16);
+            this.rdoFox.Size = new System.Drawing.Size(69, 22);
             this.rdoFox.TabIndex = 10;
             this.rdoFox.TabStop = true;
             this.rdoFox.Text = "野狐";
@@ -208,27 +220,31 @@
             this.groupBox2.Controls.Add(this.rdo9x9);
             this.groupBox2.Controls.Add(this.rdo13x13);
             this.groupBox2.Controls.Add(this.rdo19x19);
-            this.groupBox2.Location = new System.Drawing.Point(87, 29);
+            this.groupBox2.Location = new System.Drawing.Point(130, 44);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(246, 31);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Size = new System.Drawing.Size(369, 46);
             this.groupBox2.TabIndex = 15;
             this.groupBox2.TabStop = false;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(213, 12);
+            this.label6.Location = new System.Drawing.Point(318, 18);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(11, 12);
+            this.label6.Size = new System.Drawing.Size(17, 18);
             this.label6.TabIndex = 36;
             this.label6.Text = "*";
             // 
             // txtBoardHeight
             // 
             this.txtBoardHeight.BackColor = System.Drawing.SystemColors.Menu;
-            this.txtBoardHeight.Location = new System.Drawing.Point(224, 8);
+            this.txtBoardHeight.Location = new System.Drawing.Point(336, 12);
+            this.txtBoardHeight.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtBoardHeight.Name = "txtBoardHeight";
-            this.txtBoardHeight.Size = new System.Drawing.Size(21, 21);
+            this.txtBoardHeight.Size = new System.Drawing.Size(30, 28);
             this.txtBoardHeight.TabIndex = 35;
             this.txtBoardHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tb_KeyPressHeight);
             this.txtBoardHeight.Leave += new System.EventHandler(this.parseHeight);
@@ -236,9 +252,10 @@
             // txtBoardWidth
             // 
             this.txtBoardWidth.BackColor = System.Drawing.SystemColors.Menu;
-            this.txtBoardWidth.Location = new System.Drawing.Point(191, 8);
+            this.txtBoardWidth.Location = new System.Drawing.Point(286, 12);
+            this.txtBoardWidth.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtBoardWidth.Name = "txtBoardWidth";
-            this.txtBoardWidth.Size = new System.Drawing.Size(21, 21);
+            this.txtBoardWidth.Size = new System.Drawing.Size(30, 28);
             this.txtBoardWidth.TabIndex = 34;
             this.txtBoardWidth.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tb_KeyPressWidth);
             this.txtBoardWidth.Leave += new System.EventHandler(this.parseWidth);
@@ -246,9 +263,10 @@
             // rdoOtherBoard
             // 
             this.rdoOtherBoard.AutoSize = true;
-            this.rdoOtherBoard.Location = new System.Drawing.Point(176, 12);
+            this.rdoOtherBoard.Location = new System.Drawing.Point(264, 18);
+            this.rdoOtherBoard.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdoOtherBoard.Name = "rdoOtherBoard";
-            this.rdoOtherBoard.Size = new System.Drawing.Size(14, 13);
+            this.rdoOtherBoard.Size = new System.Drawing.Size(21, 20);
             this.rdoOtherBoard.TabIndex = 33;
             this.rdoOtherBoard.TabStop = true;
             this.rdoOtherBoard.UseVisualStyleBackColor = true;
@@ -257,18 +275,20 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 12);
+            this.label1.Location = new System.Drawing.Point(4, 18);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 12);
+            this.label1.Size = new System.Drawing.Size(53, 18);
             this.label1.TabIndex = 17;
             this.label1.Text = "棋盘:";
             // 
             // rdo9x9
             // 
             this.rdo9x9.AutoSize = true;
-            this.rdo9x9.Location = new System.Drawing.Point(138, 11);
+            this.rdo9x9.Location = new System.Drawing.Point(207, 16);
+            this.rdo9x9.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdo9x9.Name = "rdo9x9";
-            this.rdo9x9.Size = new System.Drawing.Size(41, 16);
+            this.rdo9x9.Size = new System.Drawing.Size(60, 22);
             this.rdo9x9.TabIndex = 16;
             this.rdo9x9.TabStop = true;
             this.rdo9x9.Text = "9*9";
@@ -278,9 +298,10 @@
             // rdo13x13
             // 
             this.rdo13x13.AutoSize = true;
-            this.rdo13x13.Location = new System.Drawing.Point(88, 11);
+            this.rdo13x13.Location = new System.Drawing.Point(132, 16);
+            this.rdo13x13.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdo13x13.Name = "rdo13x13";
-            this.rdo13x13.Size = new System.Drawing.Size(53, 16);
+            this.rdo13x13.Size = new System.Drawing.Size(78, 22);
             this.rdo13x13.TabIndex = 15;
             this.rdo13x13.TabStop = true;
             this.rdo13x13.Text = "13*13";
@@ -290,9 +311,10 @@
             // rdo19x19
             // 
             this.rdo19x19.AutoSize = true;
-            this.rdo19x19.Location = new System.Drawing.Point(38, 11);
+            this.rdo19x19.Location = new System.Drawing.Point(57, 16);
+            this.rdo19x19.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rdo19x19.Name = "rdo19x19";
-            this.rdo19x19.Size = new System.Drawing.Size(53, 16);
+            this.rdo19x19.Size = new System.Drawing.Size(78, 22);
             this.rdo19x19.TabIndex = 14;
             this.rdo19x19.TabStop = true;
             this.rdo19x19.Text = "19*19";
@@ -302,9 +324,10 @@
             // radioWhite
             // 
             this.radioWhite.AutoSize = true;
-            this.radioWhite.Location = new System.Drawing.Point(84, 38);
+            this.radioWhite.Location = new System.Drawing.Point(126, 57);
+            this.radioWhite.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.radioWhite.Name = "radioWhite";
-            this.radioWhite.Size = new System.Drawing.Size(47, 16);
+            this.radioWhite.Size = new System.Drawing.Size(69, 22);
             this.radioWhite.TabIndex = 23;
             this.radioWhite.TabStop = true;
             this.radioWhite.Text = "执白";
@@ -314,9 +337,10 @@
             // radioBlack
             // 
             this.radioBlack.AutoSize = true;
-            this.radioBlack.Location = new System.Drawing.Point(84, 13);
+            this.radioBlack.Location = new System.Drawing.Point(126, 20);
+            this.radioBlack.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.radioBlack.Name = "radioBlack";
-            this.radioBlack.Size = new System.Drawing.Size(47, 16);
+            this.radioBlack.Size = new System.Drawing.Size(69, 22);
             this.radioBlack.TabIndex = 22;
             this.radioBlack.TabStop = true;
             this.radioBlack.Text = "执黑";
@@ -326,9 +350,10 @@
             // chkBothSync
             // 
             this.chkBothSync.AutoSize = true;
-            this.chkBothSync.Location = new System.Drawing.Point(6, 12);
+            this.chkBothSync.Location = new System.Drawing.Point(9, 18);
+            this.chkBothSync.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkBothSync.Name = "chkBothSync";
-            this.chkBothSync.Size = new System.Drawing.Size(72, 16);
+            this.chkBothSync.Size = new System.Drawing.Size(106, 22);
             this.chkBothSync.TabIndex = 20;
             this.chkBothSync.Text = "双向同步";
             this.chkBothSync.UseVisualStyleBackColor = true;
@@ -336,26 +361,29 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(193, 36);
+            this.textBox1.Location = new System.Drawing.Point(290, 54);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(50, 21);
+            this.textBox1.Size = new System.Drawing.Size(73, 28);
             this.textBox1.TabIndex = 25;
             this.textBox1.TextChanged += new System.EventHandler(this.textbox1_TextChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(137, 41);
+            this.label2.Location = new System.Drawing.Point(206, 62);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 12);
+            this.label2.Size = new System.Drawing.Size(80, 18);
             this.label2.TabIndex = 24;
             this.label2.Text = "每手用时";
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(202, 152);
+            this.button7.Location = new System.Drawing.Point(303, 228);
+            this.button7.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(82, 23);
+            this.button7.Size = new System.Drawing.Size(123, 34);
             this.button7.TabIndex = 21;
             this.button7.Text = "停止/分析";
             this.button7.UseVisualStyleBackColor = true;
@@ -364,42 +392,47 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(249, 15);
+            this.label3.Location = new System.Drawing.Point(374, 22);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 12);
+            this.label3.Size = new System.Drawing.Size(152, 18);
             this.label3.TabIndex = 26;
             this.label3.Text = "最大计算量(选填)";
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(356, 10);
+            this.textBox2.Location = new System.Drawing.Point(534, 15);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(84, 21);
+            this.textBox2.Size = new System.Drawing.Size(124, 28);
             this.textBox2.TabIndex = 27;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(249, 39);
+            this.label4.Location = new System.Drawing.Point(374, 58);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 12);
+            this.label4.Size = new System.Drawing.Size(152, 18);
             this.label4.TabIndex = 28;
             this.label4.Text = "首位计算量(选填)";
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(356, 36);
+            this.textBox3.Location = new System.Drawing.Point(534, 54);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(85, 21);
+            this.textBox3.Size = new System.Drawing.Size(126, 28);
             this.textBox3.TabIndex = 29;
             this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(409, 4);
+            this.button1.Location = new System.Drawing.Point(614, 6);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(44, 26);
+            this.button1.Size = new System.Drawing.Size(66, 39);
             this.button1.TabIndex = 30;
             this.button1.Text = "帮助";
             this.button1.UseVisualStyleBackColor = true;
@@ -408,9 +441,10 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(137, 15);
+            this.label5.Location = new System.Drawing.Point(206, 22);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(107, 12);
+            this.label5.Size = new System.Drawing.Size(161, 18);
             this.label5.TabIndex = 31;
             this.label5.Text = "引擎自动落子条件:";
             // 
@@ -427,18 +461,21 @@
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.textBox1);
             this.groupBox4.Controls.Add(this.textBox2);
-            this.groupBox4.Location = new System.Drawing.Point(7, 59);
+            this.groupBox4.Location = new System.Drawing.Point(10, 88);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(446, 63);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox4.Size = new System.Drawing.Size(669, 94);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
             // 
             // chkAutoPlay
             // 
             this.chkAutoPlay.AutoSize = true;
-            this.chkAutoPlay.Location = new System.Drawing.Point(6, 38);
+            this.chkAutoPlay.Location = new System.Drawing.Point(9, 57);
+            this.chkAutoPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkAutoPlay.Name = "chkAutoPlay";
-            this.chkAutoPlay.Size = new System.Drawing.Size(72, 16);
+            this.chkAutoPlay.Size = new System.Drawing.Size(106, 22);
             this.chkAutoPlay.TabIndex = 32;
             this.chkAutoPlay.Text = "自动落子";
             this.chkAutoPlay.UseVisualStyleBackColor = true;
@@ -446,9 +483,10 @@
             // 
             // btnSettings
             // 
-            this.btnSettings.Location = new System.Drawing.Point(335, 4);
+            this.btnSettings.Location = new System.Drawing.Point(502, 6);
+            this.btnSettings.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(71, 26);
+            this.btnSettings.Size = new System.Drawing.Size(106, 39);
             this.btnSettings.TabIndex = 33;
             this.btnSettings.Text = "参数设置";
             this.btnSettings.UseVisualStyleBackColor = true;
@@ -456,9 +494,10 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(287, 152);
+            this.button8.Location = new System.Drawing.Point(430, 228);
+            this.button8.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(82, 23);
+            this.button8.Size = new System.Drawing.Size(123, 34);
             this.button8.TabIndex = 34;
             this.button8.Text = "交换顺序";
             this.button8.UseVisualStyleBackColor = true;
@@ -467,9 +506,10 @@
             // chkShowInBoard
             // 
             this.chkShowInBoard.AutoSize = true;
-            this.chkShowInBoard.Location = new System.Drawing.Point(338, 129);
+            this.chkShowInBoard.Location = new System.Drawing.Point(507, 194);
+            this.chkShowInBoard.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkShowInBoard.Name = "chkShowInBoard";
-            this.chkShowInBoard.Size = new System.Drawing.Size(120, 16);
+            this.chkShowInBoard.Size = new System.Drawing.Size(178, 22);
             this.chkShowInBoard.TabIndex = 35;
             this.chkShowInBoard.Text = "原棋盘上显示选点";
             this.chkShowInBoard.UseVisualStyleBackColor = true;
@@ -477,9 +517,10 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(335, 35);
+            this.button9.Location = new System.Drawing.Point(502, 52);
+            this.button9.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(118, 25);
+            this.button9.Size = new System.Drawing.Size(177, 38);
             this.button9.TabIndex = 36;
             this.button9.Text = "6.5目规则设置方法";
             this.button9.UseVisualStyleBackColor = true;
@@ -487,9 +528,10 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(7, 35);
+            this.button10.Location = new System.Drawing.Point(10, 52);
+            this.button10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(78, 25);
+            this.button10.Size = new System.Drawing.Size(117, 38);
             this.button10.TabIndex = 37;
             this.button10.Text = "一键同步";
             this.button10.UseVisualStyleBackColor = true;
@@ -497,9 +539,10 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(241, 125);
+            this.button11.Location = new System.Drawing.Point(362, 188);
+            this.button11.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(92, 23);
+            this.button11.Size = new System.Drawing.Size(138, 34);
             this.button11.TabIndex = 38;
             this.button11.Text = "框选1路线";
             this.button11.UseVisualStyleBackColor = true;
@@ -507,9 +550,9 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(460, 178);
+            this.ClientSize = new System.Drawing.Size(690, 267);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button9);
@@ -528,6 +571,7 @@
             this.Controls.Add(this.button2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "棋盘同步工具";

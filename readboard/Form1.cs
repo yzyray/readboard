@@ -15,6 +15,7 @@ using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
+using System.ComponentModel;
 
 namespace readboard
 {
@@ -413,11 +414,11 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 13)
+                    if (arr.Length == 12)
                     {
                         try
                         {
-                            if (Environment.GetEnvironmentVariable("computername").Replace("_", "").Equals(arr[11]))
+                            if (Environment.GetEnvironmentVariable("computername").Replace("_", "").Equals(arr[10]))
                             {
                                 Program.blackPC = Convert.ToInt32(arr[0]);
                                 Program.blackZB = Convert.ToInt32(arr[1]);
@@ -429,8 +430,7 @@ namespace readboard
                                 Program.showInBoard = (Convert.ToInt32(arr[7]) == 1);
                                 Program.showInBoardHint = (Convert.ToInt32(arr[8]) == 1);
                                 Program.autoMin = (Convert.ToInt32(arr[9]) == 1);
-                                Program.isAdvScale = (Convert.ToInt32(arr[10]) == 1);
-                                type = Convert.ToInt32(arr[12]);
+                                type = Convert.ToInt32(arr[11]);
                                 Program.hasConfigFile = true;
                             }
                             else
@@ -547,13 +547,13 @@ namespace readboard
             }          
             this.chkShowInBoard.Checked = Program.showInBoard;
             Program.showInBoard = chkShowInBoard.Checked;
-            if (Program.showScaleHint && factor > 1)
-            {
+            //if (Program.showScaleHint && factor > 1)
+            //{
 
-                Form6 form6 = new Form6();
-                form6.ShowDialog();
+            //    Form6 form6 = new Form6();
+            //    form6.ShowDialog();
 
-            }
+            //}
             dm = new CDmSoft();
             dm.SetShowErrorMsg(0);
             this.MaximizeBox = false;
@@ -580,8 +580,8 @@ namespace readboard
                     lw = new lw.lwsoft();
                     canUseLW = true;
                 }
-                catch (Exception ex)
-                {
+                catch (Exception)
+                {                   
                     canUseLW = false;
                 }
                 //  }
@@ -819,6 +819,47 @@ namespace readboard
             oneTimeSync();
         }
 
+        [DllImport("Kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool CloseHandle(IntPtr handle);
+
+        private const int S_OK = 0;
+        private enum PROCESS_DPI_AWARENESS
+        {
+            PROCESS_DPI_UNAWARE = 0,
+            PROCESS_SYSTEM_DPI_AWARE = 1,
+            PROCESS_PER_MONITOR_DPI_AWARE = 2
+        }
+        [DllImport("Shcore.dll")]
+        private static extern int GetProcessDpiAwareness(IntPtr hprocess, out PROCESS_DPI_AWARENESS value);
+
+        [DllImport("user32", EntryPoint = "GetWindowThreadProcessId")]
+        private static extern int GetWindowThreadProcessId(IntPtr hwnd, out int pid);
+
+        private Boolean GetSupportDpiState(IntPtr hwnd)
+        {
+            try
+            {
+                int pid = -1;
+                GetWindowThreadProcessId(hwnd, out pid);
+                System.Diagnostics.Process proc = Process.GetProcessById(pid);
+                PROCESS_DPI_AWARENESS value;
+                int res = GetProcessDpiAwareness(proc.Handle, out value);
+                if (res == 0)
+                {
+                    if (value == PROCESS_DPI_AWARENESS.PROCESS_DPI_UNAWARE)
+                        return false;
+                    else
+                        return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void oneTimeSync() {
             if (type == 5)
             {
@@ -855,18 +896,9 @@ namespace readboard
                 y1 = rect.Top;
 
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
-                {
-                    p = new IntPtr(hwnd);
-                    GetWindowRect(p, ref rect);
-                    x2 = rect.Right;
-                    y2 = rect.Bottom;
-                    x1 = rect.Left;
-                    y1 = rect.Top;
-                    if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
-                    {
+                {                    
                         MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
-                        return;
-                    }
+                        return;                    
                 }
                 StringBuilder className = new StringBuilder(256);
                 GetClassName(new IntPtr(hwnd), className, className.Capacity);
@@ -879,25 +911,15 @@ namespace readboard
                     isJavaFrame = false;
                 }
                 RgbInfo[] rgbArray = new RgbInfo[0];
+                int totalWidth = -1;
                 if (type == 0)
                 {
                     if (!dm.GetWindowClass(hwnd).ToLower().Equals("#32770"))
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
-                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,-1|0|2E2E2E-050505,-2|0|2E2E2E-050505,-2|1|-2E2E2E-050505,-1|1|-2E2E2E-050505,-1|2|-2E2E2E-050505", 1.0, 2, out qx1, out qy1);
-                    //object qx4;
-                    //object qy4;
-                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|1|2E2E2E-050505,0|2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|1|-2E2E2E-050505,1|1|-2E2E2E-050505,1|2|-2E2E2E-050505", 1.0, 0, out qx4, out qy4);
-                    //// dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "313131-050505", "0|-1|2E2E2E-050505,0|-2|2E2E2E-050505,1|0|2E2E2E-050505,2|0|2E2E2E-050505,2|-1|-2E2E2E-050505,1|-1|-2E2E2E-050505,1|-2|-2E2E2E-050505", 1.0, 1, out qx4, out qy4);
-                    //sx1 = (int)qx4;
-                    //sy1 = (int)qy1;
-                    //width = (int)qx1 - (int)qx4;
-                    //height = width;
-
-                    if (!getFoxPos(new IntPtr(hwnd), rgbArray))
+                    if (!getFoxPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
                         return;
-                    //  all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 1)
                 {
@@ -909,12 +931,11 @@ namespace readboard
                     sy1 = 0;
                     width = x2 - x1;
                     height = y2 - y1;
-                    if (!Program.isAdvScale)
+                    if (!GetSupportDpiState(new IntPtr(hwnd)))
                     {
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    //     all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 2)
                 {
@@ -922,47 +943,27 @@ namespace readboard
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
-                    if (!getSinaPos(new IntPtr(hwnd), rgbArray))
-                        return;
-                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 0, out qx1, out qy1);
-                    //object qx4;
-                    //object qy4;
-                    //dm.FindMultiColor(0, 0, (int)x2 - (int)x1, (int)y2 - (int)y1, "FBDAA2-050505", "0|1|FBDAA2-050505,0|2|FBDAA2-050505", 1.0, 1, out qx4, out qy4);
-                    //sx1 = (int)qx1 - 1;
-                    //sy1 = (int)qy1 - 1;
-                    //height = (int)qy4 - (int)qy1 + 4;
-                    //width = height;
-                    //      all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
+                    if (!getSinaPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
+                        return;               
                 }
                 if (type == 3)
                 {
+                  
                     sx1 = (int)(ox1 - x1);
                     sy1 = (int)(oy1 - y1);
                     width = (int)((ox2 - ox1));
                     height = (int)((oy2 - oy1));
-                    if (!Program.isAdvScale)
+                    if (!GetSupportDpiState(new IntPtr(hwnd)))
                     {
                         sx1 = (int)(sx1 / factor);
                         sy1 = (int)(sy1 / factor);
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    //if (true) {
-                    //    sx1 = (int)(sx1 / factor);
-                    //    sy1 = (int)(sy1 / factor);
-                    //   // width = (int)(width / factor);
-                    //  //  height = (int)(height / factor);
-                    //}
-                    //   all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
-                    //dm.Capture(sx1, sy1, sx1+width, sy1+ height, "backboard.bmp");
                     OutPut3(true);
                 }
                 else
-                    OutPut(true, rgbArray, null);
-                // if (t != null)
-                //  {
-                //       t.Enabled = false;
-                //   }
+                    OutPut(true, rgbArray, null, totalWidth);
             }
         }
 
@@ -1063,7 +1064,7 @@ namespace readboard
 
         public void resetBtnKeepSyncName()
         {
-            if (!isContinuousSyncing)
+            if (!startedSync)
                 this.btnKeepSync.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)";
         }
 
@@ -1275,7 +1276,7 @@ namespace readboard
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    if (!getFoxPos(new IntPtr(hwnd),null))
+                    if (!getFoxPos(new IntPtr(hwnd),out RgbInfo[] rgbArray, out int totalWidth))
                     {
                         sx1 = 0;
                         sy1 = 0;
@@ -1301,12 +1302,12 @@ namespace readboard
                     sy1 = 0;
                     width = x2 - x1;
                     height = y2 - y1;
-                    if (!Program.isAdvScale)
+                    if (!GetSupportDpiState(new IntPtr(hwnd)))
                     {
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    if (!getTygemPos(new IntPtr(hwnd),null))
+                    if (!getTygemPos(new IntPtr(hwnd),out RgbInfo[] rgbArray, out int totalWidth))
                     {
                         sx1 = 0;
                         sy1 = 0;
@@ -1318,7 +1319,6 @@ namespace readboard
                             return;
                         }
                     }
-                    //       all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
                 if (type == 2)
                 {
@@ -1328,7 +1328,7 @@ namespace readboard
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    if (!getSinaPos(new IntPtr(hwnd), null))
+                    if (!getSinaPos(new IntPtr(hwnd), out RgbInfo[] rgbArray, out int totalWidth))
                     {
                         sx1 = 0;
                         sy1 = 0;
@@ -1347,14 +1347,13 @@ namespace readboard
                     sy1 = (int)(oy1 - y1);
                     width = (int)((ox2 - ox1));
                     height = (int)((oy2 - oy1));
-                    if (!Program.isAdvScale)
+                    if (!GetSupportDpiState(new IntPtr(hwnd)))
                     {
                         sx1 = (int)(sx1 / factor);
                         sy1 = (int)(sy1 / factor);
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    //      all = (int)Math.Round(width / (float)boardW * height / (float)boardH);
                 }
             }
 
@@ -1417,31 +1416,44 @@ namespace readboard
             Send("sync");            
             while (keepSync)
             {
+
+                int x1;
+                int y1;
+                int x2;
+                int y2;
+                RECT rect = new RECT();
+                IntPtr p = new IntPtr(hwnd);
+                GetWindowRect(p, ref rect);
+                x2 = rect.Right;
+                y2 = rect.Bottom;
+                x1 = rect.Left;
+                y1 = rect.Top;
                 if (Program.showInBoard && type != 5)
                 {
-                    object startX, startY;
-                    object rectWidth, rectHeight;
-                    dm.GetClientRect(hwnd, out (startX), out (startY), out (rectWidth), out (rectHeight));
-                    if (!Program.isAdvScale)
-                    {
-                        if (type == 1)
-                            Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width) + " " + (int)(height) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                        else if (type == 2)
-                            Send("inboard " + (int)((sx1 + (int)startX / factor)) + " " + (int)((sy1 + (int)startY / factor)) + " " + (int)(width) + " " + (int)(height) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                        else if (type == 3)
-                            Send("inboard " + (int)((sx1 + (int)startX / factor)) + " " + (int)((sy1 + (int)startY / factor)) + " " + (int)(width) + " " + (int)(height) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    //    if (!Program.isAdvScale)
+                    //   {
+                    //if (type == 1)
+                    //        Send("inboard " + (int)(sx1 + x1 / factor) + " " + (int)(sy1 + y1 / factor) + " " + (int)(width) + " " + (int)(height) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    //    else if (type == 2)
+                    //        Send("inboard " + (int)(sx1 + x1 / factor) + " " + (int)((sy1 + y1 / factor)) + " " + (int)(width) + " " + (int)(height) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    //    else if (type == 3)
+                        if (GetSupportDpiState(new IntPtr(hwnd)))
+                            Send("inboard " + (int)((sx1  + x1 ) / factor) + " " + (int)((sy1  + y1) / factor) + " " + Math.Round(width/factor) + " " + Math.Round(height/factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
                         else
-                            Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                    }
-                    else
-                    {
-                        if (type == 1)
-                            Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                        else if (type == 2)
-                            Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                        else
-                            Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                    }
+                            Send("inboard " +(sx1 + (int)(x1 / factor)) + " " + (sy1 + (int)( y1 / factor)) + " " + width + " " + height+ " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+
+                    //else
+                    //    Send("inboard " + (int)((sx1 + x1) / factor) + " " + (int)((sy1 +y1) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    ////}
+                    //else
+                    //{
+                    //    if (type == 1)
+                    //        Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    //    else if (type == 2)
+                    //        Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    //    else
+                    //        Send("inboard " + (int)((sx1 + (int)startX) / factor) + " " + (int)((sy1 + (int)startY) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    //}
                     //    sx1, sy1,width,height
                 }
                 if (type == 5)
@@ -1449,19 +1461,7 @@ namespace readboard
                     OutPut3(false);
                 }
                 else
-                {                   
-                    int x1;
-                    int y1;
-                    int x2;
-                    int y2;
-
-                    RECT rect = new RECT();
-                    IntPtr p = new IntPtr(hwnd);
-                    GetWindowRect(p, ref rect);
-                    x2 = rect.Right;
-                    y2 = rect.Bottom;
-                    x1 = rect.Left;
-                    y1 = rect.Top;
+                {    
 
                     int size = width * height;
                     if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
@@ -1477,11 +1477,13 @@ namespace readboard
                         javaY = y1;
                     }
                     RgbInfo[] rgbArray=new RgbInfo[0];
+                    int totalWidth=-1;
                     if (type == 0)
                     {
                         rectX1 = x1;
                         rectY1 = y1;
-                        if (!getFoxPos(new IntPtr(hwnd), rgbArray))
+                        
+                        if (!getFoxPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
                         {
                             sx1 = 0;
                             sy1 = 0;
@@ -1492,7 +1494,7 @@ namespace readboard
                                 stopKeepingSync();
                                 return;
                             }
-                        }
+                        }                       
                     }
                     if (type == 1)
                     {
@@ -1500,12 +1502,12 @@ namespace readboard
                         sy1 = 0;
                         width = x2 - x1;
                         height = y2 - y1;
-                        if (!Program.isAdvScale)
+                        if (!GetSupportDpiState(new IntPtr(hwnd)))
                         {
                             width = (int)(width / factor);
                             height = (int)(height / factor);
                         }
-                        if (!getTygemPos(new IntPtr(hwnd), rgbArray))
+                        if (!getTygemPos(new IntPtr(hwnd), out rgbArray,out totalWidth))
                         {
                             sx1 = 0;
                             sy1 = 0;
@@ -1520,7 +1522,7 @@ namespace readboard
                     }
                     if (type == 2)
                     {
-                        if (!getSinaPos(new IntPtr(hwnd), rgbArray))
+                        if (!getSinaPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
                         {
                             sx1 = 0;
                             sy1 = 0;
@@ -1546,10 +1548,10 @@ namespace readboard
                     {
                         if (canUseLW&&type==0)
                         {
-                            OutPut(false, rgbArray, lwh);
+                            OutPut(false, rgbArray, lwh, totalWidth);
                         }
                         else
-                        OutPut(false, rgbArray,null);
+                        OutPut(false, rgbArray,null, totalWidth);
                     }
                 }
                 try
@@ -1642,11 +1644,18 @@ namespace readboard
                 return isWhite;
             }
         }
+        private void recognizeBoard(RgbInfo[] rgbArray)
+        {
+            recognizeBoard(rgbArray, -1);
+        }
 
-        private void recognizeBoard( RgbInfo[] rgbArray)
-        {           
-            if (rgbArray == null || rgbArray.Length == 0) {
-                Bitmap input=null;
+        private void recognizeBoard( RgbInfo[] rgbArray,int totalWidth)
+        {
+            int startX = 0;
+            int startY = 0;
+            int allWidth;
+            if (rgbArray == null || rgbArray.Length == 0|| totalWidth<0) {
+                Bitmap input = null;
                 if (type == 5)
                 {
                     input = new Bitmap(width, height);
@@ -1658,28 +1667,34 @@ namespace readboard
                 else input = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
                 if (input == null || input.Width <= boardW || input.Height <= boardH)
                     return;
+                allWidth = width;
                 Rectangle rect = new Rectangle(0, 0, input.Width, input.Height);
-            const int PixelWidth = 3;
-            const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
-            BitmapData data = input.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat);
-            rgbArray = new RgbInfo[data.Height * data.Width];
-            byte[] pixelData = new Byte[data.Stride];
-            for (int scanline = 0; scanline < data.Height; scanline++)
-            {
-                Marshal.Copy(data.Scan0 + (scanline * data.Stride), pixelData, 0, data.Stride);
-                for (int pixeloffset = 0; pixeloffset < data.Width; pixeloffset++)
+                const int PixelWidth = 3;
+                const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
+                BitmapData data = input.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat);
+                rgbArray = new RgbInfo[data.Height * data.Width];
+                byte[] pixelData = new Byte[data.Stride];
+                for (int scanline = 0; scanline < data.Height; scanline++)
                 {
-                    // PixelFormat.Format32bppRgb means the data is stored
-                    // in memory as BGR. We want RGB, so we must do some 
-                    // bit-shuffling.
-                    rgbArray[scanline * data.Width + pixeloffset] = new RgbInfo();
-                    rgbArray[scanline * data.Width + pixeloffset].r = pixelData[pixeloffset * PixelWidth + 2];
-                    rgbArray[scanline * data.Width + pixeloffset].g = pixelData[pixeloffset * PixelWidth + 1];
-                    rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
+                    Marshal.Copy(data.Scan0 + (scanline * data.Stride), pixelData, 0, data.Stride);
+                    for (int pixeloffset = 0; pixeloffset < data.Width; pixeloffset++)
+                    {
+                        // PixelFormat.Format32bppRgb means the data is stored
+                        // in memory as BGR. We want RGB, so we must do some 
+                        // bit-shuffling.
+                        rgbArray[scanline * data.Width + pixeloffset] = new RgbInfo();
+                        rgbArray[scanline * data.Width + pixeloffset].r = pixelData[pixeloffset * PixelWidth + 2];
+                        rgbArray[scanline * data.Width + pixeloffset].g = pixelData[pixeloffset * PixelWidth + 1];
+                        rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
+                    }
                 }
+                input.UnlockBits(data);
+                input.Dispose();
             }
-            input.UnlockBits(data);
-            input.Dispose();
+            else {
+                startX = sx1;
+                startY = sy1;
+                allWidth = totalWidth;
             }
             float hGap = height / (float)boardH;
             float vGap = width / (float)boardW;
@@ -1733,7 +1748,7 @@ namespace readboard
                     Boolean isLastMove = false;
                     int blackPercent =
                         getWhiteBlackColorPercent(
-                            rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, width, height);
+                            rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, allWidth, height);
                     if (blackPercent >= blackPercentStandard)
                     {
                         isBlack = true;
@@ -1750,7 +1765,7 @@ namespace readboard
                     {
                         int whitePercent =
                             getWhiteBlackColorPercent(
-                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, width, height);
+                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, allWidth, height);
                         if (whitePercent >= whitePercentStandard)
                         {
                             if (x == 0
@@ -1783,9 +1798,9 @@ namespace readboard
                     if (needCheckRedBlue && (isWhite || isBlack))
                     {
                         int redPercent = getRedBlueColorPercent(
-                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, false, width, height);
+                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, allWidth, height);
                         int bluePercent = getRedBlueColorPercent(
-                                rgbArray, (int)Math.Round(x * vGap), (int)Math.Round(y * hGap), vGapInt, hGapInt, true, width, height);
+                                rgbArray, startX+(int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, allWidth, height);
                         if (bluePercent >= 1 )
                         {
                             blueCount++;
@@ -1917,7 +1932,10 @@ namespace readboard
             {
                 for (int x = 0; x < width; x++)
                 {
-                    RgbInfo rgbInfo = rgbArray[(startY + y) * totalWidth + startX + x];
+                    int index = (startY + y) * totalWidth + startX + x;
+                    if (index >= rgbArray.Length)
+                        break;
+                    RgbInfo rgbInfo = rgbArray[index];
                     int red = rgbInfo.r;
                     int green = rgbInfo.g;
                     int blue = rgbInfo.b;
@@ -1949,7 +1967,10 @@ namespace readboard
             {
                 for (int x = 0; x < width; x++)
                 {
-                    RgbInfo rgbInfo = rgbArray[(startY + y) * totalWidth + startX + x];
+                    int index = (startY + y) * totalWidth + startX + x;
+                    if (index >= rgbArray.Length)
+                        break;
+                    RgbInfo rgbInfo = rgbArray[index];
                     int red = rgbInfo.r;
                     int green = rgbInfo.g;
                     int blue = rgbInfo.b;
@@ -1978,7 +1999,7 @@ namespace readboard
             return (100 * sum) / (width * height);
         }
 
-        private void OutPut(Boolean first, RgbInfo[] rgbArray, lw.lwsoft lwh)
+        private void OutPut(Boolean first, RgbInfo[] rgbArray, lw.lwsoft lwh,int totalWidth)
         {
             if (width < this.boardW || height < this.boardH)
                 return;
@@ -1999,7 +2020,7 @@ namespace readboard
             }
             if (first)
                 Send("start " + boardW + " " + boardH + " " + hwnd);         
-            recognizeBoard(rgbArray);
+            recognizeBoard(rgbArray, totalWidth);
         }
 
         private void OutPut3(Boolean first)
@@ -2106,7 +2127,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0")  + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             saveOtherConfig();
             mh.Enabled = false;              
@@ -2213,19 +2234,10 @@ namespace readboard
             {
                 int xx = 0;
                 int yy = 0;
-                if (Program.isAdvScale)
-                {   // dm.MoveTo((int)Math.Round(sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(sy1 + heightMagrin * (y + 0.5)));
-                    xx = (int)Math.Round(sx1 + widthMagrin * (x + 0.5));
-                    yy = (int)Math.Round(sy1 + heightMagrin * (y + 0.5));
-                }
-                else
-                {
-                    xx = (int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * factor);
-                    yy = (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * factor);
-                }
-                //dm.MoveTo((int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * factor), (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * factor));
+                Boolean isScaled = GetSupportDpiState(new IntPtr(hwnd));
+                    xx = (int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * (isScaled?1:factor));
+                    yy = (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * (isScaled?1:factor));
                 backMouseClick(xx, yy, hwnd);
-                //dm.LeftClick();
             }
         }
 
@@ -2590,7 +2602,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + (Program.isAdvScale ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0")  + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             if (chkShowInBoard.Checked)
             {
@@ -3253,16 +3265,21 @@ namespace readboard
             return linesPoint;
         }
 
-        private Boolean getTygemPos(IntPtr hwnd, RgbInfo[] rgbArray)
+        private Boolean getTygemPos(IntPtr hwnd,out RgbInfo[] rgbArray,out int totalWidth)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
+            {
+                rgbArray = null;
+                totalWidth = -1;
                 return false;
+            }
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
             const int PixelWidth = 3;
             const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
             BitmapData data = input.LockBits(rect2, ImageLockMode.ReadOnly, PixelFormat);
             rgbArray = new RgbInfo[data.Height * data.Width];
+            totalWidth = data.Width;
             byte[] pixelData = new Byte[data.Stride];
             for (int scanline = 0; scanline < data.Height; scanline++)
             {
@@ -3298,16 +3315,21 @@ namespace readboard
             }
             return found;
         }
-        private Boolean getSinaPos(IntPtr hwnd, RgbInfo[] rgbArray)
+        private Boolean getSinaPos(IntPtr hwnd,out RgbInfo[] rgbArray,out int totalWidth)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
+            {
+                rgbArray = null;
+                totalWidth = -1;
                 return false;
+            }
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
             const int PixelWidth = 3;
             const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
             BitmapData data = input.LockBits(rect2, ImageLockMode.ReadOnly, PixelFormat);
             rgbArray = new RgbInfo[data.Height * data.Width];
+            totalWidth = data.Width;
             byte[] pixelData = new Byte[data.Stride];
             for (int scanline = 0; scanline < data.Height; scanline++)
             {
@@ -3374,16 +3396,21 @@ namespace readboard
             return true;
         }
 
-        private Boolean getFoxPos(IntPtr hwnd, RgbInfo[] rgbArray)
+        private Boolean getFoxPos(IntPtr hwnd,out RgbInfo[] rgbArray,out int totalWidth)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
+            {
+                rgbArray = null;
+                totalWidth = -1;
                 return false;
+            }
             Rectangle rect2 = new Rectangle(0, 0, input.Width, input.Height);
             const int PixelWidth = 3;
             const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
             BitmapData data = input.LockBits(rect2, ImageLockMode.ReadOnly, PixelFormat);
             rgbArray = new RgbInfo[data.Height * data.Width];
+            totalWidth = data.Width;
             byte[] pixelData = new Byte[data.Stride];
             for (int scanline = 0; scanline < data.Height; scanline++)
             {
@@ -3580,10 +3607,11 @@ namespace readboard
             if (upLeft.X < 0 || upLeft.Y < 0 || upRight.X < 0 || upRight.Y <= 0)
                 return false;
            
-                sx1 = upLeft.X;
+            sx1 = upLeft.X;
                 sy1 = upLeft.Y;
                 this.width = upRight.X - upLeft.X;
                 this.height = this.width;
+           
             if (cansetFirstGetPos)
                 isFirstGetPos = false;
             return true;
@@ -3611,9 +3639,9 @@ namespace readboard
                     }
                     break;
                 case 1:
-                    for (int x = width - 1; x >= 0; x--)
+                    for (int y = 0; y < height; y++)
                     {
-                        for (int y = 0; y < height; y++)
+                        for (int x = width - 1; x >= 0; x--) 
                         {
                             if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
                             {

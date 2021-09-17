@@ -22,47 +22,47 @@ namespace readboard
             this.chkEnhanceScreen.Checked = Program.useEnhanceScreen;
             txtGrayOffset.Text = Program.grayOffset.ToString();
             this.chkPonder.Checked = Program.playPonder;
-            if (!Program.isScaled)
-            {
-                rdoAdvanceScale.Visible = false;
-                rdoNormalScale.Visible = false;
-                scaleGroup.Visible = false;
-                button3.Visible = false;
-                    label9.Location = new System.Drawing.Point(10, 60);
-                label1.Location = new System.Drawing.Point(10, 87);
-                label2.Location = new System.Drawing.Point(10, 114);
-                label3.Location = new System.Drawing.Point(196, 87);
-                label4.Location = new System.Drawing.Point(196, 114);
-                txtBpc.Location = new System.Drawing.Point(109, 82);
-                txtBzb.Location = new System.Drawing.Point(297, 82);
-                txtWpc.Location = new System.Drawing.Point(109, 108);
-                txtWzb.Location = new System.Drawing.Point(297, 108);
-                label8.Location = new System.Drawing.Point(10, 163);
-                label7.Location = new System.Drawing.Point(10, 183);
-                label6.Location = new System.Drawing.Point(10, 201);
-                lblGrayOffset.Location=new System.Drawing.Point(10, 141);
-                txtGrayOffset.Location = new System.Drawing.Point(Program.isChn ? 109 : 120, 135);
-            }
-            if (Program.isAdvScale)
-                rdoAdvanceScale.Checked = true;
-            else
-                rdoNormalScale.Checked = true;
+           // if (!Program.isScaled)
+            //{
+                //rdoAdvanceScale.Visible = false;
+                //rdoNormalScale.Visible = false;
+                //scaleGroup.Visible = false;
+                //button3.Visible = false;
+                //    label9.Location = new System.Drawing.Point(10, 60);
+                //label1.Location = new System.Drawing.Point(10, 87);
+                //label2.Location = new System.Drawing.Point(10, 114);
+                //label3.Location = new System.Drawing.Point(196, 87);
+                //label4.Location = new System.Drawing.Point(196, 114);
+                //txtBpc.Location = new System.Drawing.Point(109, 82);
+                //txtBzb.Location = new System.Drawing.Point(297, 82);
+                //txtWpc.Location = new System.Drawing.Point(109, 108);
+                //txtWzb.Location = new System.Drawing.Point(297, 108);
+                //label8.Location = new System.Drawing.Point(10, 163);
+                //label7.Location = new System.Drawing.Point(10, 183);
+                //label6.Location = new System.Drawing.Point(10, 201);
+                //lblGrayOffset.Location=new System.Drawing.Point(10, 141);
+                //txtGrayOffset.Location = new System.Drawing.Point(Program.isChn ? 109 : 120, 135);
+        //    }
+         //   if (Program.isAdvScale)
+         //       rdoAdvanceScale.Checked = true;
+         //   else
+         //       rdoNormalScale.Checked = true;
             if (!Program.isChn) {
                 this.Text = "Settings";
                 this.chkPonder.Text = "Ponder";
                 this.chkMag.Text = "Show Magnifier";
                 this.chkVerifyMove.Text = "Verify Placed Stone";
                 this.chkAutoMin.Text = "Auto Minimize";
-                this.rdoNormalScale.Text = "NormalScale";
-                this.rdoAdvanceScale.Text = "AdvanceScale";
-                this.button3.Text = "HowToKnowMyScaleType";
+        //        this.rdoNormalScale.Text = "NormalScale";
+      //          this.rdoAdvanceScale.Text = "AdvanceScale";
+       //         this.button3.Text = "HowToKnowMyScaleType";
                 this.label9.Text = "The following options only be effective on foreground/background";
                 this.label1.Text = "B Offset(0-255)";
                 this.label3.Text = "B Ratio(0-100)";
                 this.label2.Text = "W Offset(0-255)";
                 this.label4.Text = "W Ratio(0-100)";
                 this.label8.Text = "all parameter must be integer";
-                this.label7.Text = "If got some unnecessary stones,try to decrease offset or increase ratio.";//如某种颜色棋子识别过多,可尝试降低偏差或增大占比
+                this.label7.Text = "If got some unnecessary stones,try to decrease offset or increase ratio";//如某种颜色棋子识别过多,可尝试降低偏差或增大占比
                 this.label6.Text = "If lost some stones,try to increase offset or decrease ratio";//如某种颜色棋子识别丢失,可尝试增大偏差或降低占比
                 this.lblSyncInterval.Text = "Sync Interval(ms):";
                 this.button4.Text = "ResetAll";
@@ -70,7 +70,7 @@ namespace readboard
                 this.button2.Text = "Cancel";
                 this.lblGrayOffset.Text = "GrayOffset(0-255)";
                 this.chkEnhanceScreen.Text = "EnhScreen";
-                this.Size= new Size((int)(461 *Program.factor), (int)(292 * Program.factor));
+                this.Size= new Size((int)(461 *Program.factor), (int)(270 * Program.factor));
             }
             var toolTip1 = new ToolTip();
             toolTip1.SetToolTip(this.chkEnhanceScreen, Program.isChn?@"关闭则无法获取桌面外窗口信息,如遇到原棋盘少子等情况可尝试关闭": @"If unchecked,can not get info out of scrren.If origin board comes up lack of stones try closing it.");
@@ -114,12 +114,12 @@ namespace readboard
             Program.useMag = useMag;
             Program.verifyMove = enableVerifyMove;
             Program.autoMin = chkAuto;
-            Program.isAdvScale = rdoAdvanceScale.Checked;
+         //   Program.isAdvScale = rdoAdvanceScale.Checked;
             string result1 = "config_readboard.txt";
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (enableVerifyMove ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0")+"_"+(rdoAdvanceScale.Checked?"1":"0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + Form1.type);
+            wr.WriteLine(Bpc.ToString()+"_"+Bzb.ToString()+"_"+Wpc.ToString()+"_"+Wzb.ToString()+"_"+ (useMag ? "1":"0")+"_"+ (enableVerifyMove ? "1" : "0")+"_"+(Program.showScaleHint?"1":"0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (chkAuto ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + Form1.type);
             wr.Close();
             this.Close();
             Program.timeinterval = syncInterval;
