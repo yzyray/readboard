@@ -2638,7 +2638,7 @@ namespace readboard
 
         private void button10_Click(object sender, EventArgs e)
         {
-            if (!isContinuousSyncing)
+            if (!isContinuousSyncing&&!startedSync)
             {
                 while (threadFastSync != null && threadFastSync.IsAlive)
                 {
