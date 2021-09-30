@@ -1018,7 +1018,7 @@ namespace readboard
         {
             this.btnKeepSync.Text = t;
             if (!isContinuousSyncing)
-                this.button10.Text = "一键同步";
+                this.button10.Text = Program.isChn?"一键同步":"FastSync";
             //if (this.factor <= 1)
             //{ 
             this.button4.Enabled = true;
