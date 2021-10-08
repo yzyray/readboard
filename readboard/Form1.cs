@@ -1654,6 +1654,7 @@ namespace readboard
             int startX = 0;
             int startY = 0;
             int allWidth;
+            int allHeight;
             if (rgbArray == null || rgbArray.Length == 0|| totalWidth<0) {
                 Bitmap input = null;
                 if (type == 5)
@@ -1668,6 +1669,7 @@ namespace readboard
                 if (input == null || input.Width <= boardW || input.Height <= boardH)
                     return;
                 allWidth = width;
+                allHeight = height;
                 Rectangle rect = new Rectangle(0, 0, input.Width, input.Height);
                 const int PixelWidth = 3;
                 const PixelFormat PixelFormat = PixelFormat.Format24bppRgb;
@@ -1695,6 +1697,7 @@ namespace readboard
                 startX = sx1;
                 startY = sy1;
                 allWidth = totalWidth;
+                allHeight = sy1 + height;
             }
             float hGap = height / (float)boardH;
             float vGap = width / (float)boardW;
@@ -1748,7 +1751,7 @@ namespace readboard
                     Boolean isLastMove = false;
                     int blackPercent =
                         getWhiteBlackColorPercent(
-                            rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, allWidth, height);
+                            rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, blackOffsetStandard, grayOffsetStandard, allWidth, allHeight);
                     if (blackPercent >= blackPercentStandard)
                     {
                         isBlack = true;
@@ -1765,7 +1768,7 @@ namespace readboard
                     {
                         int whitePercent =
                             getWhiteBlackColorPercent(
-                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, allWidth, height);
+                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, allWidth, allHeight);
                         if (whitePercent >= whitePercentStandard)
                         {
                             if (x == 0
@@ -1798,9 +1801,9 @@ namespace readboard
                     if (needCheckRedBlue && (isWhite || isBlack))
                     {
                         int redPercent = getRedBlueColorPercent(
-                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, allWidth, height);
+                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, allWidth, allHeight);
                         int bluePercent = getRedBlueColorPercent(
-                                rgbArray, startX+(int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, allWidth, height);
+                                rgbArray, startX+(int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, allWidth, allHeight);
                         if (bluePercent >= 1 )
                         {
                             blueCount++;
