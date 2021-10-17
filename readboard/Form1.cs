@@ -345,7 +345,7 @@ namespace readboard
                 char[] separator = { ' ' }; string[] arr = a.Split(separator);
                 try
                 {
-                    place(int.Parse(arr[1]), int.Parse(arr[2]));
+                    placeMove(int.Parse(arr[1]), int.Parse(arr[2]));
                 }
                 catch (Exception e)
                 {
@@ -2214,10 +2214,20 @@ namespace readboard
             public int y;
         }
 
+        [DllImport("USER32.DLL")]
+        public static extern void SwitchToThisWindow(IntPtr hwnd, Boolean fAltTab);
+
+        [DllImport("USER32.DLL")]
+        public static extern IntPtr GetParent(IntPtr hwnd);
+
+
+
         private void placeStone(int x, int y)
         {
             if (isJavaFrame)
             {
+                if(type!=5)
+                    SwitchToThisWindow(new IntPtr(hwnd), true);
                 foreMouseClick(javaX+sx1 + (int)(widthMagrin * (x + 0.5)), javaY+sy1 + (int)(heightMagrin * (y + 0.5)));
             }
            else if (type == 5)
@@ -2226,6 +2236,8 @@ namespace readboard
             }
             else if (type == 0 && !canUseLW)
             {
+             IntPtr fatherHwnd = new IntPtr(dm.FindWindow("#32770", ""));
+                SwitchToThisWindow(fatherHwnd, true);
                 object xo, yo;
                 dm.GetCursorPos(out xo, out yo);
                 dm.MoveTo((int)Math.Round(rectX1 + sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(rectY1 + sy1 + heightMagrin * (y + 0.5)));
@@ -2264,14 +2276,11 @@ namespace readboard
                 bmp = GetWindowBmp(new IntPtr(hwnd), startX, startY, width, height);
             return recognizeMove(bmp, x, y);
         }
-
-        private void placeMove(object obj)
+        
+        public void placeMove(int x, int y)
         {
-            if (!syncBoth || width < boardW)
+            if (!keepSync||!syncBoth || width < boardW)
                 return;
-            MoveInfo move = (MoveInfo)obj;
-            int x = move.x;
-            int y = move.y;
             int times = 10;
             if ((type == 0) && canUseLW)
             {
@@ -2285,19 +2294,10 @@ namespace readboard
                 {
                     placeStone(x, y);
                     times--;
-                } while (Program.verifyMove && !VerifyMove(x, y, false) && times > 0);
+                    if (times == 0)
+                        break;
+                } while (Program.verifyMove && !VerifyMove(x, y, false));
             }
-        }
-
-        public void place(int x, int y)
-        {
-            if (!keepSync)
-                return;
-            MoveInfo move = new MoveInfo();
-            move.x = x;
-            move.y = y;
-            Thread t = new Thread(placeMove);
-            t.Start(move);
         }
 
         uint WM_LBUTTONDOWN = 0x201;

@@ -73,7 +73,7 @@ namespace readboard
                         char[] separator = { ' ' }; string[] arr = a.Split(separator);
                         try
                         {
-                            Form1.pcurrentWin.place(int.Parse(arr[1]), int.Parse(arr[2]));
+                            Form1.pcurrentWin.placeMove(int.Parse(arr[1]), int.Parse(arr[2]));
                         }
                         catch (Exception e)
                         {
