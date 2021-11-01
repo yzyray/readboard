@@ -33,9 +33,9 @@ namespace readboard
         int ox2;
         public static int oy1;
         int oy2;
-        public static CDmSoft dm;
+        //  public static CDmSoft dm;
         //public static CDmSoft dm2;
-        int hwnd = 0;
+        IntPtr hwnd = IntPtr.Zero;
         //int hwndFoxPlace = 0;
         Form2 form2;
 
@@ -83,8 +83,8 @@ namespace readboard
         int posX = -1;
         int posY = -1;
 
-        private Boolean isJavaFrame=false;
-        private int javaX,javaY;
+        private Boolean isJavaFrame = false;
+        private int javaX, javaY;
         lw.lwsoft lw;
         Boolean canUsePrintWindow = true;
         Boolean isFirstGetPos = true;
@@ -135,14 +135,14 @@ namespace readboard
         public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
         private Bitmap GetWindowImage(IntPtr hwnd)
         {
-            return GetWindowImage(hwnd, false, - 1, -1, -1, -1,true);
+            return GetWindowImage(hwnd, false, -1, -1, -1, -1, true);
         }
-        private Bitmap GetWindowImage(IntPtr hwnd,Boolean usePrintWindow)
+        private Bitmap GetWindowImage(IntPtr hwnd, Boolean usePrintWindow)
         {
             return GetWindowImage(hwnd, false, -1, -1, -1, -1, usePrintWindow);
         }
 
-        private Bitmap GetWindowImage(IntPtr hwnd,Boolean calcRect,int x,int y,int w,int h,Boolean usePrintWindow)
+        private Bitmap GetWindowImage(IntPtr hwnd, Boolean calcRect, int x, int y, int w, int h, Boolean usePrintWindow)
         {
             if (isJavaFrame)
             {
@@ -152,28 +152,29 @@ namespace readboard
             {
                 try
                 {
-                    cansetFirstGetPos = true; 
+                    cansetFirstGetPos = true;
                     RECT rect = new RECT();
                     GetWindowRect(hwnd, ref rect);
                     int screenWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
                     int screenHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
-                    if (usePrintWindow) { 
-                    if (calcRect)
+                    if (usePrintWindow)
                     {
-                        int startx = rect.Left + x;
-                        int endx = rect.Left + x + w;
-                        int starty = rect.Top + y;
-                        int endy = rect.Top + y + h;
-                        if (Program.useEnhanceScreen && canUsePrintWindow && (startx< 0 ||startx > screenWidth || starty < 0 ||endy > screenHeight))
+                        if (calcRect)
+                        {
+                            int startx = rect.Left + x;
+                            int endx = rect.Left + x + w;
+                            int starty = rect.Top + y;
+                            int endy = rect.Top + y + h;
+                            if (Program.useEnhanceScreen && canUsePrintWindow && (startx < 0 || startx > screenWidth || starty < 0 || endy > screenHeight))
+                            {
+                                return GetWindowPrintImage(hwnd);
+                            }
+                        }
+                        else
+                        if (Program.useEnhanceScreen && canUsePrintWindow && (rect.Left < 0 || rect.Left > screenWidth || rect.Top < 0 || rect.Bottom > screenHeight))
                         {
                             return GetWindowPrintImage(hwnd);
                         }
-                    }
-                    else
-                    if (Program.useEnhanceScreen && canUsePrintWindow && (rect.Left < 0 || rect.Left > screenWidth || rect.Top < 0 || rect.Bottom > screenHeight))
-                    {
-                        return GetWindowPrintImage(hwnd);
-                    }
                     }
                     int rectWidth = rect.Right - rect.Left;
                     int rectHeight = rect.Bottom - rect.Top;
@@ -196,7 +197,7 @@ namespace readboard
                     return null;
                 }
             }
-        }        
+        }
 
         private Bitmap GetWindowPrintImage(IntPtr hWnd)
         {
@@ -225,7 +226,7 @@ namespace readboard
                 return null;
             try
             {
-                Bitmap bmp = GetWindowImage(hWnd,true,x,y,width,height,true);
+                Bitmap bmp = GetWindowImage(hWnd, true, x, y, width, height, true);
                 if (bmp == null)
                     return null;
                 Bitmap mybit = new Bitmap(width, height);
@@ -247,13 +248,27 @@ namespace readboard
          UInt32 nFlags              // Optional flags,Specifies the drawing options. It can be one of the following values.
          );
 
+        private String GetClassNameStr(IntPtr hwnd)
+        {
+            StringBuilder className = new StringBuilder(256);
+            GetClassName(hwnd, className, className.Capacity);
+            return className.ToString();
+        }
+
+        private String GetTitleStr(IntPtr hwnd)
+        {
+            StringBuilder title = new StringBuilder(256);
+            GetWindowText(hwnd, title, title.Capacity);
+            return title.ToString();
+        }
+
         private void SendError(String strMsg)
         {
             if (useTcp)
             {
                 try
                 {
-                    byte[] by = Encoding.UTF8.GetBytes("error: "+strMsg + "\r\n");
+                    byte[] by = Encoding.UTF8.GetBytes("error: " + strMsg + "\r\n");
                     io.Write(by, 0, by.Length);
                     io.Flush();
                 }
@@ -266,7 +281,7 @@ namespace readboard
             else
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
-                Console.Error.WriteLine("error: " +strMsg);
+                Console.Error.WriteLine("error: " + strMsg);
             }
         }
 
@@ -325,7 +340,7 @@ namespace readboard
                             readStr = Encoding.UTF8.GetString(data, 0, numBytesRead);
                             //Console.Error.WriteLine(readStr);
                         }
-                      readPlace(readStr);
+                        readPlace(readStr);
                     }
                     catch (Exception ex)
                     {
@@ -354,11 +369,11 @@ namespace readboard
             }
             if (a.StartsWith("loss"))
             {
-               lossFocus();
+                lossFocus();
             }
             if (a.StartsWith("notinboard"))
             {
-              stopInBoard();
+                stopInBoard();
             }
             if (a.StartsWith("version"))
             {
@@ -477,7 +492,7 @@ namespace readboard
                                 var h = Screen.PrimaryScreen.Bounds.Height;
                                 var w = Screen.PrimaryScreen.Bounds.Width;
                                 this.Location = new System.Drawing.Point(Math.Min(Math.Max(0, posX), w - 476), Math.Min(Math.Max(0, posY), h - 217));
-                            }  
+                            }
                         }
                         catch (Exception)
                         {
@@ -544,7 +559,7 @@ namespace readboard
                 case 3:
                     rdoBack.Checked = true;
                     break;
-            }          
+            }
             this.chkShowInBoard.Checked = Program.showInBoard;
             Program.showInBoard = chkShowInBoard.Checked;
             //if (Program.showScaleHint && factor > 1)
@@ -554,8 +569,8 @@ namespace readboard
             //    form6.ShowDialog();
 
             //}
-            dm = new CDmSoft();
-            dm.SetShowErrorMsg(0);
+            //dm = new CDmSoft();
+            //dm.SetShowErrorMsg(0);
             this.MaximizeBox = false;
             pcurrentWin = this;
 
@@ -578,10 +593,10 @@ namespace readboard
                 try
                 {
                     lw = new lw.lwsoft();
-                    canUseLW = true;
+                    canUseLW = false;// true;
                 }
                 catch (Exception)
-                {                   
+                {
                     canUseLW = false;
                 }
                 //  }
@@ -640,14 +655,14 @@ namespace readboard
                 this.button6.Text = "ClearBoard";
                 this.button11.Text = "CircleRow1";
                 this.Text = "Board Synchronization Tool";
-            }           
-                Send("ready");
+            }
+            Send("ready");
             sendPonderStatus();
         }
 
         public void sendPonderStatus()
         {
-            if(Program.playPonder)
+            if (Program.playPonder)
                 Send("playponder on");
             else
                 Send("playponder off");
@@ -716,24 +731,24 @@ namespace readboard
                     MessageBox.Show(Program.isChn ? "不能识别棋盘,请调整被同步棋盘大小后重新选择或尝试[框选1路线]" : "Can not detect board,Please zoom the board and try again or use [CircleRow1]");
                 else if (type == 3)
                 {
-                    object curX, curY;
-                    dm.GetCursorPos(out curX, out curY);
+                    int curX = Control.MousePosition.X;
+                    int curY = Control.MousePosition.Y;
                     // BlockInput(true);
-                    dm.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                    foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false,false);
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(35);
-                        hwnd = dm.GetMousePointWindow();
+                        hwnd = getMousePointHwnd();
                         Console.WriteLine(hwnd);
                     });
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(30);
-                        dm.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false,false);
                         Thread.Sleep(20);
-                        dm.MoveTo((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false, false);
                         Thread.Sleep(50);
-                        dm.MoveTo((int)curX, (int)curY);
+                        foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false, false);
                     });
                     //  BlockInput(false);                   
                 }
@@ -758,7 +773,7 @@ namespace readboard
             if (pressed)
             {
                 pressed = false;
-                hwnd = dm.GetMousePointWindow();
+                hwnd = getMousePointHwnd();
             }
         }
 
@@ -771,7 +786,7 @@ namespace readboard
                 //if (!isKuangxuan)
                 //     mh.Enabled = false;
                 clicked = false;
-                hwnd = dm.GetMousePointWindow();
+                hwnd = getMousePointHwnd();
             }
 
 
@@ -836,6 +851,19 @@ namespace readboard
         [DllImport("user32", EntryPoint = "GetWindowThreadProcessId")]
         private static extern int GetWindowThreadProcessId(IntPtr hwnd, out int pid);
 
+        [DllImport("user32.dll")]
+        internal static extern IntPtr WindowFromPoint(Point Point);
+
+        [DllImport("user32.dll")]
+        internal static extern bool GetCursorPos(out Point lpPoint);
+
+        private IntPtr getMousePointHwnd()
+        {
+            Point p;
+            GetCursorPos(out p);
+            return WindowFromPoint(p);
+        }
+
         private Boolean GetSupportDpiState(IntPtr hwnd)
         {
             try
@@ -860,7 +888,8 @@ namespace readboard
             }
         }
 
-        private void oneTimeSync() {
+        private void oneTimeSync()
+        {
             if (type == 5)
             {
                 isJavaFrame = false;
@@ -877,7 +906,7 @@ namespace readboard
             }
             else
             {
-                if (hwnd <= 0)
+                if ((int)hwnd <= 0)
                 {
                     MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     return;
@@ -888,21 +917,19 @@ namespace readboard
                 int y2;
 
                 RECT rect = new RECT();
-                IntPtr p = new IntPtr(hwnd);
-                GetWindowRect(p, ref rect);
+                GetWindowRect(hwnd, ref rect);
                 x2 = rect.Right;
                 y2 = rect.Bottom;
                 x1 = rect.Left;
                 y1 = rect.Top;
 
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
-                {                    
-                        MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
-                        return;                    
+                {
+                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    return;
                 }
-                StringBuilder className = new StringBuilder(256);
-                GetClassName(new IntPtr(hwnd), className, className.Capacity);
-                if (className.ToString().Equals("SunAwtFrame"))
+                String classNameStr = GetClassNameStr(hwnd);
+                if (classNameStr.Equals("SunAwtFrame"))
                 {
                     isJavaFrame = true;
                 }
@@ -914,16 +941,16 @@ namespace readboard
                 int totalWidth = -1;
                 if (type == 0)
                 {
-                    if (!dm.GetWindowClass(hwnd).ToLower().Equals("#32770"))
+                    if (!classNameStr.ToLower().Equals("#32770"))
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
-                    if (!getFoxPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
+                    if (!getFoxPos(hwnd, out rgbArray, out totalWidth))
                         return;
                 }
                 if (type == 1)
                 {
-                    if (!dm.GetWindowClass(hwnd).ToLower().Equals("afxwnd140u"))
+                    if (!classNameStr.ToLower().Equals("afxwnd140u"))
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
@@ -931,7 +958,7 @@ namespace readboard
                     sy1 = 0;
                     width = x2 - x1;
                     height = y2 - y1;
-                    if (!GetSupportDpiState(new IntPtr(hwnd)))
+                    if (!GetSupportDpiState(hwnd))
                     {
                         width = (int)(width / factor);
                         height = (int)(height / factor);
@@ -939,21 +966,21 @@ namespace readboard
                 }
                 if (type == 2)
                 {
-                    if (!(dm.GetWindowClass(hwnd).ToLower().Equals("tlmdsimplepanel") || dm.GetWindowClass(hwnd).ToLower().Equals("tpanel")))
+                    if (!(classNameStr.ToLower().Equals("tlmdsimplepanel") || classNameStr.Equals("tpanel")))
                     {
                         MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
-                    if (!getSinaPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
-                        return;               
+                    if (!getSinaPos(hwnd, out rgbArray, out totalWidth))
+                        return;
                 }
                 if (type == 3)
                 {
-                  
+
                     sx1 = (int)(ox1 - x1);
                     sy1 = (int)(oy1 - y1);
                     width = (int)((ox2 - ox1));
                     height = (int)((oy2 - oy1));
-                    if (!GetSupportDpiState(new IntPtr(hwnd)))
+                    if (!GetSupportDpiState(hwnd))
                     {
                         sx1 = (int)(sx1 / factor);
                         sy1 = (int)(sy1 / factor);
@@ -1018,7 +1045,7 @@ namespace readboard
         {
             this.btnKeepSync.Text = t;
             if (!isContinuousSyncing)
-                this.button10.Text = Program.isChn?"一键同步":"FastSync";
+                this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
             //if (this.factor <= 1)
             //{ 
             this.button4.Enabled = true;
@@ -1047,18 +1074,18 @@ namespace readboard
         }
 
         private void stopKeepingSync()
-        {         
+        {
             Action2<String> a = new Action2<String>(Action2Test);
             if (!isContinuousSyncing)
             {
                 Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
-            }      
+            }
             startedSync = false;
             if (needForceUnbind)
             {
                 needForceUnbind = false;
                 lw.lwsoft lwh = new lw.lwsoft();
-                lwh.ForceUnBindWindow(hwnd);
+                lwh.ForceUnBindWindow((int)hwnd);
             }
         }
 
@@ -1083,12 +1110,116 @@ namespace readboard
             int nMaxCount //最大值
             );
 
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("USER32.DLL")]
+        static extern bool IsWindowVisible(IntPtr hWnd);
+        [DllImport("USER32.DLL")]
+        static extern IntPtr GetShellWindow();
+        [DllImport("User32.dll")]
+        static extern bool IsIconic(IntPtr hwnd);
+
+        [DllImport("USER32.DLL")]
+        static extern bool EnumWindows(EnumWindowsProc enumFunc, int lParam);
+
+        delegate bool EnumWindowsProc(IntPtr hWnd, int lParam);
+        /// <summary>Returns a dictionary that contains the handle and title of all opened windows.</summary>
+        /// <returns>A dictionary that contains the handle and title of all opened windows.</returns>
+        public static IDictionary<IntPtr, string> GetOpenWindows()
+        {
+            IntPtr lShellWindow = GetShellWindow();
+            Dictionary<IntPtr, string> lWindows = new Dictionary<IntPtr, string>();
+            EnumWindows(delegate (IntPtr hWnd, int lParam)
+            {
+                if (hWnd == lShellWindow) return true;
+                if (!IsWindowVisible(hWnd)) return true;
+                if (IsIconic(hWnd)) return true;
+                lWindows[hWnd] = "";
+                return true;
+            }, 0);
+
+            return lWindows;
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
+
+        /// <summary>
+        /// Delegate for the EnumChildWindows method
+        /// </summary>
+        /// <param name="hWnd">Window handle</param>
+        /// <param name="parameter">Caller-defined variable; we use it for a pointer to our list</param>
+        /// <returns>True to continue enumerating, false to bail.</returns>
+        public delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
+        public static List<IntPtr> GetChildWindows(IntPtr parent)
+        {
+            List<IntPtr> result = new List<IntPtr>();
+            GCHandle listHandle = GCHandle.Alloc(result);
+            try
+            {
+                EnumWindowProc childProc = new EnumWindowProc(EnumWindow);
+                EnumChildWindows(parent, childProc, GCHandle.ToIntPtr(listHandle));
+            }
+            finally
+            {
+                if (listHandle.IsAllocated)
+                    listHandle.Free();
+            }
+            return result;
+        }
+
+        private static bool EnumWindow(IntPtr handle, IntPtr pointer)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(pointer);
+            List<IntPtr> list = gch.Target as List<IntPtr>;
+            if (list == null)
+            {
+                throw new InvalidCastException("GCHandle Target could not be cast as List<IntPtr>");
+            }
+            list.Add(handle);
+            //  You can modify this to check to see if you want to cancel the operation, then return a null here
+            return true;
+        }
+
+        private String EnumWindowByProcess(String processName, String likeClassName)
+        {
+            String hwnds = "";
+            IDictionary<IntPtr, string> winds = GetOpenWindows();
+            foreach (var item in winds)
+            {
+                int pid = -1;
+                GetWindowThreadProcessId(item.Key, out pid);
+                Process proc = Process.GetProcessById(pid);
+                //Console.WriteLine("=====================");
+                //Console.WriteLine(proc.ProcessName);
+                // Console.WriteLine(item.Key);
+                //Console.WriteLine(item.Value);
+                if (proc.ProcessName.Equals(processName))
+                {
+                    List<IntPtr> allHwnds = new List<IntPtr>();
+                    allHwnds.Add(item.Key);
+                    foreach (IntPtr subHwnd in GetChildWindows(item.Key))
+                    {
+                        allHwnds.Add(subHwnd);                     
+                    }
+                    foreach (IntPtr oneHwnd in allHwnds)
+                    {
+                        if(GetClassNameStr(oneHwnd).Contains(likeClassName))
+                        hwnds += oneHwnd + ",";
+                    }
+                }
+            }
+            if (hwnds.EndsWith(","))
+                hwnds = hwnds.Substring(0, hwnds.Length - 1);
+            return hwnds;
+        }
+
         private void startContinuous()
         {
             Action2<String> a = new Action2<String>(setContinuousSync);
             Invoke(a, "");
             RECT rect = new RECT();
-            IntPtr p = new IntPtr(hwnd);
             while (isContinuousSyncing)
             {
                 if (threadKeepSync != null && threadKeepSync.IsAlive)
@@ -1096,110 +1227,110 @@ namespace readboard
                     Thread.Sleep(100);
                     continue;
                 }
-                    if (startedSync)
+                if (startedSync)
                 {
                     Thread.Sleep(100);
                     continue;
                 }
-                hwnd = -1;
-                    int finalWidth = 0;
-                    int x1;
-                    int y1;
-                    int x2;
-                    int y2;
-                    if(Program.showInBoard)
+                hwnd = new IntPtr(-1);
+                int finalWidth = 0;
+                int x1;
+                int y1;
+                int x2;
+                int y2;
+                if (Program.showInBoard)
                     Send("noinboard");
-                    if (type == 0)
+                if (type == 0)
+                {
+                    // hwnd = dm.FindWindow("#32770", "");
+                    // hwndFoxPlace = -1;
+                    String hwnds = EnumWindowByProcess("foxwq", "#32770");
+                    string[] hwndArray = hwnds.Split(',');
+                    foreach (string oneHwnd in hwndArray)
                     {
-                       // hwnd = dm.FindWindow("#32770", "");
-                       // hwndFoxPlace = -1;
-                        String hwnds = dm.EnumWindowByProcess("foxwq.exe", "", "#32770", 16);
-                        string[] hwndArray = hwnds.Split(',');
-                        foreach (string oneHwnd in hwndArray)
-                        {
-                            if (oneHwnd.Length == 0)
-                                continue;
+                        if (oneHwnd.Length == 0)
+                            continue;
 
-                            StringBuilder title = new StringBuilder(256);
-                            GetWindowText(new IntPtr(int.Parse(oneHwnd)), title, title.Capacity);
-                            if (title.ToString().Equals("CChessboardPanel"))
-                            {
-                                hwnd = int.Parse(oneHwnd);
-                                break;
-                                //int hwndTemp = int.Parse(oneHwnd);
-                                //p = new IntPtr(hwndTemp);
-                                //GetWindowRect(p, ref rect);
-                                //x2 = rect.Right;
-                                //y2 = rect.Bottom;
-                                //x1 = rect.Left;
-                                //y1 = rect.Top;
-                                //if (x1 >= -9999 && y1 >= -9999 && x2 - x1 > finalWidth || finalWidth == 0)
-                                //{
-                                //    hwndFoxPlace = hwndTemp;
-                                //    finalWidth = x2 - x1;
-                                //}
-                            }
+                        String titleStr = GetTitleStr(new IntPtr(int.Parse(oneHwnd)));
+                        if (titleStr.Equals("CChessboardPanel"))
+                        {
+                            hwnd = new IntPtr(int.Parse(oneHwnd));
+                            break;
+                            //int hwndTemp = int.Parse(oneHwnd);
+                            //p = new IntPtr(hwndTemp);
+                            //GetWindowRect(p, ref rect);
+                            //x2 = rect.Right;
+                            //y2 = rect.Bottom;
+                            //x1 = rect.Left;
+                            //y1 = rect.Top;
+                            //if (x1 >= -9999 && y1 >= -9999 && x2 - x1 > finalWidth || finalWidth == 0)
+                            //{
+                            //    hwndFoxPlace = hwndTemp;
+                            //    finalWidth = x2 - x1;
+                            //}
                         }
                     }
-                    else if (type == 1)
+                }
+                else if (type == 1)
+                {
+                    String hwnds = EnumWindowByProcess("TygemEweiqi", "AfxWnd140u");
+                    string[] hwndArray = hwnds.Split(',');
+                    foreach (string oneHwnd in hwndArray)
                     {
-                        String hwnds = dm.EnumWindowByProcess("TygemEweiqi.exe", "", "AfxWnd140u", 16);
-                        string[] hwndArray = hwnds.Split(',');
-                        foreach (string oneHwnd in hwndArray)
+                        if (oneHwnd.Length == 0)
+                            continue;
+                        String titleStr = GetTitleStr(new IntPtr(int.Parse(oneHwnd)));
+                        String classNameStr = GetClassNameStr(new IntPtr(int.Parse(oneHwnd)));
+                        if (classNameStr.Equals("AfxWnd140u") && titleStr.Length == 0)
                         {
-                            if (oneHwnd.Length == 0)
-                                continue;
-                            if (dm.GetWindowClass(int.Parse(oneHwnd)).Equals("AfxWnd140u") && dm.GetWindowTitle(int.Parse(oneHwnd)).Length == 0)
-                            {
-                                int hwndTemp = int.Parse(oneHwnd);
-                                p = new IntPtr(hwndTemp);
-                                GetWindowRect(p, ref rect);
-                                x2 = rect.Right;
-                                y2 = rect.Bottom;
-                                x1 = rect.Left;
-                                y1 = rect.Top;
-                                if (x1 >= -9999 && y1 >= -9999 && (x2 - x1) > 0 && (y2 - y1) > 0 && (float)(x2 - x1) / (float)(y2 - y1) < 1.05 && (float)(x2 - x1) / (float)(y2 - y1) > 0.95)
-                                {
-                                    if (x2 - x1 < finalWidth || finalWidth == 0)
-                                    {
-                                        hwnd = hwndTemp;
-                                        finalWidth = x2 - x1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (type == 2)
-                    {
-                        String hwnds = dm.EnumWindowByProcess("Sina.exe", "", "TLMDSimplePanel", 16);
-                        string[] hwndArray = hwnds.Split(',');
-                        foreach (string oneHwnd in hwndArray)
-                        {
-                            if (oneHwnd.Length == 0)
-                                continue;
                             int hwndTemp = int.Parse(oneHwnd);
-                            p = new IntPtr(hwndTemp);
-                            GetWindowRect(p, ref rect);
+                            GetWindowRect(new IntPtr(hwndTemp), ref rect);
                             x2 = rect.Right;
                             y2 = rect.Bottom;
                             x1 = rect.Left;
                             y1 = rect.Top;
-                            if (!dm.GetWindowClass(hwndTemp).Equals("TLMDSimplePanel"))
-                                continue;
-
-                            if (x1 >= -9999 && y1 >= -9999 && x2 - x1 > finalWidth || finalWidth == 0)
+                            if (x1 >= -9999 && y1 >= -9999 && (x2 - x1) > 0 && (y2 - y1) > 0 && (float)(x2 - x1) / (float)(y2 - y1) < 1.05 && (float)(x2 - x1) / (float)(y2 - y1) > 0.95)
                             {
-                                hwnd = hwndTemp;
-                                finalWidth = x2 - x1;
+                                if (x2 - x1 < finalWidth || finalWidth == 0)
+                                {
+                                    hwnd = new IntPtr(hwndTemp);
+                                    finalWidth = x2 - x1;
+                                }
                             }
-
                         }
                     }
-                    if (hwnd > 0 && isContinuousSyncing)
+                }
+                else if (type == 2)
+                {
+                    String hwnds = EnumWindowByProcess("Sina", "TLMDSimplePanel");
+                    string[] hwndArray = hwnds.Split(',');
+                    foreach (string oneHwnd in hwndArray)
                     {
-                        startContinuousSync(true);
-                    }                
-                    Thread.Sleep(100);                
+                        if (oneHwnd.Length == 0)
+                            continue;
+                        int hwndTemp = int.Parse(oneHwnd);
+                        GetWindowRect(new IntPtr(hwndTemp), ref rect);
+                        x2 = rect.Right;
+                        y2 = rect.Bottom;
+                        x1 = rect.Left;
+                        y1 = rect.Top;
+                        String classNameStr = GetClassNameStr(new IntPtr(int.Parse(oneHwnd)));
+                        if (!classNameStr.Equals("TLMDSimplePanel"))
+                            continue;
+
+                        if (x1 >= -9999 && y1 >= -9999 && x2 - x1 > finalWidth || finalWidth == 0)
+                        {
+                            hwnd = new IntPtr(hwndTemp);
+                            finalWidth = x2 - x1;
+                        }
+
+                    }
+                }
+                if ((int)hwnd > 0 && isContinuousSyncing)
+                {
+                    startContinuousSync(true);
+                }
+                Thread.Sleep(100);
             }
         }
 
@@ -1220,10 +1351,10 @@ namespace readboard
                 if (width <= this.boardW)
                 {
                     MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
-                        stopKeepingSync();
+                    stopKeepingSync();
                     return;
                 }
-                OutPut3(true);               
+                OutPut3(true);
             }
             else
             {
@@ -1231,7 +1362,7 @@ namespace readboard
                 int y1;
                 int x2;
                 int y2;
-                if (hwnd<=0)
+                if ((int)hwnd <= 0)
                 {
                     MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     stopKeepingSync();
@@ -1239,8 +1370,7 @@ namespace readboard
                 }
 
                 RECT rect = new RECT();
-                IntPtr p = new IntPtr(hwnd);
-                GetWindowRect(p, ref rect);
+                GetWindowRect(hwnd, ref rect);
                 x2 = rect.Right;
                 y2 = rect.Bottom;
                 x1 = rect.Left;
@@ -1253,7 +1383,7 @@ namespace readboard
                     return;
                 }
                 StringBuilder className = new StringBuilder(256);
-                GetClassName(new IntPtr(hwnd), className, className.Capacity);
+                GetClassName(hwnd, className, className.Capacity);
                 if (className.ToString().Equals("SunAwtFrame"))
                 {
                     isJavaFrame = true;
@@ -1262,21 +1392,21 @@ namespace readboard
                 }
                 else
                 {
-                    isJavaFrame = false;                   
+                    isJavaFrame = false;
                 }
-                    Action2<String> a = new Action2<String>(startKeepingSync);
+                Action2<String> a = new Action2<String>(startKeepingSync);
                 Invoke(a, "");
                 if (type == 0)
                 {
                     rectX1 = x1;
                     rectY1 = y1;
-                    if (!dm.GetWindowClass(hwnd).ToLower().Equals("#32770"))
+                    if (!GetClassNameStr(hwnd).Equals("#32770"))
                     {
                         if (!isSimpleSync && startedSync)
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    if (!getFoxPos(new IntPtr(hwnd),out RgbInfo[] rgbArray, out int totalWidth))
+                    if (!getFoxPos(hwnd, out RgbInfo[] rgbArray, out int totalWidth))
                     {
                         sx1 = 0;
                         sy1 = 0;
@@ -1292,7 +1422,7 @@ namespace readboard
 
                 if (type == 1)
                 {
-                    if (!dm.GetWindowClass(hwnd).ToLower().Equals("afxwnd140u"))
+                    if (!GetClassNameStr(hwnd).ToLower().Equals("afxwnd140u"))
                     {
                         if (!isSimpleSync && startedSync)
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
@@ -1302,12 +1432,12 @@ namespace readboard
                     sy1 = 0;
                     width = x2 - x1;
                     height = y2 - y1;
-                    if (!GetSupportDpiState(new IntPtr(hwnd)))
+                    if (!GetSupportDpiState(hwnd))
                     {
                         width = (int)(width / factor);
                         height = (int)(height / factor);
                     }
-                    if (!getTygemPos(new IntPtr(hwnd),out RgbInfo[] rgbArray, out int totalWidth))
+                    if (!getTygemPos(hwnd, out RgbInfo[] rgbArray, out int totalWidth))
                     {
                         sx1 = 0;
                         sy1 = 0;
@@ -1322,13 +1452,13 @@ namespace readboard
                 }
                 if (type == 2)
                 {
-                    if (!(dm.GetWindowClass(hwnd).ToLower().Equals("tlmdsimplepanel") || dm.GetWindowClass(hwnd).ToLower().Equals("tpanel")))
+                    if (!(GetClassNameStr(hwnd).ToLower().Equals("tlmdsimplepanel") || GetClassNameStr(hwnd).ToLower().Equals("tpanel")))
                     {
                         if (!isSimpleSync)
                             MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                         isRightGoban = false;
                     }
-                    if (!getSinaPos(new IntPtr(hwnd), out RgbInfo[] rgbArray, out int totalWidth))
+                    if (!getSinaPos(hwnd, out RgbInfo[] rgbArray, out int totalWidth))
                     {
                         sx1 = 0;
                         sy1 = 0;
@@ -1347,7 +1477,7 @@ namespace readboard
                     sy1 = (int)(oy1 - y1);
                     width = (int)((ox2 - ox1));
                     height = (int)((oy2 - oy1));
-                    if (!GetSupportDpiState(new IntPtr(hwnd)))
+                    if (!GetSupportDpiState(hwnd))
                     {
                         sx1 = (int)(sx1 / factor);
                         sy1 = (int)(sy1 / factor);
@@ -1371,7 +1501,7 @@ namespace readboard
                     Send("play>white>" + (textBox1.Text.Equals("") ? "0" : textBox1.Text) + " " + (textBox2.Text.Equals("") ? "0" : textBox2.Text) + " " + (textBox3.Text.Equals("") ? "0" : textBox3.Text));
                 }
             }
-            if (!isContinuousSyncing&&Program.autoMin && isRightGoban && this.WindowState != FormWindowState.Minimized)
+            if (!isContinuousSyncing && Program.autoMin && isRightGoban && this.WindowState != FormWindowState.Minimized)
             {
                 Action2<String> a = new Action2<String>(minWindow);
                 Invoke(a, "");
@@ -1382,7 +1512,7 @@ namespace readboard
             }
             threadKeepSync = new Thread(OutPutTime);
             threadKeepSync.SetApartmentState(ApartmentState.STA);
-            threadKeepSync.Start();          
+            threadKeepSync.Start();
         }
         private void button5_Click(object sender, EventArgs e)
         {
@@ -1412,8 +1542,8 @@ namespace readboard
 
         private void OutPutTime()
         {
-            lw.lwsoft lwh=null;
-            Send("sync");            
+            lw.lwsoft lwh = null;
+            Send("sync");
             while (keepSync)
             {
 
@@ -1422,8 +1552,7 @@ namespace readboard
                 int x2;
                 int y2;
                 RECT rect = new RECT();
-                IntPtr p = new IntPtr(hwnd);
-                GetWindowRect(p, ref rect);
+                GetWindowRect(hwnd, ref rect);
                 x2 = rect.Right;
                 y2 = rect.Bottom;
                 x1 = rect.Left;
@@ -1437,10 +1566,10 @@ namespace readboard
                     //    else if (type == 2)
                     //        Send("inboard " + (int)(sx1 + x1 / factor) + " " + (int)((sy1 + y1 / factor)) + " " + (int)(width) + " " + (int)(height) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
                     //    else if (type == 3)
-                        if (GetSupportDpiState(new IntPtr(hwnd)))
-                            Send("inboard " + (int)((sx1  + x1 ) / factor) + " " + (int)((sy1  + y1) / factor) + " " + Math.Round(width/factor) + " " + Math.Round(height/factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
-                        else
-                            Send("inboard " +(sx1 + (int)(x1 / factor)) + " " + (sy1 + (int)( y1 / factor)) + " " + width + " " + height+ " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    if (GetSupportDpiState(hwnd))
+                        Send("inboard " + (int)((sx1 + x1) / factor) + " " + (int)((sy1 + y1) / factor) + " " + Math.Round(width / factor) + " " + Math.Round(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
+                    else
+                        Send("inboard " + (sx1 + (int)(x1 / factor)) + " " + (sy1 + (int)(y1 / factor)) + " " + width + " " + height + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
 
                     //else
                     //    Send("inboard " + (int)((sx1 + x1) / factor) + " " + (int)((sy1 +y1) / factor) + " " + (int)(width / factor) + " " + (int)(height / factor) + " " + (factor > 1 ? "99_" + factor + "_" + type.ToString() : type.ToString()));
@@ -1461,7 +1590,7 @@ namespace readboard
                     OutPut3(false);
                 }
                 else
-                {    
+                {
 
                     int size = width * height;
                     if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
@@ -1476,14 +1605,14 @@ namespace readboard
                         javaX = x1;
                         javaY = y1;
                     }
-                    RgbInfo[] rgbArray=new RgbInfo[0];
-                    int totalWidth=-1;
+                    RgbInfo[] rgbArray = new RgbInfo[0];
+                    int totalWidth = -1;
                     if (type == 0)
                     {
                         rectX1 = x1;
                         rectY1 = y1;
-                        
-                        if (!getFoxPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
+
+                        if (!getFoxPos(hwnd, out rgbArray, out totalWidth))
                         {
                             sx1 = 0;
                             sy1 = 0;
@@ -1494,7 +1623,7 @@ namespace readboard
                                 stopKeepingSync();
                                 return;
                             }
-                        }                       
+                        }
                     }
                     if (type == 1)
                     {
@@ -1502,12 +1631,12 @@ namespace readboard
                         sy1 = 0;
                         width = x2 - x1;
                         height = y2 - y1;
-                        if (!GetSupportDpiState(new IntPtr(hwnd)))
+                        if (!GetSupportDpiState(hwnd))
                         {
                             width = (int)(width / factor);
                             height = (int)(height / factor);
                         }
-                        if (!getTygemPos(new IntPtr(hwnd), out rgbArray,out totalWidth))
+                        if (!getTygemPos(hwnd, out rgbArray, out totalWidth))
                         {
                             sx1 = 0;
                             sy1 = 0;
@@ -1522,7 +1651,7 @@ namespace readboard
                     }
                     if (type == 2)
                     {
-                        if (!getSinaPos(new IntPtr(hwnd),out rgbArray,out totalWidth))
+                        if (!getSinaPos(hwnd, out rgbArray, out totalWidth))
                         {
                             sx1 = 0;
                             sy1 = 0;
@@ -1539,19 +1668,19 @@ namespace readboard
                     if (changedSize)
                     {
                         Send("clear");
-                    }                   
+                    }
                     if (type == 3)
                     {
                         OutPut3(false);
                     }
                     else
                     {
-                        if (canUseLW&&type==0)
+                        if (canUseLW && type == 0)
                         {
                             OutPut(false, rgbArray, lwh, totalWidth);
                         }
                         else
-                        OutPut(false, rgbArray,null, totalWidth);
+                            OutPut(false, rgbArray, null, totalWidth);
                     }
                 }
                 try
@@ -1591,7 +1720,7 @@ namespace readboard
                     rgbArray[scanline * data.Width + pixeloffset].b = pixelData[pixeloffset * PixelWidth];
                 }
             }
-            input.UnlockBits(data);          
+            input.UnlockBits(data);
             int blackPercentStandard = Program.blackZB;
             int whitePercentStandard = Program.whiteZB;
             int blackOffsetStandard = Program.blackPC;
@@ -1649,13 +1778,14 @@ namespace readboard
             recognizeBoard(rgbArray, -1);
         }
 
-        private void recognizeBoard( RgbInfo[] rgbArray,int totalWidth)
+        private void recognizeBoard(RgbInfo[] rgbArray, int totalWidth)
         {
             int startX = 0;
             int startY = 0;
             int allWidth;
             int allHeight;
-            if (rgbArray == null || rgbArray.Length == 0|| totalWidth<0) {
+            if (rgbArray == null || rgbArray.Length == 0 || totalWidth < 0)
+            {
                 Bitmap input = null;
                 if (type == 5)
                 {
@@ -1665,7 +1795,7 @@ namespace readboard
                         graphics.CopyFromScreen(sx1, sy1, 0, 0, new System.Drawing.Size(width, height));
                     }
                 }
-                else input = GetWindowBmp(new IntPtr(hwnd), sx1, sy1, width, height);
+                else input = GetWindowBmp(hwnd, sx1, sy1, width, height);
                 if (input == null || input.Width <= boardW || input.Height <= boardH)
                     return;
                 allWidth = width;
@@ -1693,7 +1823,8 @@ namespace readboard
                 input.UnlockBits(data);
                 input.Dispose();
             }
-            else {
+            else
+            {
                 startX = sx1;
                 startY = sy1;
                 allWidth = totalWidth;
@@ -1768,7 +1899,7 @@ namespace readboard
                     {
                         int whitePercent =
                             getWhiteBlackColorPercent(
-                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, allWidth, allHeight);
+                                rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, allWidth, allHeight);
                         if (whitePercent >= whitePercentStandard)
                         {
                             if (x == 0
@@ -1801,10 +1932,10 @@ namespace readboard
                     if (needCheckRedBlue && (isWhite || isBlack))
                     {
                         int redPercent = getRedBlueColorPercent(
-                                rgbArray, startX+(int)Math.Round(x * vGap), startY+(int)Math.Round(y * hGap), vGapInt, hGapInt, false, allWidth, allHeight);
+                                rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, false, allWidth, allHeight);
                         int bluePercent = getRedBlueColorPercent(
-                                rgbArray, startX+(int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, allWidth, allHeight);
-                        if (bluePercent >= 1 )
+                                rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, true, allWidth, allHeight);
+                        if (bluePercent >= 1)
                         {
                             blueCount++;
                             if (redCount > 1 && blueCount > 1) needCheckRedBlue = false;
@@ -1846,8 +1977,9 @@ namespace readboard
                 else if (resultValue[blueRedY * boardW + blueRedX] == 2)
                     resultValue[blueRedY * boardW + blueRedX] = 4;
             }
-            else { 
-               if (blackCounts >= 2 && whiteCounts >= 2)
+            else
+            {
+                if (blackCounts >= 2 && whiteCounts >= 2)
                 {
                     float blackMaxOffset =
                         Math.Abs(
@@ -1893,7 +2025,7 @@ namespace readboard
                         allBlack = false;
                         allWhite = false;
                     }
-                    if (resultHere ==2|| resultHere ==4)
+                    if (resultHere == 2 || resultHere == 4)
                         allBlack = false;
                     if (resultHere == 1 || resultHere == 3)
                         allWhite = false;
@@ -1909,19 +2041,19 @@ namespace readboard
             }
             if (!allWhite && !allBlack)
             {
-                foreach(String line in sendList)
+                foreach (String line in sendList)
                 {
                     Send(line);
                 }
                 Send("end");
-            }         
+            }
             if (allBlack)
             {
                 canUsePrintWindow = false;
-                if (!startedSync&&!isSecondTime)
+                if (!startedSync && !isSecondTime)
                 {
                     isSecondTime = true;
-                     oneTimeSync();
+                    oneTimeSync();
                 }
             }
         }
@@ -2002,14 +2134,14 @@ namespace readboard
             return (100 * sum) / (width * height);
         }
 
-        private void OutPut(Boolean first, RgbInfo[] rgbArray, lw.lwsoft lwh,int totalWidth)
+        private void OutPut(Boolean first, RgbInfo[] rgbArray, lw.lwsoft lwh, int totalWidth)
         {
             if (width < this.boardW || height < this.boardH)
                 return;
             if (savedPlace && syncBoth)
             {
                 lwh = new lw.lwsoft();
-                lwh.BindWindow(hwnd, 0, 4, 0, 0, 0);
+                lwh.BindWindow((int)hwnd, 0, 4, 0, 0, 0);
                 needForceUnbind = true;
                 savedPlace = false;
                 int times = 10;
@@ -2022,14 +2154,14 @@ namespace readboard
                 lwh.UnBindWindow();
             }
             if (first)
-                Send("start " + boardW + " " + boardH + " " + hwnd);         
+                Send("start " + boardW + " " + boardH + " " + hwnd);
             recognizeBoard(rgbArray, totalWidth);
         }
 
         private void OutPut3(Boolean first)
         {
             if (width < this.boardW || height < this.boardH)
-                return;            
+                return;
             if (first)
                 Send("start " + boardW + " " + boardH);
             recognizeBoard(null);
@@ -2118,7 +2250,7 @@ namespace readboard
             catch (Exception)
             {
             }
-            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY+"_"+ (Program.useEnhanceScreen ? "1" : "0")+"_"+ (Program.playPonder ? "1" : "0"));
+            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY + "_" + (Program.useEnhanceScreen ? "1" : "0") + "_" + (Program.playPonder ? "1" : "0"));
             wr.Close();
         }
 
@@ -2130,17 +2262,17 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0")  + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             saveOtherConfig();
-            mh.Enabled = false;              
+            mh.Enabled = false;
             Send("stopsync");
             Send("nobothSync");
             Send("endsync");
             if (needForceUnbind)
             {
                 lw.lwsoft lwh = new lw.lwsoft();
-                lwh.ForceUnBindWindow(hwnd);
+                lwh.ForceUnBindWindow((int)hwnd);
             }
             System.Diagnostics.Process.GetCurrentProcess().Kill();
             Application.Exit();
@@ -2200,19 +2332,19 @@ namespace readboard
         public static extern IntPtr GetF();
 
         public void lossFocus()
-        {           
-            if ((int)GetF()!=dm.FindWindow("SunAwtDialog", "FloatBoard"))              
+        {
+            if (GetF() != FindWindow("SunAwtDialog", "FloatBoard"))//dm.FindWindow("SunAwtDialog", "FloatBoard"))              
             {
                 mouse_event((int)(MouseEventFlags.MiddleDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
                 mouse_event((int)(MouseEventFlags.MiddleUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
             }
         }
 
-        class MoveInfo
-        {
-            public int x;
-            public int y;
-        }
+        //class MoveInfo
+        //{
+        //    public int x;
+        //    public int y;
+        //}
 
         [DllImport("USER32.DLL")]
         public static extern void SwitchToThisWindow(IntPtr hwnd, Boolean fAltTab);
@@ -2226,32 +2358,27 @@ namespace readboard
         {
             if (isJavaFrame)
             {
-                if(type!=5)
-                    SwitchToThisWindow(new IntPtr(hwnd), true);
-                foreMouseClick(javaX+sx1 + (int)(widthMagrin * (x + 0.5)), javaY+sy1 + (int)(heightMagrin * (y + 0.5)));
+                if (type != 5)
+                    SwitchToThisWindow(hwnd, true);
+                foreMouseClick(javaX + sx1 + (int)(widthMagrin * (x + 0.5)), javaY + sy1 + (int)(heightMagrin * (y + 0.5)), true, false);
             }
-           else if (type == 5)
+            else if (type == 5)
             {
-                foreMouseClick(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)));
+                foreMouseClick(sx1 + (int)(widthMagrin * (x + 0.5)), sy1 + (int)(heightMagrin * (y + 0.5)), true, false);
             }
             else if (type == 0 && !canUseLW)
             {
-             IntPtr fatherHwnd = new IntPtr(dm.FindWindow("#32770", ""));
+                IntPtr fatherHwnd = FindWindow("#32770", "");// new IntPtr(dm.FindWindow("#32770", ""));
                 SwitchToThisWindow(fatherHwnd, true);
-                object xo, yo;
-                dm.GetCursorPos(out xo, out yo);
-                dm.MoveTo((int)Math.Round(rectX1 + sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(rectY1 + sy1 + heightMagrin * (y + 0.5)));
-                dm.LeftClick();
-                dm.LeftClick();
-                dm.MoveTo((int)xo, (int)yo);
+                foreMouseClick((int)Math.Round(rectX1 + sx1 + widthMagrin * (x + 0.5)), (int)Math.Round(rectY1 + sy1 + heightMagrin * (y + 0.5)), true,true);
             }
             else
             {
                 int xx = 0;
                 int yy = 0;
-                Boolean isScaled = GetSupportDpiState(new IntPtr(hwnd));
-                    xx = (int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * (isScaled?1:factor));
-                    yy = (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * (isScaled?1:factor));
+                Boolean isScaled = GetSupportDpiState(hwnd);
+                xx = (int)Math.Round((sx1 + widthMagrin * (x + 0.5)) * (isScaled ? 1 : factor));
+                yy = (int)Math.Round((sy1 + heightMagrin * (y + 0.5)) * (isScaled ? 1 : factor));
                 backMouseClick(xx, yy, hwnd);
             }
         }
@@ -2273,13 +2400,13 @@ namespace readboard
                 }
             }
             else
-                bmp = GetWindowBmp(new IntPtr(hwnd), startX, startY, width, height);
+                bmp = GetWindowBmp(hwnd, startX, startY, width, height);
             return recognizeMove(bmp, x, y);
         }
-        
+
         public void placeMove(int x, int y)
         {
-            if (!keepSync||!syncBoth || width < boardW)
+            if (!keepSync || !syncBoth || width < boardW)
                 return;
             int times = 10;
             if ((type == 0) && canUseLW)
@@ -2306,10 +2433,10 @@ namespace readboard
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
 
-        private void backMouseClick(int x, int y, int hwnd)
+        private void backMouseClick(int x, int y, IntPtr hwnd)
         {
-            PostMessage(new IntPtr(hwnd), WM_LBUTTONDOWN, 0, x + (y << 16));
-            PostMessage(new IntPtr(hwnd), WM_LBUTTONUP, 0, x + (y << 16));
+            PostMessage(hwnd, WM_LBUTTONDOWN, 0, x + (y << 16));
+            PostMessage(hwnd, WM_LBUTTONUP, 0, x + (y << 16));
         }
 
         public enum MouseEventFlags
@@ -2329,15 +2456,26 @@ namespace readboard
         [DllImport("User32")]
         public extern static void mouse_event(int dwFlags, int dx, int dy, int dwData, IntPtr dwExtraInfo);
 
-        private void foreMouseClick(int x, int y)
+        private void foreMouseClick(int x, int y, Boolean moveBack,Boolean isFox)
         {
-            int curX = Control.MousePosition.X;
-            int curY = Control.MousePosition.Y;
-            SetCursorPos(x, y);
-            mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
-            mouse_event((int)(MouseEventFlags.LeftDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
-            mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
-            SetCursorPos(curX, curY);
+            if (moveBack)
+            {
+                int curX = Control.MousePosition.X;
+                int curY = Control.MousePosition.Y;
+                SetCursorPos(x, y);
+                mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+                mouse_event((int)(MouseEventFlags.LeftDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+                if (isFox)
+                    Thread.Sleep(50);
+                mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);             
+                SetCursorPos(curX, curY);
+            }
+            else
+            {
+                mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+                mouse_event((int)(MouseEventFlags.LeftDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+                mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
+            }
         }
 
         private void textbox1_TextChanged(object sender, EventArgs e)
@@ -2605,7 +2743,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0")  + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
+            wr.WriteLine(Program.blackPC + "_" + Program.blackZB + "_" + Program.whitePC + "_" + Program.whiteZB + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "") + "_" + type);
             wr.Close();
             if (chkShowInBoard.Checked)
             {
@@ -2641,7 +2779,7 @@ namespace readboard
 
         private void button10_Click(object sender, EventArgs e)
         {
-            if (!isContinuousSyncing&&!startedSync)
+            if (!isContinuousSyncing && !startedSync)
             {
                 while (threadFastSync != null && threadFastSync.IsAlive)
                 {
@@ -2661,7 +2799,7 @@ namespace readboard
                 }
             }
             else
-            {               
+            {
                 stopSync();
                 this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
                 isContinuousSyncing = false;
@@ -3268,7 +3406,7 @@ namespace readboard
             return linesPoint;
         }
 
-        private Boolean getTygemPos(IntPtr hwnd,out RgbInfo[] rgbArray,out int totalWidth)
+        private Boolean getTygemPos(IntPtr hwnd, out RgbInfo[] rgbArray, out int totalWidth)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
@@ -3309,8 +3447,8 @@ namespace readboard
                 if (cl.r > 233 && cl.g > 203 && cl.b > 120 && cl.b < 180)
                 {
                     found = true;
-                    if(cansetFirstGetPos)
-                    isFirstGetPos = false;
+                    if (cansetFirstGetPos)
+                        isFirstGetPos = false;
                 }
             }
             catch (Exception)
@@ -3318,7 +3456,7 @@ namespace readboard
             }
             return found;
         }
-        private Boolean getSinaPos(IntPtr hwnd,out RgbInfo[] rgbArray,out int totalWidth)
+        private Boolean getSinaPos(IntPtr hwnd, out RgbInfo[] rgbArray, out int totalWidth)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
@@ -3399,7 +3537,7 @@ namespace readboard
             return true;
         }
 
-        private Boolean getFoxPos(IntPtr hwnd,out RgbInfo[] rgbArray,out int totalWidth)
+        private Boolean getFoxPos(IntPtr hwnd, out RgbInfo[] rgbArray, out int totalWidth)
         {
             Bitmap input = GetWindowImage(hwnd, isFirstGetPos);
             if (input == null || input.Width <= boardW || input.Height <= boardH)
@@ -3609,12 +3747,12 @@ namespace readboard
             Point upRight = getMultiColorPos(rgbArray, width, height, colorInfos2, 1);
             if (upLeft.X < 0 || upLeft.Y < 0 || upRight.X < 0 || upRight.Y <= 0)
                 return false;
-           
+
             sx1 = upLeft.X;
-                sy1 = upLeft.Y;
-                this.width = upRight.X - upLeft.X;
-                this.height = this.width;
-           
+            sy1 = upLeft.Y;
+            this.width = upRight.X - upLeft.X;
+            this.height = this.width;
+
             if (cansetFirstGetPos)
                 isFirstGetPos = false;
             return true;
@@ -3644,7 +3782,7 @@ namespace readboard
                 case 1:
                     for (int y = 0; y < height; y++)
                     {
-                        for (int x = width - 1; x >= 0; x--) 
+                        for (int x = width - 1; x >= 0; x--)
                         {
                             if (getMultiColorPixel(rgbArray, x, y, width, height, colorInfos))
                             {
