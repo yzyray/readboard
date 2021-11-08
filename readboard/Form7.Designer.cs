@@ -1,6 +1,6 @@
 ﻿namespace readboard
 {
-    partial class Form7
+    partial class TipsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,66 +28,66 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form7));
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TipsForm));
+            this.btnConfirm = new System.Windows.Forms.Button();
+            this.btnNotAskAgain = new System.Windows.Forms.Button();
+            this.lblTips = new System.Windows.Forms.Label();
+            this.lblTips1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // button1
+            // btnConfirm
             // 
-            this.button1.Location = new System.Drawing.Point(167, 52);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(56, 22);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "确定";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnConfirm.Location = new System.Drawing.Point(167, 52);
+            this.btnConfirm.Margin = new System.Windows.Forms.Padding(2);
+            this.btnConfirm.Name = "btnConfirm";
+            this.btnConfirm.Size = new System.Drawing.Size(69, 22);
+            this.btnConfirm.TabIndex = 0;
+            this.btnConfirm.Text = "确定";
+            this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnNotAskAgain
             // 
-            this.button2.Location = new System.Drawing.Point(240, 52);
-            this.button2.Margin = new System.Windows.Forms.Padding(2);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(70, 22);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "不再提示";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnNotAskAgain.Location = new System.Drawing.Point(240, 52);
+            this.btnNotAskAgain.Margin = new System.Windows.Forms.Padding(2);
+            this.btnNotAskAgain.Name = "btnNotAskAgain";
+            this.btnNotAskAgain.Size = new System.Drawing.Size(84, 22);
+            this.btnNotAskAgain.TabIndex = 1;
+            this.btnNotAskAgain.Text = "不再提示";
+            this.btnNotAskAgain.UseVisualStyleBackColor = true;
+            this.btnNotAskAgain.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label1
+            // lblTips
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 10);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(497, 12);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "注: 快捷键Alt+A,[前台]方式同步时不支持此功能,选点显示在原棋盘上后,原棋盘将无法落子";
+            this.lblTips.AutoSize = true;
+            this.lblTips.Location = new System.Drawing.Point(10, 10);
+            this.lblTips.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTips.Name = "lblTips";
+            this.lblTips.Size = new System.Drawing.Size(503, 12);
+            this.lblTips.TabIndex = 2;
+            this.lblTips.Text = "注: 快捷键Ctrl+D,[前台]方式同步时不支持此功能,选点显示在原棋盘上后,原棋盘将无法落子";
             // 
-            // label2
+            // lblTips1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(33, 30);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(209, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "可通过勾选双向同步选项恢复落子功能";
+            this.lblTips1.AutoSize = true;
+            this.lblTips1.Location = new System.Drawing.Point(33, 30);
+            this.lblTips1.Name = "lblTips1";
+            this.lblTips1.Size = new System.Drawing.Size(209, 12);
+            this.lblTips1.TabIndex = 3;
+            this.lblTips1.Text = "可通过勾选双向同步选项恢复落子功能";
             // 
-            // Form7
+            // TipsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(513, 82);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.lblTips1);
+            this.Controls.Add(this.lblTips);
+            this.Controls.Add(this.btnNotAskAgain);
+            this.Controls.Add(this.btnConfirm);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form7";
+            this.Name = "TipsForm";
             this.Text = "提示";
             this.TopMost = true;
             this.ResumeLayout(false);
@@ -97,9 +97,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnConfirm;
+        private System.Windows.Forms.Button btnNotAskAgain;
+        private System.Windows.Forms.Label lblTips;
+        private System.Windows.Forms.Label lblTips1;
     }
 }

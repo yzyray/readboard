@@ -19,7 +19,7 @@ using System.ComponentModel;
 
 namespace readboard
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         // Boolean showDebugImage = true;
         TcpClient client;
@@ -262,7 +262,7 @@ namespace readboard
             return title.ToString();
         }
 
-        private void SendError(String strMsg)
+        public void SendError(String strMsg)
         {
             if (useTcp)
             {
@@ -308,21 +308,21 @@ namespace readboard
             }
         }
 
-        private Boolean isAltDown = false;
+        private Boolean isCtrlDown = false;
 
         private void HookListener_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             // Console.Out.WriteLine(e.KeyValue);
-            if (e.KeyValue == 164 || e.KeyValue == 165)
-                isAltDown = true;
-            if (isAltDown && e.KeyValue == 65)
+            if (e.KeyValue == 163)
+                isCtrlDown = true;
+            if (isCtrlDown && e.KeyValue == 68)
                 chkShowInBoard.Checked = !chkShowInBoard.Checked;
         }
 
         private void HookListener_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if (e.KeyValue == 164 || e.KeyValue == 165)
-                isAltDown = false;
+            if ( e.KeyValue == 163)
+                isCtrlDown = false;
         }
 
         private void Receive()
@@ -382,11 +382,11 @@ namespace readboard
             if (a.StartsWith("quit"))
             {
                 Control.CheckForIllegalCrossThreadCalls = false;
-                Form1.pcurrentWin.shutdown();
+                MainForm.pcurrentWin.shutdown();
             }
         }
 
-        public Form1(String aitime, String playouts, String firstpo, String usetcp, String serverPort)
+        public MainForm(String aitime, String playouts, String firstpo, String usetcp, String serverPort)
         {
             InitializeComponent();
             if (usetcp.Equals("1"))
@@ -406,7 +406,7 @@ namespace readboard
                 }
                 catch
                 {
-                    MessageBox.Show(Program.isChn ? "棋盘同步工具与Lizzie连接失败" : "Can not connect to Lizzie");
+                    MessageBox.Show(getLangStr("connectLizzieFailed"));// "棋盘同步工具与Lizzie连接失败" : "Can not connect to Lizzie");
                 }
             }
             GlobalHooker hooker = new GlobalHooker();
@@ -575,9 +575,9 @@ namespace readboard
             pcurrentWin = this;
 
             if (type == 0 || type == 1 || type == 2)
-                this.button10.Enabled = true;
+                this.btnFastSync.Enabled = true;
             else
-                this.button10.Enabled = false;
+                this.btnFastSync.Enabled = false;
             if (!aitime.Equals(" "))
                 textBox1.Text = aitime;
             if (!playouts.Equals(" "))
@@ -625,39 +625,50 @@ namespace readboard
                 chkBothSync.Checked = false;
                 chkAutoPlay.Enabled = false;
             }
-            if (!Program.isChn)
-            {
-                this.rdoFox.Text = "FoxWQ";
-                this.rdoTygem.Text = "Tygem";
-                this.rdoBack.Text = "Background";
-                this.rdoSina.Text = "Sina";
-                this.rdoFore.Text = "Foreground";
-                this.btnSettings.Text = "Settings";
-                this.button1.Text = "Help";
-                this.button10.Text = "FastSync";
-                this.label1.Text = "Size:";
-                this.button9.Text = "HowToSetKomi6.5";
-                this.chkBothSync.Text = "BothSync";
-                this.chkAutoPlay.Text = "AutoPlay";
-                this.radioBlack.Text = "PlayB";
-                this.radioWhite.Text = "PlayW";
-                this.label5.Text = "PlayCondition:";
-                this.label2.Text = "MoveTime";
-                this.label3.Text = "MaxPlayouts";
-                this.label4.Text = "BestMovePlayouts";
-                this.button3.Text = "ChooseGoban(clickInside)";
-                this.button2.Text = "SelectBoard";
-                this.button7.Text = "Ponder/off";
-                this.chkShowInBoard.Text = "DisplayOnOriginal";
-                this.btnKeepSync.Text = "KeepSync(200ms)";
-                this.button4.Text = "OneTimeSync";
-                this.button8.Text = "Exchange";
-                this.button6.Text = "ClearBoard";
-                this.button11.Text = "CircleRow1";
-                this.Text = "Board Synchronization Tool";
-            }
+            this.rdoFox.Text = getLangStr("MainForm_rdoFox");
+            this.rdoTygem.Text = getLangStr("MainForm_rdoTygem");
+            this.rdoSina.Text = getLangStr("MainForm_rdoSina");
+            this.rdoBack.Text = getLangStr("MainForm_rdoBack");
+            this.rdoFore.Text = getLangStr("MainForm_rdoFore");
+            this.btnSettings.Text = getLangStr("MainForm_btnSettings");
+            this.btnHelp.Text = getLangStr("MainForm_btnHelp");
+            this.btnFastSync.Text = getLangStr("MainForm_btnFastSync");
+            this.lblBoardSize.Text = getLangStr("MainForm_lblBoardSize");
+            this.btnKomi65.Text = getLangStr("MainForm_btnKomi65");
+            this.chkBothSync.Text = getLangStr("MainForm_chkBothSync");
+            this.chkAutoPlay.Text = getLangStr("MainForm_chkAutoPlay");
+            this.radioBlack.Text = getLangStr("MainForm_radioBlack");
+            this.radioWhite.Text = getLangStr("MainForm_radioWhite");
+            this.lblPlayCondition.Text = getLangStr("MainForm_lblPlayCondition");
+            this.lblTime.Text = getLangStr("MainForm_lblTime");
+            this.lblTotalVisits.Text = getLangStr("MainForm_lblTotalVisits");
+            this.lblBestMoveVisits.Text=getLangStr("MainForm_lblBestMoveVisits");
+            this.btnClickBoard.Text = getLangStr("MainForm_btnClickBoard");
+            this.btnCircleBoard.Text = getLangStr("MainForm_btnCircleBoard");
+            this.btnCircleRow1.Text = getLangStr("MainForm_btnCircleRow1");
+            this.btnTogglePonder.Text = getLangStr("MainForm_btnTogglePonder");
+            this.chkShowInBoard.Text = getLangStr("MainForm_chkShowInBoard");
+            this.btnKeepSync.Text = getLangStr("MainForm_btnKeepSync");
+            this.btnOneTimeSync.Text = getLangStr("MainForm_btnOneTimeSync");
+            this.btnExchange.Text = getLangStr("MainForm_btnExchange");
+            this.btnClearBoard.Text = getLangStr("MainForm_btnClearBoard");
+            this.Text = getLangStr("MainForm_title");
+
             Send("ready");
             sendPonderStatus();
+        }
+
+        private String getLangStr(String itemName)
+        {
+            String result  = "";
+            try {
+                result = Program.langItems[itemName].ToString();
+            }
+            catch (Exception e)
+            {
+                SendError(e.ToString());              
+            }
+            return result;
         }
 
         public void sendPonderStatus()
@@ -699,7 +710,7 @@ namespace readboard
             }
         }
 
-        public static Form1
+        public static MainForm
            pcurrentWin = null;
 
         private void Form1_Load(object sender, EventArgs e)
@@ -713,7 +724,7 @@ namespace readboard
             mh.MouseMove += mh_MouseMoveEvent;
             mh.MouseClick += mh_MouseMoveEvent2;
             mh.Enabled = false;
-            this.btnKeepSync.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)";
+            this.btnKeepSync.Text = getLangStr("keepSync") + "(" + Program.timename + "ms)";
         }
 
         //[DllImport("user32.dll")]
@@ -728,13 +739,13 @@ namespace readboard
             if (!isMannulCircle)
             {
                 if (!reCalculateRow1(ox1, oy1, ox2, oy2))
-                    MessageBox.Show(Program.isChn ? "不能识别棋盘,请调整被同步棋盘大小后重新选择或尝试[框选1路线]" : "Can not detect board,Please zoom the board and try again or use [CircleRow1]");
+                    MessageBox.Show(getLangStr("recgnizeFaild"));// Program.isChn ? "不能识别棋盘,请调整被同步棋盘大小后重新选择或尝试[框选1路线]" : "Can not detect board,Please zoom the board and try again or use [CircleRow1]");
                 else if (type == 3)
                 {
                     int curX = Control.MousePosition.X;
                     int curY = Control.MousePosition.Y;
                     // BlockInput(true);
-                    foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false,false);
+                    SetCursorPos((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(35);
@@ -744,11 +755,12 @@ namespace readboard
                     Task.Factory.StartNew(() =>
                     {
                         Thread.Sleep(30);
-                        foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false,false);
+                        SetCursorPos((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                         Thread.Sleep(20);
-                        foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false, false);
+                        SetCursorPos((ox1 + ox2) / 2, (oy1 + oy2) / 2);
                         Thread.Sleep(50);
-                        foreMouseClick((ox1 + ox2) / 2, (oy1 + oy2) / 2, false, false);
+                        SetCursorPos((ox1 + ox2) / 2, (oy1 + oy2) / 2);
+                        SetCursorPos(curX, curY);
                     });
                     //  BlockInput(false);                   
                 }
@@ -821,7 +833,7 @@ namespace readboard
             }
             else
             {
-                MessageBox.Show(Program.isChn ? "未选择棋盘" : "No board has been choosen");
+                MessageBox.Show(getLangStr("noSelectedBoard"));// (Program.isChn ? "未选择棋盘" : "No board has been choosen");
                 return false;
             }
         }
@@ -900,7 +912,7 @@ namespace readboard
                 OutPut3(true);
                 if (width <= this.boardW)
                 {
-                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    MessageBox.Show(getLangStr("noSelectedBoardAndFailed"));// (Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     return;
                 }
             }
@@ -908,7 +920,7 @@ namespace readboard
             {
                 if ((int)hwnd <= 0)
                 {
-                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    MessageBox.Show(getLangStr("noSelectedBoardAndFailed"));// (Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     return;
                 }
                 int x1;
@@ -925,7 +937,7 @@ namespace readboard
 
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                 {
-                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    MessageBox.Show(getLangStr("noSelectedBoardAndFailed"));// (Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     return;
                 }
                 String classNameStr = GetClassNameStr(hwnd);
@@ -943,7 +955,7 @@ namespace readboard
                 {
                     if (!classNameStr.ToLower().Equals("#32770"))
                     {
-                        MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
+                        MessageBox.Show(getLangStr("notRightBoard"));// (Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
                     if (!getFoxPos(hwnd, out rgbArray, out totalWidth))
                         return;
@@ -952,7 +964,7 @@ namespace readboard
                 {
                     if (!classNameStr.ToLower().Equals("afxwnd140u"))
                     {
-                        MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
+                        MessageBox.Show(getLangStr("notRightBoard"));// (Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
                     sx1 = 0;
                     sy1 = 0;
@@ -968,7 +980,7 @@ namespace readboard
                 {
                     if (!(classNameStr.ToLower().Equals("tlmdsimplepanel") || classNameStr.Equals("tpanel")))
                     {
-                        MessageBox.Show(Program.isChn ? "未选择正确的棋盘" : "Not right board");
+                        MessageBox.Show(getLangStr("notRightBoard"));// (Program.isChn ? "未选择正确的棋盘" : "Not right board");
                     }
                     if (!getSinaPos(hwnd, out rgbArray, out totalWidth))
                         return;
@@ -1000,8 +1012,8 @@ namespace readboard
         }
         private void startKeepingSync(String a)
         {
-            this.btnKeepSync.Text = Program.isChn ? "停止同步" : "StopSync";
-            this.button10.Text = Program.isChn ? "停止同步" : "StopSync";
+            this.btnKeepSync.Text = getLangStr("stopSync");//  Program.isChn ? "停止同步" : "StopSync";
+            this.btnFastSync.Text = getLangStr("stopSync");//Program.isChn ? "停止同步" : "StopSync";
             startedSync = true;
             this.rdoFox.Enabled = false;
             this.rdoTygem.Enabled = false;
@@ -1014,16 +1026,16 @@ namespace readboard
             this.rdo9x9.Enabled = false;
             this.rdoOtherBoard.Enabled = false;
             this.rdoFore.Enabled = false;
-            this.button11.Enabled = false;
-            this.button2.Enabled = false;
-            this.button3.Enabled = false;
-            this.button4.Enabled = false;
+            this.btnCircleRow1.Enabled = false;
+            this.btnCircleBoard.Enabled = false;
+            this.btnClickBoard.Enabled = false;
+            this.btnOneTimeSync.Enabled = false;
         }
 
         private void setContinuousSync(String a)
         {
             //this.button5.Text = "停止同步";
-            this.button10.Text = Program.isChn ? "停止同步" : "StopSync";
+            this.btnFastSync.Text = getLangStr("stopSync");//Program.isChn ? "停止同步" : "StopSync";
             //  button5click = true;
             this.rdoFox.Enabled = false;
             this.rdoTygem.Enabled = false;
@@ -1045,10 +1057,10 @@ namespace readboard
         {
             this.btnKeepSync.Text = t;
             if (!isContinuousSyncing)
-                this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
+                this.btnFastSync.Text = getLangStr("stopSync");//Program.isChn ? "一键同步" : "FastSync";
             //if (this.factor <= 1)
             //{ 
-            this.button4.Enabled = true;
+            this.btnOneTimeSync.Enabled = true;
             this.btnKeepSync.Enabled = true;
             this.rdoFox.Enabled = true;
             this.rdoSina.Enabled = true;
@@ -1065,12 +1077,12 @@ namespace readboard
             //
             if (type == 3 || type == 5)
             {
-                this.button11.Enabled = true;
-                this.button2.Enabled = true;
+                this.btnCircleRow1.Enabled = true;
+                this.btnCircleBoard.Enabled = true;
             }
             else
-                this.button3.Enabled = true;
-            this.button4.Enabled = true;
+                this.btnClickBoard.Enabled = true;
+            this.btnOneTimeSync.Enabled = true;
         }
 
         private void stopKeepingSync()
@@ -1078,7 +1090,7 @@ namespace readboard
             Action2<String> a = new Action2<String>(Action2Test);
             if (!isContinuousSyncing)
             {
-                Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
+                Invoke(a, getLangStr("keepSync") + "(" + Program.timename + "ms)");
             }
             startedSync = false;
             if (needForceUnbind)
@@ -1092,7 +1104,7 @@ namespace readboard
         public void resetBtnKeepSyncName()
         {
             if (!startedSync)
-                this.btnKeepSync.Text = (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)";
+                this.btnKeepSync.Text = getLangStr("keepSync") + "("+ Program.timename + "ms)";
         }
 
         [DllImport("user32", SetLastError = true)]
@@ -1339,6 +1351,10 @@ namespace readboard
             Boolean isRightGoban = true;
             isFirstGetPos = true;
             canUsePrintWindow = true;
+            if (Program.showInBoard && type == 0 && !canUseLW)
+                Send("foreFoxWithInBoard");
+            else
+                Send("notForeFoxWithInBoard");
             if (type == 5)
             {
                 isJavaFrame = false;
@@ -1350,7 +1366,7 @@ namespace readboard
                 height = oy2 - oy1;
                 if (width <= this.boardW)
                 {
-                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    MessageBox.Show(getLangStr("noSelectedBoardAndFailed"));// (Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     stopKeepingSync();
                     return;
                 }
@@ -1364,7 +1380,7 @@ namespace readboard
                 int y2;
                 if ((int)hwnd <= 0)
                 {
-                    MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                    MessageBox.Show(getLangStr("noSelectedBoardAndFailed"));//(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     stopKeepingSync();
                     return;
                 }
@@ -1378,7 +1394,7 @@ namespace readboard
                 if ((int)x1 == 0 && (int)x2 == 0 && (int)y1 == 0 && (int)y2 == 0)
                 {
                     if (!isSimpleSync && startedSync)
-                        MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                        MessageBox.Show(getLangStr("noSelectedBoardAndFailed"));//(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
                     stopKeepingSync();
                     return;
                 }
@@ -1403,7 +1419,7 @@ namespace readboard
                     if (!GetClassNameStr(hwnd).Equals("#32770"))
                     {
                         if (!isSimpleSync && startedSync)
-                            MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                            MessageBox.Show(getLangStr("notRightBoard"));
                         isRightGoban = false;
                     }
                     if (!getFoxPos(hwnd, out RgbInfo[] rgbArray, out int totalWidth))
@@ -1425,7 +1441,7 @@ namespace readboard
                     if (!GetClassNameStr(hwnd).ToLower().Equals("afxwnd140u"))
                     {
                         if (!isSimpleSync && startedSync)
-                            MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                            MessageBox.Show(getLangStr("notRightBoard"));
                         isRightGoban = false;
                     }
                     sx1 = 0;
@@ -1455,7 +1471,7 @@ namespace readboard
                     if (!(GetClassNameStr(hwnd).ToLower().Equals("tlmdsimplepanel") || GetClassNameStr(hwnd).ToLower().Equals("tpanel")))
                     {
                         if (!isSimpleSync)
-                            MessageBox.Show(Program.isChn ? "未选择棋盘,同步失败" : "No board has been choosen,Sync failed");
+                            MessageBox.Show(getLangStr("notRightBoard"));
                         isRightGoban = false;
                     }
                     if (!getSinaPos(hwnd, out RgbInfo[] rgbArray, out int totalWidth))
@@ -1519,7 +1535,7 @@ namespace readboard
             if (isContinuousSyncing)
             {
                 isContinuousSyncing = false;
-                this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
+                this.btnFastSync.Text = getLangStr("fastSync"); //Program.isChn ? "一键同步" : "FastSync";
             }
             if (!startedSync)
             {
@@ -2177,10 +2193,10 @@ namespace readboard
             if (this.rdoFox.Checked)
             {
                 type = 0;
-                this.button2.Enabled = false;
-                this.button11.Enabled = false;
-                this.button3.Enabled = true;
-                this.button10.Enabled = true;
+                this.btnCircleBoard.Enabled = false;
+                this.btnCircleRow1.Enabled = false;
+                this.btnClickBoard.Enabled = true;
+                this.btnFastSync.Enabled = true;
                 if (this.rdoOtherBoard.Checked)
                     this.rdo19x19.Checked = true;
                 this.rdoOtherBoard.Enabled = false;
@@ -2192,10 +2208,10 @@ namespace readboard
             if (this.rdoTygem.Checked)
             {
                 type = 1;
-                this.button2.Enabled = false;
-                this.button11.Enabled = false;
-                this.button3.Enabled = true;
-                this.button10.Enabled = true;
+                this.btnCircleBoard.Enabled = false;
+                this.btnCircleRow1.Enabled = false;
+                this.btnClickBoard.Enabled = true;
+                this.btnFastSync.Enabled = true;
                 if (this.rdoOtherBoard.Checked)
                     this.rdo19x19.Checked = true;
                 this.rdoOtherBoard.Enabled = false;
@@ -2207,10 +2223,10 @@ namespace readboard
             if (this.rdoBack.Checked)
             {
                 type = 3;
-                this.button3.Enabled = false;
-                this.button11.Enabled = true;
-                this.button2.Enabled = true;
-                this.button10.Enabled = false;
+                this.btnClickBoard.Enabled = false;
+                this.btnCircleRow1.Enabled = true;
+                this.btnCircleBoard.Enabled = true;
+                this.btnFastSync.Enabled = false;
                 this.rdoOtherBoard.Enabled = true;
             }
         }
@@ -2221,10 +2237,10 @@ namespace readboard
             if (this.rdoSina.Checked)
             {
                 type = 2;
-                this.button2.Enabled = false;
-                this.button11.Enabled = false;
-                this.button3.Enabled = true;
-                this.button10.Enabled = true;
+                this.btnCircleBoard.Enabled = false;
+                this.btnCircleRow1.Enabled = false;
+                this.btnClickBoard.Enabled = true;
+                this.btnFastSync.Enabled = true;
                 if (this.rdoOtherBoard.Checked)
                     this.rdo19x19.Checked = true;
                 this.rdoOtherBoard.Enabled = false;
@@ -2425,6 +2441,7 @@ namespace readboard
                         break;
                 } while (Program.verifyMove && !VerifyMove(x, y, false));
             }
+            Send("placeComplete");
         }
 
         uint WM_LBUTTONDOWN = 0x201;
@@ -2456,7 +2473,7 @@ namespace readboard
         [DllImport("User32")]
         public extern static void mouse_event(int dwFlags, int dx, int dy, int dwData, IntPtr dwExtraInfo);
 
-        private void foreMouseClick(int x, int y, Boolean moveBack,Boolean isFox)
+        private void foreMouseClick(int x, int y, Boolean moveBack, Boolean isFox)
         {
             if (moveBack)
             {
@@ -2467,7 +2484,7 @@ namespace readboard
                 mouse_event((int)(MouseEventFlags.LeftDown | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
                 if (isFox)
                     Thread.Sleep(50);
-                mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);             
+                mouse_event((int)(MouseEventFlags.LeftUp | MouseEventFlags.Absolute), 0, 0, 0, IntPtr.Zero);
                 SetCursorPos(curX, curY);
             }
             else
@@ -2550,10 +2567,14 @@ namespace readboard
             {
                 Send("bothSync");
                 chkAutoPlay.Enabled = true;
+                if (Program.showInBoard && type == 0 && !canUseLW)
+                    Send("foreFoxWithInBoard");
             }
             else
             {
                 Send("nobothSync");
+                if (Program.showInBoard && type == 0 && !canUseLW)
+                    Send("notForeFoxWithInBoard");
                 chkAutoPlay.Enabled = false;
             }
             if (keepSync)
@@ -2576,14 +2597,14 @@ namespace readboard
             try
             {
                 Process process1 = new Process();
-                process1.StartInfo.FileName = "readboard\\readme.rtf";
+                process1.StartInfo.FileName = getLangStr("helpFile");
                 process1.StartInfo.Arguments = "";
                 process1.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
                 process1.Start();
             }
             catch (Exception)
             {
-                MessageBox.Show(Program.isChn ? "找不到说明文档,请检查Lizzie目录下[readboard]文件夹内的[readme.rtf]文件是否存在" : "Can not find file,Please check [readme.rtf] file is in the folder [readboard]");
+                MessageBox.Show(getLangStr("noHelpFile")); //(Program.isChn ? "找不到说明文档,请检查Lizzie目录下[readboard]文件夹内的[readme.rtf]文件是否存在" : "Can not find file,Please check [readme.rtf] file is in the folder [readboard]");
             }
         }
 
@@ -2592,10 +2613,10 @@ namespace readboard
             if (this.rdoFore.Checked)
             {
                 type = 5;
-                this.button3.Enabled = false;
-                this.button11.Enabled = true;
-                this.button2.Enabled = true;
-                this.button10.Enabled = false;
+                this.btnClickBoard.Enabled = false;
+                this.btnCircleRow1.Enabled = true;
+                this.btnCircleBoard.Enabled = true;
+                this.btnFastSync.Enabled = false;
                 this.rdoOtherBoard.Enabled = true;
             }
         }
@@ -2625,7 +2646,7 @@ namespace readboard
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            Form4 form4 = new Form4();
+            SettingsForm form4 = new SettingsForm();
             form4.Show();
         }
 
@@ -2750,7 +2771,7 @@ namespace readboard
                 if (Program.showInBoardHint)
                 {
 
-                    Form7 form7 = new Form7();
+                    TipsForm form7 = new TipsForm();
                     form7.ShowDialog();
 
                 }
@@ -2763,18 +2784,26 @@ namespace readboard
 
         private void button9_Click(object sender, EventArgs e)
         {
-            try
-            {
-                Process process1 = new Process();
-                process1.StartInfo.FileName = "readboard\\65komi.rtf";
-                process1.StartInfo.Arguments = "";
-                process1.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
-                process1.Start();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(Program.isChn ? "找不到说明文档,请检查Lizzie目录下[readboard]文件夹内的[65komi.rtf]文件是否存在" : "Can not find file,Please check [65komi.rtf] file is in the folder [readboard]");
-            }
+            MessageBox.Show(getLangStr("komi65Describe")); 
+            //if (!Program.isChn)
+            //    MessageBox.Show("Because of lack of move history,captured stone number will be incorrectly,So only area scoring can be used.You can set rules [area scoring + 7.0 komi + hasbutton] to simulate Japanese rule.");
+            //else
+            //MessageBox.Show("由于同步时无法获取提子数,日本规则(数目)将变得不准确,需要同步日本规则贴6.5目的棋局时可在Katago中使用[数子+贴目7.0+收后方贴还0.5目]规则模拟");
+
+            //else {
+            //    try
+            //    {
+            //        Process process1 = new Process();
+            //        process1.StartInfo.FileName = "readboard\\65komi.rtf";
+            //        process1.StartInfo.Arguments = "";
+            //        process1.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+            //        process1.Start();
+            //    }
+            //    catch (Exception)
+            //    {
+            //        MessageBox.Show(Program.isChn ? "找不到说明文档,请检查Lizzie目录下[readboard]文件夹内的[65komi.rtf]文件是否存在" : "Can not find file,Please check [65komi.rtf] file is in the folder [readboard]");
+            //    }
+            //}            
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -2787,8 +2816,8 @@ namespace readboard
                     Thread.Sleep(50);
                 }
                 isContinuousSyncing = true;
-                this.button3.Enabled = false;
-                this.button4.Enabled = false;
+                this.btnClickBoard.Enabled = false;
+                this.btnOneTimeSync.Enabled = false;
                 this.btnKeepSync.Enabled = false;
                 threadFastSync = new Thread(startContinuous);
                 threadFastSync.SetApartmentState(ApartmentState.STA);
@@ -2801,10 +2830,10 @@ namespace readboard
             else
             {
                 stopSync();
-                this.button10.Text = Program.isChn ? "一键同步" : "FastSync";
+                this.btnFastSync.Text = getLangStr("fastSync");  //Program.isChn ? "一键同步" : "FastSync";
                 isContinuousSyncing = false;
                 Action2<String> a = new Action2<String>(Action2Test);
-                Invoke(a, (Program.isChn ? "持续同步(" : "KeepSync(") + Program.timename + "ms)");
+                Invoke(a, getLangStr("keepSync") +"("+Program.timename + "ms)");
             }
         }
 

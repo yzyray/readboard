@@ -5,19 +5,30 @@ using System.Windows.Forms;
 
 namespace readboard
 {
-    public partial class Form7 : Form
+    public partial class TipsForm : Form
     {
-        public Form7()
+        public TipsForm()
         {
             InitializeComponent();
-            if (!Program.isChn) {
-                this.label1.Text = "Notice: Short cut \"Crtl+A\".Foreground is not supported.after displayed on original";
-                this.label2.Text = "board,you can't place stone.Check BothSync may solve the issue.";
-                this.Text = "Information";
-                this.button1.Text = "Confirm";
-                this.button2.Text = "NotAskAgain";
-                this.button2.Size = new Size((int)(80 * Program.factor), (int)(23 * Program.factor));
+            this.Text = getLangStr("TipsForm_title");
+            this.lblTips.Text = getLangStr("TipsForm_lblTips");
+            this.lblTips1.Text = getLangStr("TipsForm_lblTips1");
+            this.btnConfirm.Text = getLangStr("TipsForm_btnConfirm");
+            this.btnNotAskAgain.Text = getLangStr("TipsForm_btnNotAskAgain");            
+        }
+
+        private String getLangStr(String itemName)
+        {
+            String result = "";
+            try
+            {
+                result = Program.langItems[itemName].ToString();
             }
+            catch (Exception e)
+            {
+                MainForm.pcurrentWin.SendError(e.ToString());
+            }
+            return result;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -27,7 +38,7 @@ namespace readboard
             FileStream fs = new FileStream(result1, FileMode.Create);
             StreamWriter wr = null;
             wr = new StreamWriter(fs);
-            wr.WriteLine(Program.blackPC.ToString() + "_" + Program.blackZB.ToString() + "_" + Program.whitePC.ToString() + "_" + Program.whiteZB.ToString() + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "")+"_" + Form1.type);
+            wr.WriteLine(Program.blackPC.ToString() + "_" + Program.blackZB.ToString() + "_" + Program.whitePC.ToString() + "_" + Program.whiteZB.ToString() + "_" + (Program.useMag ? "1" : "0") + "_" + (Program.verifyMove ? "1" : "0") + "_" + (Program.showScaleHint ? "1" : "0") + "_" + (Program.showInBoard ? "1" : "0") + "_" + (Program.showInBoardHint ? "1" : "0") + "_" + (Program.autoMin ? "1" : "0") + "_" + Environment.GetEnvironmentVariable("computername").Replace("_", "")+"_" + MainForm.type);
             wr.Close();
             this.Close();
         }

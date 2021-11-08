@@ -10,7 +10,7 @@ namespace readboard
         //int hwnd;
         Boolean isMouthDown = false;
         Graphics g;
-        Form5 form5;
+        MagnifierForm form5;
         Boolean needMag;
 
 
@@ -25,7 +25,7 @@ namespace readboard
             this.needMag = needMag;
             if (Program.useMag && needMag)
             {
-                form5 = new Form5();
+                form5 = new MagnifierForm();
                 form5.StartPosition = FormStartPosition.Manual;
                 int iActulaHeight = Screen.PrimaryScreen.Bounds.Height;
                 form5.Location = new Point(0, iActulaHeight-200);
@@ -93,8 +93,8 @@ namespace readboard
             this.Close();
             
             //formMain.pcurrentWin.Snap(x < nowX ? x : nowX, y < nowY ? y : nowY, Math.Abs(nowX - x), Math.Abs(nowY - y));
-            Form1.pcurrentWin.Snap(x1,y1,x2,y2);
-            Form1.pcurrentWin.Show();
+            MainForm.pcurrentWin.Snap(x1,y1,x2,y2);
+            MainForm.pcurrentWin.Show();
            
         }
 

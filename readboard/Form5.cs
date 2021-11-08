@@ -1,16 +1,30 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace readboard
 {
-    public partial class Form5 : Form
+    public partial class MagnifierForm : Form
     {
-        public Form5()
+        public MagnifierForm()
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            if (!Program.isChn)
-                this.Text = "Magnifier";
+            this.Text = getLangStr("MagnifierForm_title");
+        }
+
+        private String getLangStr(String itemName)
+        {
+            String result = "";
+            try
+            {
+                result = Program.langItems[itemName].ToString();
+            }
+            catch (Exception e)
+            {
+                MainForm.pcurrentWin.SendError(e.ToString());
+            }
+            return result;
         }
 
 
