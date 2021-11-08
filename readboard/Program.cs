@@ -29,7 +29,7 @@ namespace readboard
         public static Boolean autoMin = true;
        // public const Boolean isAdvScale = false;
         public static Boolean isScaled = false;
-        public static String version = "916";
+        public static String version = "1108";
         //public static Boolean isChn = false;
         public static String timename="200";
         public static int timeinterval=200;

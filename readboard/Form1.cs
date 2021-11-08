@@ -313,7 +313,7 @@ namespace readboard
         private void HookListener_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             // Console.Out.WriteLine(e.KeyValue);
-            if (e.KeyValue == 163)
+            if (e.KeyValue == 162 || e.KeyValue == 163)
                 isCtrlDown = true;
             if (isCtrlDown && e.KeyValue == 68)
                 chkShowInBoard.Checked = !chkShowInBoard.Checked;
@@ -321,7 +321,7 @@ namespace readboard
 
         private void HookListener_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if ( e.KeyValue == 163)
+            if ( e.KeyValue == 162 || e.KeyValue==163)
                 isCtrlDown = false;
         }
 
