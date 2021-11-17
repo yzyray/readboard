@@ -1057,7 +1057,7 @@ namespace readboard
         {
             this.btnKeepSync.Text = t;
             if (!isContinuousSyncing)
-                this.btnFastSync.Text = getLangStr("stopSync");//Program.isChn ? "一键同步" : "FastSync";
+                this.btnFastSync.Text = getLangStr("fastSync");//Program.isChn ? "一键同步" : "FastSync";
             //if (this.factor <= 1)
             //{ 
             this.btnOneTimeSync.Enabled = true;
@@ -1203,16 +1203,16 @@ namespace readboard
                 int pid = -1;
                 GetWindowThreadProcessId(item.Key, out pid);
                 Process proc = Process.GetProcessById(pid);
-                //Console.WriteLine("=====================");
-                //Console.WriteLine(proc.ProcessName);
-                // Console.WriteLine(item.Key);
-                //Console.WriteLine(item.Value);
-                if (proc.ProcessName.Equals(processName))
+                if (proc.ProcessName.Contains(processName))
                 {
                     List<IntPtr> allHwnds = new List<IntPtr>();
                     allHwnds.Add(item.Key);
                     foreach (IntPtr subHwnd in GetChildWindows(item.Key))
                     {
+                        if (!IsWindowVisible(subHwnd))
+                            continue;
+                        if (IsIconic(subHwnd))
+                            continue;
                         allHwnds.Add(subHwnd);                     
                     }
                     foreach (IntPtr oneHwnd in allHwnds)
@@ -1285,7 +1285,7 @@ namespace readboard
                 }
                 else if (type == 1)
                 {
-                    String hwnds = EnumWindowByProcess("TygemEweiqi", "AfxWnd140u");
+                    String hwnds = EnumWindowByProcess("Tygem", "AfxWnd140u");
                     string[] hwndArray = hwnds.Split(',');
                     foreach (string oneHwnd in hwndArray)
                     {
