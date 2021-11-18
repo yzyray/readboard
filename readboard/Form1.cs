@@ -471,28 +471,31 @@ namespace readboard
                 if ((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('_');
-                    if (arr.Length == 11)
+                    if (arr.Length == 12)
                     {
                         try
                         {
-                            this.boardW = Convert.ToInt32(arr[0]);
-                            this.boardH = Convert.ToInt32(arr[1]);
-                            customW = Convert.ToInt32(arr[2]);
-                            customH = Convert.ToInt32(arr[3]);
-                            Program.timeinterval = Convert.ToInt32(arr[4]);
-                            Program.timename = Program.timeinterval.ToString();
-                            this.syncBoth = (Convert.ToInt32(arr[5]) == 1);
-                            Program.grayOffset = Convert.ToInt32(arr[6]);
-                            posX = Convert.ToInt32(arr[7]);
-                            posY = Convert.ToInt32(arr[8]);
-                            Program.useEnhanceScreen = (Convert.ToInt32(arr[9]) == 1);
-                            Program.playPonder = (Convert.ToInt32(arr[10]) == 1);
-                            if (posX != -1 && posY != -1)
-                            {
-                                var h = Screen.PrimaryScreen.Bounds.Height;
-                                var w = Screen.PrimaryScreen.Bounds.Width;
-                                this.Location = new System.Drawing.Point(Math.Min(Math.Max(0, posX), w - 476), Math.Min(Math.Max(0, posY), h - 217));
-                            }
+                            int savedVersion= Convert.ToInt32(arr[0]);
+                            if (savedVersion == Convert.ToInt32(Program.version)) {
+                                this.boardW = Convert.ToInt32(arr[1]);
+                                this.boardH = Convert.ToInt32(arr[2]);
+                                customW = Convert.ToInt32(arr[3]);
+                                customH = Convert.ToInt32(arr[4]);
+                                Program.timeinterval = Convert.ToInt32(arr[5]);
+                                Program.timename = Program.timeinterval.ToString();
+                                this.syncBoth = (Convert.ToInt32(arr[6]) == 1);
+                                Program.grayOffset = Convert.ToInt32(arr[7]);
+                                posX = Convert.ToInt32(arr[8]);
+                                posY = Convert.ToInt32(arr[9]);
+                                Program.useEnhanceScreen = (Convert.ToInt32(arr[10]) == 1);
+                                Program.playPonder = (Convert.ToInt32(arr[11]) == 1);
+                                if (posX != -1 && posY != -1)
+                                {
+                                    var h = Screen.PrimaryScreen.Bounds.Height;
+                                    var w = Screen.PrimaryScreen.Bounds.Width;
+                                    this.Location = new System.Drawing.Point(Math.Min(Math.Max(0, posX), w - 476), Math.Min(Math.Max(0, posY), h - 217));
+                                }
+                            }                       
                         }
                         catch (Exception)
                         {
@@ -2266,7 +2269,7 @@ namespace readboard
             catch (Exception)
             {
             }
-            wr.WriteLine(this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY + "_" + (Program.useEnhanceScreen ? "1" : "0") + "_" + (Program.playPonder ? "1" : "0"));
+            wr.WriteLine(Program.version+"_"+this.boardW + "_" + this.boardH + "_" + customW + "_" + customH + "_" + Program.timeinterval + "_" + (syncBoth ? "1" : "0") + "_" + Program.grayOffset + "_" + posX + "_" + posY + "_" + (Program.useEnhanceScreen ? "1" : "0") + "_" + (Program.playPonder ? "1" : "0"));
             wr.Close();
         }
 

@@ -34,7 +34,7 @@ namespace readboard
         public static String timename="200";
         public static int timeinterval=200;
         public static int grayOffset = 50;
-        public static Boolean useEnhanceScreen = true;
+        public static Boolean useEnhanceScreen = false;
         public static Boolean playPonder = true;
      //   public static Boolean scaleForBack = false;
 
@@ -180,7 +180,7 @@ namespace readboard
             langItems.Add("SettingsForm_btnCancel", "取消");
             langItems.Add("SettingsForm_chkEnhanceScreen", "强化截图");
 
-            langItems.Add("SettingsForm_chkEnhanceScreen_ToolTip", "关闭则无法获取桌面外窗口信息,如遇到原棋盘少子等情况可尝试关闭");
+            langItems.Add("SettingsForm_chkEnhanceScreen_ToolTip", "勾选可获取桌面外的截图,通常不需要(可能导致刷新降低,无法实时切换棋局等问题)");
             langItems.Add("SettingsForm_chkPonder_ToolTip", "双向同步自动落子时,引擎在对手的回合计算");
 
             langItems.Add("SettingsForm_mustBeInteger", "必须输入整数");

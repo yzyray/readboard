@@ -126,8 +126,8 @@ namespace readboard
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (File.Exists("config_readboard_boardsize.txt"))
-                File.Delete("config_readboard_boardsize.txt");
+            if (File.Exists("config_readboard_others.txt"))
+                File.Delete("config_readboard_others.txt");
             if (File.Exists("config_readboard.txt"))
                 File.Delete("config_readboard.txt");
             MessageBox.Show(getLangStr("SettingsForm_resetDefaultTip"));// Program.isChn ? "已恢复默认设置,请重新打开": "Reset successfully,please restart.");
