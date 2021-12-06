@@ -1373,7 +1373,6 @@ namespace readboard
                     stopKeepingSync();
                     return;
                 }
-                OutPut3(true);
             }
             else
             {
@@ -1563,9 +1562,9 @@ namespace readboard
         {
             lw.lwsoft lwh = null;
             Send("sync");
+            Boolean firstTime = true;
             while (keepSync)
             {
-
                 int x1;
                 int y1;
                 int x2;
@@ -1606,7 +1605,7 @@ namespace readboard
                 }
                 if (type == 5)
                 {
-                    OutPut3(false);
+                    OutPut3(firstTime);
                 }
                 else
                 {
@@ -1690,16 +1689,16 @@ namespace readboard
                     }
                     if (type == 3)
                     {
-                        OutPut3(false);
+                        OutPut3(firstTime);
                     }
                     else
                     {
                         if (canUseLW && type == 0)
                         {
-                            OutPut(false, rgbArray, lwh, totalWidth);
+                            OutPut(firstTime, rgbArray, lwh, totalWidth);
                         }
                         else
-                            OutPut(false, rgbArray, null, totalWidth);
+                            OutPut(firstTime, rgbArray, null, totalWidth);
                     }
                 }
                 try
@@ -1707,6 +1706,7 @@ namespace readboard
                     Thread.Sleep(Program.timeinterval);
                 }
                 catch (Exception) { }
+                firstTime = false;
             }
             Send("stopsync");
         }
