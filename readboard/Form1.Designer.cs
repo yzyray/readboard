@@ -62,7 +62,13 @@
             this.btnHelp = new System.Windows.Forms.Button();
             this.lblPlayCondition = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.chkAutoPlay = new System.Windows.Forms.CheckBox();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnExchange = new System.Windows.Forms.Button();
             this.chkShowInBoard = new System.Windows.Forms.CheckBox();
@@ -72,11 +78,17 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
+            this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCircleBoard
             // 
-            this.btnCircleBoard.Location = new System.Drawing.Point(155, 125);
+            this.btnCircleBoard.Location = new System.Drawing.Point(155, 126);
             this.btnCircleBoard.Name = "btnCircleBoard";
             this.btnCircleBoard.Size = new System.Drawing.Size(83, 23);
             this.btnCircleBoard.TabIndex = 1;
@@ -87,7 +99,7 @@
             // btnClickBoard
             // 
             this.btnClickBoard.Font = new System.Drawing.Font("宋体", 9F);
-            this.btnClickBoard.Location = new System.Drawing.Point(7, 125);
+            this.btnClickBoard.Location = new System.Drawing.Point(7, 126);
             this.btnClickBoard.Name = "btnClickBoard";
             this.btnClickBoard.Size = new System.Drawing.Size(145, 23);
             this.btnClickBoard.TabIndex = 2;
@@ -97,7 +109,7 @@
             // 
             // btnOneTimeSync
             // 
-            this.btnOneTimeSync.Location = new System.Drawing.Point(117, 152);
+            this.btnOneTimeSync.Location = new System.Drawing.Point(117, 153);
             this.btnOneTimeSync.Name = "btnOneTimeSync";
             this.btnOneTimeSync.Size = new System.Drawing.Size(82, 23);
             this.btnOneTimeSync.TabIndex = 3;
@@ -107,7 +119,7 @@
             // 
             // btnKeepSync
             // 
-            this.btnKeepSync.Location = new System.Drawing.Point(7, 152);
+            this.btnKeepSync.Location = new System.Drawing.Point(7, 153);
             this.btnKeepSync.Name = "btnKeepSync";
             this.btnKeepSync.Size = new System.Drawing.Size(107, 23);
             this.btnKeepSync.TabIndex = 4;
@@ -117,7 +129,7 @@
             // 
             // btnClearBoard
             // 
-            this.btnClearBoard.Location = new System.Drawing.Point(372, 152);
+            this.btnClearBoard.Location = new System.Drawing.Point(372, 153);
             this.btnClearBoard.Name = "btnClearBoard";
             this.btnClearBoard.Size = new System.Drawing.Size(80, 23);
             this.btnClearBoard.TabIndex = 5;
@@ -302,7 +314,7 @@
             // radioWhite
             // 
             this.radioWhite.AutoSize = true;
-            this.radioWhite.Location = new System.Drawing.Point(84, 38);
+            this.radioWhite.Location = new System.Drawing.Point(81, 3);
             this.radioWhite.Name = "radioWhite";
             this.radioWhite.Size = new System.Drawing.Size(47, 16);
             this.radioWhite.TabIndex = 23;
@@ -314,7 +326,7 @@
             // radioBlack
             // 
             this.radioBlack.AutoSize = true;
-            this.radioBlack.Location = new System.Drawing.Point(84, 13);
+            this.radioBlack.Location = new System.Drawing.Point(81, 3);
             this.radioBlack.Name = "radioBlack";
             this.radioBlack.Size = new System.Drawing.Size(47, 16);
             this.radioBlack.TabIndex = 22;
@@ -326,7 +338,7 @@
             // chkBothSync
             // 
             this.chkBothSync.AutoSize = true;
-            this.chkBothSync.Location = new System.Drawing.Point(6, 12);
+            this.chkBothSync.Location = new System.Drawing.Point(3, 3);
             this.chkBothSync.Name = "chkBothSync";
             this.chkBothSync.Size = new System.Drawing.Size(72, 16);
             this.chkBothSync.TabIndex = 20;
@@ -336,16 +348,17 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(193, 36);
+            this.textBox1.Location = new System.Drawing.Point(187, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(50, 21);
+            this.textBox1.Size = new System.Drawing.Size(51, 21);
             this.textBox1.TabIndex = 25;
             this.textBox1.TextChanged += new System.EventHandler(this.textbox1_TextChanged);
             // 
             // lblTime
             // 
             this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(137, 41);
+            this.lblTime.Location = new System.Drawing.Point(0, 5);
+            this.lblTime.Margin = new System.Windows.Forms.Padding(0);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(53, 12);
             this.lblTime.TabIndex = 24;
@@ -353,7 +366,7 @@
             // 
             // btnTogglePonder
             // 
-            this.btnTogglePonder.Location = new System.Drawing.Point(202, 152);
+            this.btnTogglePonder.Location = new System.Drawing.Point(202, 153);
             this.btnTogglePonder.Name = "btnTogglePonder";
             this.btnTogglePonder.Size = new System.Drawing.Size(82, 23);
             this.btnTogglePonder.TabIndex = 21;
@@ -364,7 +377,7 @@
             // lblTotalVisits
             // 
             this.lblTotalVisits.AutoSize = true;
-            this.lblTotalVisits.Location = new System.Drawing.Point(249, 15);
+            this.lblTotalVisits.Location = new System.Drawing.Point(2, 5);
             this.lblTotalVisits.Name = "lblTotalVisits";
             this.lblTotalVisits.Size = new System.Drawing.Size(101, 12);
             this.lblTotalVisits.TabIndex = 26;
@@ -372,7 +385,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(356, 10);
+            this.textBox2.Location = new System.Drawing.Point(350, 3);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(84, 21);
             this.textBox2.TabIndex = 27;
@@ -381,7 +394,7 @@
             // lblBestMoveVisits
             // 
             this.lblBestMoveVisits.AutoSize = true;
-            this.lblBestMoveVisits.Location = new System.Drawing.Point(249, 39);
+            this.lblBestMoveVisits.Location = new System.Drawing.Point(2, 5);
             this.lblBestMoveVisits.Name = "lblBestMoveVisits";
             this.lblBestMoveVisits.Size = new System.Drawing.Size(101, 12);
             this.lblBestMoveVisits.TabIndex = 28;
@@ -389,9 +402,9 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(356, 36);
+            this.textBox3.Location = new System.Drawing.Point(350, 3);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(85, 21);
+            this.textBox3.Size = new System.Drawing.Size(84, 21);
             this.textBox3.TabIndex = 29;
             this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
@@ -408,7 +421,7 @@
             // lblPlayCondition
             // 
             this.lblPlayCondition.AutoSize = true;
-            this.lblPlayCondition.Location = new System.Drawing.Point(137, 15);
+            this.lblPlayCondition.Location = new System.Drawing.Point(0, 5);
             this.lblPlayCondition.Name = "lblPlayCondition";
             this.lblPlayCondition.Size = new System.Drawing.Size(107, 12);
             this.lblPlayCondition.TabIndex = 31;
@@ -416,33 +429,93 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.chkAutoPlay);
-            this.groupBox4.Controls.Add(this.radioWhite);
-            this.groupBox4.Controls.Add(this.lblTotalVisits);
-            this.groupBox4.Controls.Add(this.radioBlack);
-            this.groupBox4.Controls.Add(this.lblPlayCondition);
-            this.groupBox4.Controls.Add(this.chkBothSync);
-            this.groupBox4.Controls.Add(this.textBox3);
-            this.groupBox4.Controls.Add(this.lblTime);
-            this.groupBox4.Controls.Add(this.lblBestMoveVisits);
-            this.groupBox4.Controls.Add(this.textBox1);
-            this.groupBox4.Controls.Add(this.textBox2);
+            this.groupBox4.Controls.Add(this.flowLayoutPanel2);
+            this.groupBox4.Controls.Add(this.flowLayoutPanel1);
             this.groupBox4.Location = new System.Drawing.Point(7, 59);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(446, 63);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(0);
+            this.groupBox4.Size = new System.Drawing.Size(541, 63);
             this.groupBox4.TabIndex = 32;
             this.groupBox4.TabStop = false;
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.Controls.Add(this.chkAutoPlay);
+            this.flowLayoutPanel2.Controls.Add(this.radioWhite);
+            this.flowLayoutPanel2.Controls.Add(this.panel3);
+            this.flowLayoutPanel2.Controls.Add(this.textBox1);
+            this.flowLayoutPanel2.Controls.Add(this.panel4);
+            this.flowLayoutPanel2.Controls.Add(this.textBox3);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(1, 34);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(588, 24);
+            this.flowLayoutPanel2.TabIndex = 39;
             // 
             // chkAutoPlay
             // 
             this.chkAutoPlay.AutoSize = true;
-            this.chkAutoPlay.Location = new System.Drawing.Point(6, 38);
+            this.chkAutoPlay.Location = new System.Drawing.Point(3, 3);
             this.chkAutoPlay.Name = "chkAutoPlay";
             this.chkAutoPlay.Size = new System.Drawing.Size(72, 16);
             this.chkAutoPlay.TabIndex = 32;
             this.chkAutoPlay.Text = "自动落子";
             this.chkAutoPlay.UseVisualStyleBackColor = true;
             this.chkAutoPlay.CheckedChanged += new System.EventHandler(this.chkAutoPlay_CheckedChanged);
+            // 
+            // panel3
+            // 
+            this.panel3.AutoSize = true;
+            this.panel3.Controls.Add(this.lblTime);
+            this.panel3.Location = new System.Drawing.Point(131, 0);
+            this.panel3.Margin = new System.Windows.Forms.Padding(0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(53, 17);
+            this.panel3.TabIndex = 33;
+            // 
+            // panel4
+            // 
+            this.panel4.AutoSize = true;
+            this.panel4.Controls.Add(this.lblBestMoveVisits);
+            this.panel4.Location = new System.Drawing.Point(241, 0);
+            this.panel4.Margin = new System.Windows.Forms.Padding(0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(106, 17);
+            this.panel4.TabIndex = 34;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.chkBothSync);
+            this.flowLayoutPanel1.Controls.Add(this.radioBlack);
+            this.flowLayoutPanel1.Controls.Add(this.panel1);
+            this.flowLayoutPanel1.Controls.Add(this.panel2);
+            this.flowLayoutPanel1.Controls.Add(this.textBox2);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(1, 9);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(569, 32);
+            this.flowLayoutPanel1.TabIndex = 39;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.lblPlayCondition);
+            this.panel1.Location = new System.Drawing.Point(131, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(110, 17);
+            this.panel1.TabIndex = 23;
+            // 
+            // panel2
+            // 
+            this.panel2.AutoSize = true;
+            this.panel2.Controls.Add(this.lblTotalVisits);
+            this.panel2.Location = new System.Drawing.Point(241, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(106, 17);
+            this.panel2.TabIndex = 24;
             // 
             // btnSettings
             // 
@@ -456,7 +529,7 @@
             // 
             // btnExchange
             // 
-            this.btnExchange.Location = new System.Drawing.Point(287, 152);
+            this.btnExchange.Location = new System.Drawing.Point(287, 153);
             this.btnExchange.Name = "btnExchange";
             this.btnExchange.Size = new System.Drawing.Size(82, 23);
             this.btnExchange.TabIndex = 34;
@@ -467,7 +540,7 @@
             // chkShowInBoard
             // 
             this.chkShowInBoard.AutoSize = true;
-            this.chkShowInBoard.Location = new System.Drawing.Point(338, 129);
+            this.chkShowInBoard.Location = new System.Drawing.Point(338, 130);
             this.chkShowInBoard.Name = "chkShowInBoard";
             this.chkShowInBoard.Size = new System.Drawing.Size(120, 16);
             this.chkShowInBoard.TabIndex = 35;
@@ -497,7 +570,7 @@
             // 
             // btnCircleRow1
             // 
-            this.btnCircleRow1.Location = new System.Drawing.Point(241, 125);
+            this.btnCircleRow1.Location = new System.Drawing.Point(241, 126);
             this.btnCircleRow1.Name = "btnCircleRow1";
             this.btnCircleRow1.Size = new System.Drawing.Size(92, 23);
             this.btnCircleRow1.TabIndex = 38;
@@ -509,7 +582,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(460, 178);
+            this.ClientSize = new System.Drawing.Size(459, 182);
             this.Controls.Add(this.btnCircleRow1);
             this.Controls.Add(this.btnFastSync);
             this.Controls.Add(this.btnKomi65);
@@ -539,7 +612,18 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -586,6 +670,12 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtBoardHeight;
         private System.Windows.Forms.TextBox txtBoardWidth;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel4;
     }
 }
 

@@ -2730,6 +2730,8 @@ namespace readboard
 
         private void radioBlack_CheckedChanged(object sender, EventArgs e)
         {
+            if (radioBlack.Checked)
+            radioWhite.Checked = false;
             if (keepSync)
                 if (radioBlack.Checked)
                 {
@@ -2738,11 +2740,13 @@ namespace readboard
                 else if (radioWhite.Checked)
                 {
                     Send("play>white>" + (textBox1.Text.Equals("") ? "0" : textBox1.Text) + " " + (textBox2.Text.Equals("") ? "0" : textBox2.Text) + " " + (textBox3.Text.Equals("") ? "0" : textBox3.Text));
-                }
+                }           
         }
 
         private void radioWhite_CheckedChanged(object sender, EventArgs e)
         {
+            if (radioWhite.Checked)
+                radioBlack.Checked = false;
             if (keepSync)
                 if (radioBlack.Checked)
                 {
