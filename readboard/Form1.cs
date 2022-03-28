@@ -315,7 +315,7 @@ namespace readboard
             // Console.Out.WriteLine(e.KeyValue);
             if (e.KeyValue == 162 || e.KeyValue == 163)
                 isCtrlDown = true;
-            if (isCtrlDown && e.KeyValue == 68)
+            if (isCtrlDown && e.KeyValue == 88)
                 chkShowInBoard.Checked = !chkShowInBoard.Checked;
         }
 
@@ -656,7 +656,8 @@ namespace readboard
             this.btnExchange.Text = getLangStr("MainForm_btnExchange");
             this.btnClearBoard.Text = getLangStr("MainForm_btnClearBoard");
             this.Text = getLangStr("MainForm_title");
-
+            var toolTip1 = new ToolTip();
+            toolTip1.SetToolTip(this.chkShowInBoard, "Ctrl+X");
             Send("ready");
             sendPonderStatus();
         }
