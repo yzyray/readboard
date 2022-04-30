@@ -1772,27 +1772,22 @@ namespace readboard
                 Boolean isWhite = false;
                 int whitePercent =
                     getWhiteBlackColorPercent(
-                        rgbArray, 0, 0, input.Width, input.Height, false, whiteOffsetStandard, grayOffsetStandard, input.Width, input.Height);
+                        rgbArray, 0, 0, input.Width, input.Height, false, whiteOffsetStandard, grayOffsetStandard, input.Width, input.Height);                
                 if (whitePercent >= whitePercentStandard)
                 {
-                    if (x == 0
-                        || x == boardW - 1
-                        || y == 0
-                        || y == boardH - 1)
-                    {
-                        if (whitePercent > 85) isWhite = false;
-                        else isWhite = true;
-                    }
-                    else
-                    {
-                        if (whitePercent > 80) isWhite = false;
-                        else isWhite = true;
-                    }
+                    int pureWhitePercent = getWhiteBlackColorPercent(
+                        rgbArray, 0, 0, input.Width, input.Height, false, 30, grayOffsetStandard, input.Width, input.Height);
+                    int almostWhitePercent = getWhiteBlackColorPercent(
+                        rgbArray, 0, 0, input.Width, input.Height, false, 65, grayOffsetStandard, input.Width, input.Height);
+                    Boolean trueWhite = getTrueWhite(rgbArray, 0, 0, input.Width, input.Height, input.Width, input.Height);
+                    if (!trueWhite && almostWhitePercent - pureWhitePercent < 10) isWhite = false;
+                    else isWhite = true; 
                 }
                 input.Dispose();
                 return isWhite;
             }
         }
+
         private void recognizeBoard(RgbInfo[] rgbArray)
         {
             recognizeBoard(rgbArray, -1);
@@ -1922,17 +1917,14 @@ namespace readboard
                                 rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, false, whiteOffsetStandard, grayOffsetStandard, allWidth, allHeight);
                         if (whitePercent >= whitePercentStandard)
                         {
-                            if (x == 0
-                                || x == boardW - 1
-                                || y == 0
-                                || y == boardH - 1)
+                            if (whitePercent >= whitePercentStandard)
                             {
-                                if (whitePercent > 85) isWhite = false;
-                                else isWhite = true;
-                            }
-                            else
-                            {
-                                if (whitePercent > 80) isWhite = false;
+                                int pureWhitePercent = getWhiteBlackColorPercent(
+                                rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, false, 30, grayOffsetStandard, allWidth, allHeight);
+                                int almostWhitePercent = getWhiteBlackColorPercent(
+                                rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, false, 65, grayOffsetStandard, allWidth, allHeight);
+                                Boolean trueWhite = getTrueWhite(rgbArray, startX + (int)Math.Round(x * vGap), startY + (int)Math.Round(y * hGap), vGapInt, hGapInt, allWidth, allHeight);
+                                if (!trueWhite && almostWhitePercent - pureWhitePercent < 10) isWhite = false;
                                 else isWhite = true;
                             }
                         }
@@ -2111,6 +2103,35 @@ namespace readboard
                 }
             }
             return (100 * sum) / (width * height);
+        }
+
+
+
+        private bool getTrueWhite(RgbInfo[] rgbArray, int startX, int startY, int width, int height, int totalWidth, int totalHeight)
+        {
+            Boolean trueWhite = false;
+            int pureWhiteValue = 255 - 30;
+            if (startX + width > totalWidth)
+                startX = totalWidth - width;
+            if (startY + height > totalHeight)
+                startY = totalHeight - height;           
+            int y = (int)Math.Round(height / 4.0);
+                for (int x = 0; x < Math.Round(width * 2.0 / 6.0); x++)
+                {
+                    int index = (startY + y) * totalWidth + startX + x;
+                    if (index >= rgbArray.Length)
+                        break;
+                    RgbInfo rgbInfo = rgbArray[index];
+                    int red = rgbInfo.r;
+                    int green = rgbInfo.g;
+                    int blue = rgbInfo.b;
+                    if (red < pureWhiteValue || blue < pureWhiteValue || green < pureWhiteValue)
+                    {
+                        trueWhite = true;
+                        break;
+                    }                   
+                }            
+            return trueWhite;
         }
 
         private int getWhiteBlackColorPercent(RgbInfo[] rgbArray, int startX, int startY, int width, int height, Boolean isBlack, int offset, int grayOffset, int totalWidth, int totalHeight)
